@@ -1,0 +1,19 @@
+{
+  "name": "rumistack",
+  "version": "0.6.0",
+  "description": "Local-first control center for AI coding assistants, gateways, skills, agents and MCP servers.",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node server/index.js",
+    "check": "node scripts/check.js",
+    "test": "node scripts/test.js",
+    "verify-registry": "node scripts/verify-registry.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rumitech-solutions/RumiStack.git"
+  }
+}

@@ -1,0 +1,295 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-11-03",
+  "notes": "Curated catalogue. URLs point at upstream projects; RumiStack never vendors their code. Run `npm run verify-registry` on a networked machine to re-check every URL. Installers are typed (winget/npm) and allow-listed; everything else is manual.",
+  "categories": [
+    { "id": "assistants", "name": "AI coding assistants" },
+    { "id": "gateways", "name": "Model & API gateways" },
+    { "id": "skills-agents", "name": "Skills & agents" },
+    { "id": "mcp", "name": "MCP servers" },
+    { "id": "testing", "name": "Testing tools" },
+    { "id": "security", "name": "Security utilities" },
+    { "id": "infrastructure", "name": "Developer infrastructure" }
+  ],
+  "tools": [
+    {
+      "id": "claude-code",
+      "name": "Claude Code",
+      "category": "assistants",
+      "description": "Anthropic's agentic coding assistant for the terminal.",
+      "repo": "https://github.com/anthropics/claude-code",
+      "docs": "https://docs.claude.com/en/docs/claude-code/overview",
+      "command": "claude",
+      "install": { "type": "npm", "package": "@anthropic-ai/claude-code", "minNode": 18 },
+      "launchable": true
+    },
+    {
+      "id": "opencode",
+      "name": "OpenCode",
+      "category": "assistants",
+      "description": "Open-source terminal coding agent that works with many model providers.",
+      "repo": "https://github.com/sst/opencode",
+      "docs": "https://opencode.ai/docs",
+      "command": "opencode",
+      "install": { "type": "npm", "package": "opencode-ai", "minNode": 18 },
+      "launchable": true
+    },
+    {
+      "id": "codex-cli",
+      "name": "Codex CLI",
+      "category": "assistants",
+      "description": "OpenAI's lightweight coding agent for the terminal.",
+      "repo": "https://github.com/openai/codex",
+      "docs": "https://developers.openai.com/codex/cli",
+      "command": "codex",
+      "install": { "type": "manual", "note": "Follow the official Codex CLI install guide; Windows support has its own notes upstream." },
+      "launchable": true
+    },
+    {
+      "id": "gemini-cli",
+      "name": "Gemini CLI",
+      "category": "assistants",
+      "description": "Google's open-source terminal agent for Gemini models.",
+      "repo": "https://github.com/google-gemini/gemini-cli",
+      "docs": "https://github.com/google-gemini/gemini-cli#readme",
+      "command": "gemini",
+      "install": { "type": "npm", "package": "@google/gemini-cli", "minNode": 20 },
+      "launchable": true
+    },
+    {
+      "id": "aider",
+      "name": "Aider",
+      "category": "assistants",
+      "description": "AI pair-programming in your terminal, git-aware, works with many models.",
+      "repo": "https://github.com/Aider-AI/aider",
+      "docs": "https://aider.chat/docs/install.html",
+      "command": "aider",
+      "install": { "type": "manual", "note": "Install with pipx or uv as described in the Aider docs (Python tool)." }
+    },
+    {
+      "id": "cline",
+      "name": "Cline",
+      "category": "assistants",
+      "description": "Autonomous coding agent for VS Code.",
+      "repo": "https://github.com/cline/cline",
+      "docs": "https://docs.cline.bot",
+      "command": null,
+      "install": { "type": "manual", "note": "Install the VS Code extension saoudrizwan.claude-dev (add it under VS Code extensions in Device sync)." }
+    },
+    {
+      "id": "freellmapi",
+      "name": "FreeLLMAPI",
+      "category": "gateways",
+      "description": "Self-hosted OpenAI-compatible endpoint that fans out to free-tier LLM providers.",
+      "repo": "https://github.com/tashfeenahmed/freellmapi",
+      "docs": "https://github.com/tashfeenahmed/freellmapi#readme",
+      "command": null,
+      "install": { "type": "manual", "note": "Self-hosted service. Follow the upstream README; review its install scripts before running them." },
+      "clone": true
+    },
+    {
+      "id": "omniroute",
+      "name": "OmniRoute",
+      "category": "gateways",
+      "description": "AI gateway/router that exposes many providers behind one OpenAI-compatible endpoint.",
+      "repo": "https://github.com/diegosouzapw/OmniRoute",
+      "docs": "https://github.com/diegosouzapw/OmniRoute#readme",
+      "command": null,
+      "install": { "type": "manual", "note": "Self-hosted service. Follow the upstream README; several forks exist, so confirm you are using the project you intend." },
+      "clone": true
+    },
+    {
+      "id": "litellm",
+      "name": "LiteLLM",
+      "category": "gateways",
+      "description": "Python SDK and proxy server that unifies 100+ LLM APIs in OpenAI format.",
+      "repo": "https://github.com/BerriAI/litellm",
+      "docs": "https://docs.litellm.ai",
+      "command": null,
+      "install": { "type": "manual", "note": "pip/uv or Docker deployment; see the LiteLLM proxy docs." }
+    },
+    {
+      "id": "ollama",
+      "name": "Ollama",
+      "category": "gateways",
+      "description": "Run open models locally with an OpenAI-compatible API on localhost.",
+      "repo": "https://github.com/ollama/ollama",
+      "docs": "https://github.com/ollama/ollama#readme",
+      "command": "ollama",
+      "install": { "type": "winget", "package": "Ollama.Ollama" }
+    },
+    {
+      "id": "anthropic-skills",
+      "name": "Anthropic Skills",
+      "category": "skills-agents",
+      "description": "Official example skills (documents, frontend design, skill creator and more).",
+      "repo": "https://github.com/anthropics/skills",
+      "docs": "https://github.com/anthropics/skills#readme",
+      "command": null,
+      "install": { "type": "manual", "note": "Install skills through the Skills Marketplace view or your assistant's plugin system." },
+      "clone": true
+    },
+    {
+      "id": "superpowers",
+      "name": "Superpowers",
+      "category": "skills-agents",
+      "description": "Community skills framework: brainstorming, planning, TDD and debugging workflows.",
+      "repo": "https://github.com/obra/superpowers",
+      "docs": "https://github.com/obra/superpowers#readme",
+      "command": null,
+      "install": { "type": "manual", "note": "Installed as an assistant plugin; follow the upstream README for your assistant." },
+      "clone": true
+    },
+    {
+      "id": "vercel-skills-cli",
+      "name": "Vercel Skills CLI",
+      "category": "skills-agents",
+      "description": "`npx skills` installer used by RumiStack's Restore-Skills script.",
+      "repo": "https://github.com/vercel-labs/skills",
+      "docs": "https://github.com/vercel-labs/skills#readme",
+      "command": null,
+      "install": { "type": "manual", "note": "Run on demand with npx (needs Node.js 22.20+); nothing to install globally." }
+    },
+    {
+      "id": "context7",
+      "name": "Context7 MCP",
+      "category": "mcp",
+      "description": "MCP server that serves up-to-date library documentation to assistants.",
+      "repo": "https://github.com/upstash/context7",
+      "docs": "https://github.com/upstash/context7#readme",
+      "command": null,
+      "install": { "type": "manual", "note": "Configure through the MCP Servers view; the client launches it with npx." }
+    },
+    {
+      "id": "playwright-mcp",
+      "name": "Playwright MCP",
+      "category": "mcp",
+      "description": "Microsoft's MCP server for browser automation via Playwright.",
+      "repo": "https://github.com/microsoft/playwright-mcp",
+      "docs": "https://github.com/microsoft/playwright-mcp#readme",
+      "command": null,
+      "install": { "type": "manual", "note": "Configure through the MCP Servers view; the client launches it with npx." },
+      "clone": true
+    },
+    {
+      "id": "github-mcp-server",
+      "name": "GitHub MCP Server",
+      "category": "mcp",
+      "description": "GitHub's official MCP server for repositories, issues and pull requests.",
+      "repo": "https://github.com/github/github-mcp-server",
+      "docs": "https://github.com/github/github-mcp-server#readme",
+      "command": null,
+      "install": { "type": "manual", "note": "Use the hosted remote endpoint or run it locally; authenticate with a token held in an environment variable." }
+    },
+    {
+      "id": "playwright",
+      "name": "Playwright",
+      "category": "testing",
+      "description": "End-to-end browser testing for web apps.",
+      "repo": "https://github.com/microsoft/playwright",
+      "docs": "https://playwright.dev/docs/intro",
+      "command": null,
+      "install": { "type": "manual", "note": "Project-local: run `npm init playwright@latest` inside the project that needs it." }
+    },
+    {
+      "id": "promptfoo",
+      "name": "promptfoo",
+      "category": "testing",
+      "description": "Test and red-team prompts, models and agents from the command line.",
+      "repo": "https://github.com/promptfoo/promptfoo",
+      "docs": "https://www.promptfoo.dev/docs/intro",
+      "command": "promptfoo",
+      "install": { "type": "npm", "package": "promptfoo", "minNode": 20 }
+    },
+    {
+      "id": "vitest",
+      "name": "Vitest",
+      "category": "testing",
+      "description": "Fast Vite-native unit test runner.",
+      "repo": "https://github.com/vitest-dev/vitest",
+      "docs": "https://vitest.dev/guide",
+      "command": null,
+      "install": { "type": "manual", "note": "Project-local dev dependency: `npm i -D vitest`." }
+    },
+    {
+      "id": "gitleaks",
+      "name": "Gitleaks",
+      "category": "security",
+      "description": "Detect hardcoded secrets in git repositories and files.",
+      "repo": "https://github.com/gitleaks/gitleaks",
+      "docs": "https://github.com/gitleaks/gitleaks#readme",
+      "command": "gitleaks",
+      "install": { "type": "manual", "note": "Download a release binary or use your preferred package manager; see upstream." }
+    },
+    {
+      "id": "trivy",
+      "name": "Trivy",
+      "category": "security",
+      "description": "Vulnerability, misconfiguration and secret scanner for code, images and IaC.",
+      "repo": "https://github.com/aquasecurity/trivy",
+      "docs": "https://trivy.dev/latest/getting-started/installation",
+      "command": "trivy",
+      "install": { "type": "manual", "note": "See the upstream installation page for Windows options." }
+    },
+    {
+      "id": "osv-scanner",
+      "name": "OSV-Scanner",
+      "category": "security",
+      "description": "Scan dependencies against the OSV vulnerability database.",
+      "repo": "https://github.com/google/osv-scanner",
+      "docs": "https://google.github.io/osv-scanner",
+      "command": "osv-scanner",
+      "install": { "type": "manual", "note": "Download a release binary; see upstream." }
+    },
+    {
+      "id": "git",
+      "name": "Git for Windows",
+      "category": "infrastructure",
+      "description": "Distributed version control; required by RumiStack.",
+      "repo": "https://github.com/git-for-windows/git",
+      "docs": "https://gitforwindows.org",
+      "command": "git",
+      "install": { "type": "winget", "package": "Git.Git" }
+    },
+    {
+      "id": "nodejs",
+      "name": "Node.js LTS",
+      "category": "infrastructure",
+      "description": "JavaScript runtime; required by RumiStack and most assistants.",
+      "repo": "https://github.com/nodejs/node",
+      "docs": "https://nodejs.org/en/download",
+      "command": "node",
+      "install": { "type": "winget", "package": "OpenJS.NodeJS.LTS" }
+    },
+    {
+      "id": "github-cli",
+      "name": "GitHub CLI",
+      "category": "infrastructure",
+      "description": "`gh` command line for GitHub; used by the optional publish helper.",
+      "repo": "https://github.com/cli/cli",
+      "docs": "https://cli.github.com",
+      "command": "gh",
+      "install": { "type": "winget", "package": "GitHub.cli" }
+    },
+    {
+      "id": "docker-desktop",
+      "name": "Docker Desktop",
+      "category": "infrastructure",
+      "description": "Containers for self-hosted gateways and services.",
+      "repo": "https://github.com/docker/docs",
+      "docs": "https://docs.docker.com/desktop/setup/install/windows-install",
+      "command": "docker",
+      "install": { "type": "winget", "package": "Docker.DockerDesktop" }
+    },
+    {
+      "id": "vscode",
+      "name": "Visual Studio Code",
+      "category": "infrastructure",
+      "description": "Editor with extension and MCP support; used by assistants such as Cline.",
+      "repo": "https://github.com/microsoft/vscode",
+      "docs": "https://code.visualstudio.com/docs",
+      "command": "code",
+      "install": { "type": "winget", "package": "Microsoft.VisualStudioCode" }
+    }
+  ]
+}

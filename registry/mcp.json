@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "clients": [
+    { "id": "claude-code", "name": "Claude Code" },
+    { "id": "opencode", "name": "OpenCode" },
+    { "id": "codex", "name": "Codex CLI" },
+    { "id": "vscode", "name": "VS Code" }
+  ],
+  "templates": [
+    {
+      "id": "openai-docs",
+      "name": "OpenAI Developer Docs",
+      "description": "Search OpenAI developer documentation from your assistant.",
+      "transport": "http",
+      "url": "https://developers.openai.com/mcp",
+      "headerEnv": {},
+      "envVars": [],
+      "docs": "https://developers.openai.com/resources/docs-mcp"
+    },
+    {
+      "id": "context7",
+      "name": "Context7",
+      "description": "Up-to-date library documentation. An API key is optional and raises rate limits.",
+      "transport": "stdio",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "envVars": ["CONTEXT7_API_KEY"],
+      "docs": "https://github.com/upstash/context7"
+    },
+    {
+      "id": "playwright",
+      "name": "Playwright MCP",
+      "description": "Browser automation through accessibility snapshots.",
+      "transport": "stdio",
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"],
+      "envVars": [],
+      "docs": "https://github.com/microsoft/playwright-mcp"
+    },
+    {
+      "id": "github",
+      "name": "GitHub MCP Server",
+      "description": "Hosted GitHub MCP endpoint. Token comes from an environment variable.",
+      "transport": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headerEnv": { "Authorization": "GITHUB_PERSONAL_ACCESS_TOKEN" },
+      "envVars": [],
+      "docs": "https://github.com/github/github-mcp-server"
+    }
+  ]
+}

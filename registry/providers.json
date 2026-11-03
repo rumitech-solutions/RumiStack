@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "protocols": [
+    { "id": "openai-chat", "name": "OpenAI Chat Completions", "path": "/chat/completions" },
+    { "id": "openai-responses", "name": "OpenAI Responses", "path": "/responses" },
+    { "id": "anthropic-messages", "name": "Anthropic Messages", "path": "/messages" }
+  ],
+  "presets": [
+    {
+      "id": "freellmapi",
+      "name": "FreeLLMAPI",
+      "baseUrl": "http://127.0.0.1:3001/v1",
+      "model": "auto",
+      "apiKeyEnv": "FREELLMAPI_API_KEY",
+      "protocols": ["openai-chat"],
+      "hint": "Port, model name and supported protocols depend on your FreeLLMAPI release. Check its dashboard/README and edit before saving."
+    },
+    {
+      "id": "omniroute",
+      "name": "OmniRoute",
+      "baseUrl": "http://127.0.0.1:20128/v1",
+      "model": "auto",
+      "apiKeyEnv": "OMNIROUTE_API_KEY",
+      "protocols": ["openai-chat"],
+      "hint": "Confirm the port and model/combo name in the OmniRoute dashboard. Tick Responses or Anthropic Messages only if your release exposes them."
+    },
+    {
+      "id": "custom",
+      "name": "Custom OpenAI-compatible endpoint",
+      "baseUrl": "http://127.0.0.1:8000/v1",
+      "model": "my-model",
+      "apiKeyEnv": "MY_GATEWAY_API_KEY",
+      "protocols": ["openai-chat"],
+      "hint": "Any gateway you run. Remote endpoints must use HTTPS; plain HTTP is accepted for loopback only."
+    }
+  ]
+}

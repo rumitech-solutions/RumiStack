@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-11-03",
+  "assistants": [
+    { "id": "claude-code", "name": "Claude Code" },
+    { "id": "opencode", "name": "OpenCode" },
+    { "id": "codex", "name": "Codex CLI" },
+    { "id": "gemini-cli", "name": "Gemini CLI" }
+  ],
+  "sources": [
+    {
+      "id": "anthropics-skills",
+      "name": "Anthropic Skills",
+      "tier": "official",
+      "installable": true,
+      "repo": "anthropics/skills",
+      "url": "https://github.com/anthropics/skills",
+      "skills": [
+        { "id": "frontend-design", "description": "Distinctive, production-grade frontend interfaces." },
+        { "id": "skill-creator", "description": "Create, edit and evaluate new skills." },
+        { "id": "mcp-builder", "description": "Guide for building high-quality MCP servers." },
+        { "id": "webapp-testing", "description": "Test local web apps with Playwright." },
+        { "id": "pdf", "description": "Read, create and manipulate PDF files." },
+        { "id": "docx", "description": "Create and edit Word documents." },
+        { "id": "xlsx", "description": "Create and edit spreadsheets." },
+        { "id": "pptx", "description": "Create and edit presentations." }
+      ]
+    },
+    {
+      "id": "vercel-agent-skills",
+      "name": "Vercel Agent Skills",
+      "tier": "vendor",
+      "installable": true,
+      "repo": "vercel-labs/agent-skills",
+      "url": "https://github.com/vercel-labs/agent-skills",
+      "skills": [
+        { "id": "react-best-practices", "description": "React and Next.js performance guidance." },
+        { "id": "web-design-guidelines", "description": "Review UI code against web interface guidelines." }
+      ]
+    },
+    {
+      "id": "obra-superpowers",
+      "name": "Superpowers",
+      "tier": "community",
+      "installable": false,
+      "repo": "obra/superpowers",
+      "url": "https://github.com/obra/superpowers",
+      "note": "Distributed as an assistant plugin. Install manually following the upstream README.",
+      "skills": [
+        { "id": "brainstorming", "description": "Turn ideas into designs before coding." },
+        { "id": "test-driven-development", "description": "Red-green-refactor workflow." },
+        { "id": "systematic-debugging", "description": "Root-cause debugging process." },
+        { "id": "writing-plans", "description": "Write implementation plans." }
+      ]
+    },
+    {
+      "id": "skills-sh",
+      "name": "skills.sh directory",
+      "tier": "discovery",
+      "installable": false,
+      "repo": null,
+      "url": "https://skills.sh",
+      "note": "Discovery only. Browse, read the source, then add a vetted source to this catalogue.",
+      "skills": []
+    }
+  ]
+}

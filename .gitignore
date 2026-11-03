@@ -1,0 +1,21 @@
+# Local-only data: never commit these
+sources/
+projects/
+logs/
+backups/
+state/
+
+# Secrets and machine-specific settings
+.env
+.env.*
+*.pem
+*.key
+*.local.json
+config/*.local.json
+.claude/settings.local.json
+
+# Tooling
+node_modules/
+.DS_Store
+Thumbs.db
+*.log

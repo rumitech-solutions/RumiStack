@@ -6,9 +6,12 @@ RumiStack is a local-first control center for managing AI coding assistants, mod
 
 RumiStack does **not** merge third-party projects into one application. Each upstream tool keeps its own repository, licence, release cycle and configuration.
 
-## What v0.5.0 includes
+## What v0.6.0 includes
+
+v0.6.0 is the first release that ships the complete code (server, dashboard, registry, scripts, tests and docs) behind the features below. See [`CHANGELOG.md`](CHANGELOG.md) for what is verified and what still needs testing on Windows.
 
 - Local-only dashboard for tool discovery, install guidance, health checks and agent launching.
+- **Overview** that compares your device profile with what is really installed on this laptop.
 - Curated GitHub registry covering 27 projects across 7 categories.
 - **Portable Device Sync profile**: choose the tool IDs, optional source checkouts and VS Code extensions you want on each laptop.
 - Profile import/export through the dashboard and a tracked `config/portable-profile.json` file.
@@ -52,8 +55,8 @@ The `.gitignore` intentionally excludes `sources/`, `projects/`, logs, backups, 
 
 Prerequisites: Git for Windows, Node.js 20+, and GitHub CLI (`gh`) for creating/pushing the private control-plane repository. The portable restore script uses WinGet and/or npm only for tools that have a typed, allow-listed installer in the registry. The optional Vercel Skills CLI used by `Restore-Skills.ps1` requires Node.js 22.20 or later.
 
-1. Extract the RumiStack ZIP into `D:\RumiStack` (or clone your private RumiStack repository there).
-2. Ensure Git and Node are available in a new PowerShell window. For GitHub publishing, run `gh auth login` and sign in to the intended GitHub owner.
+1. Clone the repository to `D:\RumiStack`: `git clone https://github.com/rumitech-solutions/RumiStack.git D:\RumiStack`.
+2. Ensure Git and Node are available in a new PowerShell window.
 3. In PowerShell:
 
 ```powershell
@@ -62,13 +65,12 @@ Set-ExecutionPolicy -Scope Process Bypass -Force
 .\scripts\Setup-Workspace.ps1
 npm run check
 npm test
-.\scripts\Publish-To-GitHub.ps1 -Owner rumitech-solutions -RepositoryName RumiStack -Visibility private
 .\scripts\Start-Workspace.ps1
 ```
 
-The publish helper creates a **new private** `rumitech-solutions/RumiStack` repository after showing the staged files and asking you to type `YES`. It refuses an existing repository or an unexpected remote; inspect any existing repository before proceeding. The local dashboard opens at `http://127.0.0.1:47821`. Keep the PowerShell window open; press `Ctrl+C` to stop the server.
+The local dashboard opens at `http://127.0.0.1:47821`. Keep the PowerShell window open; press `Ctrl+C` to stop the server. There is nothing to `npm install`: the server uses Node built-ins only. See [`docs/INSTALLATION.md`](docs/INSTALLATION.md) for options and troubleshooting.
 
-If the GitHub repository has already been created, do not run the publish helper again. Use ordinary Git commands after reviewing the status and diff.
+`Publish-To-GitHub.ps1` is only for creating a **new** repository elsewhere. It refuses an existing repository or an unexpected remote, so it is not needed for `rumitech-solutions/RumiStack`, which already exists. Use ordinary Git commands there after reviewing the status and diff.
 
 ## Provider Manager: connect your assistants
 
@@ -137,11 +139,12 @@ npm run check
 npm test
 ```
 
-GitHub Actions runs the same checks on pushes and pull requests. Windows PowerShell scripts still need to be exercised on the target Windows machine before treating them as verified there.
+GitHub Actions runs the same checks on Windows and Linux (Node 20 and 22) for pushes and pull requests. The PowerShell scripts could not be executed in the Linux development environment, so run each with `-WhatIf` on your Windows machine before treating them as verified. The registry URLs are curated by hand: run `npm run verify-registry` to re-check them from a networked machine.
 
 ## Useful scripts
 
 ```powershell
+.\scripts\Setup-Workspace.ps1
 .\scripts\Doctor.ps1
 .\scripts\Restore-Profile.ps1 -WhatIf
 .\scripts\Restore-Profile.ps1 -Confirm

@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "tools": ["git", "nodejs", "github-cli", "claude-code", "opencode"],
+  "sources": [],
+  "vscodeExtensions": []
+}
