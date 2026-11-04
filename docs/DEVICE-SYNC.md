@@ -60,4 +60,4 @@ The **Repositories** view keeps a list in `config/repos.json` (GitHub HTTPS link
 
 ## Bundles (v0.11.0)
 
-Settings → *Export bundle* downloads `rumistack-bundle.json` with all seven profiles. On another laptop, Settings → *Import bundle…* validates the whole file, shows which profiles would change and backs up the current ones before replacing them (restore from Sync & backups). Bundles hold no keys or sessions, but do contain your repo and link lists, so treat the file like any personal config.
+Settings → *Export bundle* downloads `rumistack-bundle.json` with all eight profiles. On another laptop, Settings → *Import bundle…* validates the whole file, shows which profiles would change and backs up the current ones before replacing them (restore from Sync & backups). Bundles hold no keys or sessions, but do contain your repo and link lists, so treat the file like any personal config.

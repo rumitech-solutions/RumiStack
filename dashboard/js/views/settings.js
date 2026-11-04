@@ -5,7 +5,7 @@ export const SHORTCUTS = [
   ['Ctrl K  or  /', 'Open the command palette'],
   ['g then o', 'Overview'], ['g then c', 'Catalogue'], ['g then d', 'Device sync'], ['g then r', 'Repositories'],
   ['g then l', 'Saved links'], ['g then s', 'Sync & backups'], ['g then w', 'Gateways (Docker)'], ['g then p', 'Provider manager'],
-  ['g then k', 'Skills marketplace'], ['g then a', 'Agent manager'], ['g then m', 'MCP servers'], ['g then h', 'Activity'],
+  ['g then k', 'Skills marketplace'], ['g then a', 'Agent manager'], ['g then m', 'MCP servers'], ['g then h', 'Activity'], ['g then j', 'Projects'], ['g then i', 'Prompt library'], ['g then y', 'Keys'],
   ['t', 'Cycle theme (auto / light / dark)'], ['?', 'Show these shortcuts'], ['Esc', 'Close a dialog']
 ];
 
@@ -69,7 +69,7 @@ export async function renderSettings(root, { navigate }) {
 
     h('h2', {}, icon('download', 16), 'Move to another laptop'),
     h('div', { class: 'panel' },
-      h('p', { class: 'muted', style: 'margin-top:0' }, 'A bundle is one JSON file with all seven portable profiles (tools, repos, links, providers, skills, agents, MCP). It contains no keys or sessions. Importing validates everything first and backs up what it replaces.'),
+      h('p', { class: 'muted', style: 'margin-top:0' }, 'A bundle is one JSON file with all eight portable profiles (tools, repos, links, prompts, providers, skills, agents, MCP). It contains no keys or sessions. Importing validates everything first and backs up what it replaces.'),
       h('div', { class: 'row', style: 'flex-wrap:wrap' },
         h('a', { class: 'btn primary', href: '/api/bundle/export', download: 'rumistack-bundle.json' }, icon('download', 15), 'Export bundle'),
         h('button', { class: 'btn', type: 'button', onclick: () => file.click() }, icon('upload', 15), 'Import bundle…'), file)),

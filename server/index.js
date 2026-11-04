@@ -4,7 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { REPO_ROOT, loadRegistry } from './lib/registry.js';
 import { createProfileStore } from './lib/profiles.js';
-import { ValidationError, assertId, assertObject } from './lib/validate.js';
+import { ValidationError, assertId, assertObject, rejectUnknown } from './lib/validate.js';
 import { SECURITY_HEADERS, sendJson, checkHost, checkMutation, readJsonBody } from './lib/http.js';
 import { PROVIDER_CLIENTS, MCP_CLIENTS, AGENT_FORMATS, providerSnippet, discoveryCommand, mcpSnippet, agentExport } from './lib/snippets.js';
 import {
@@ -16,6 +16,8 @@ import { gitStatus, gitDiff, gitFetch, gitPull, gitCommitPush } from './lib/git.
 import { testProvider } from './lib/gateway.js';
 import { applyKit } from './lib/kits.js';
 import { runDoctor } from './lib/doctor.js';
+import { keyStatus } from './lib/keys.js';
+import { listProjects, createProject, addTemplate, openProject } from './lib/projects.js';
 import { exportBundle, importBundle } from './lib/bundle.js';
 import { setupProgress } from './lib/progress.js';
 import { ensureWorkspace, workspaceInfo } from './lib/workspace.js';
@@ -179,6 +181,33 @@ export async function createApp(options = {}) {
       const [gitState, sources] = await Promise.all([gitStatus(root), sourceStatus(root, registry)]);
       return setupProgress({ store, gitState, sources });
     },
+
+    // ---- API-key environment variables (set / not set only), projects, prompt library
+    'GET /api/keys': async () => keyStatus(store),
+    'GET /api/projects': async () => listProjects(root),
+    'POST /api/projects/create': async (req) => {
+      const input = await body(req);
+      rejectUnknown(input, ['name', 'git', 'files'], 'request');
+      const result = await createProject(root, path.join(REPO_ROOT, 'templates'), input);
+      await activity.log('project:create', result.name);
+      return result;
+    },
+    'POST /api/projects/template': async (req) => {
+      const input = await body(req);
+      rejectUnknown(input, ['name', 'file'], 'request');
+      const result = await addTemplate(root, path.join(REPO_ROOT, 'templates'), input);
+      await activity.log('project:template', `${result.name}: ${result.file}${result.created ? '' : ' (already existed)'}`);
+      return result;
+    },
+    'POST /api/projects/open': async (req) => {
+      const input = await body(req);
+      rejectUnknown(input, ['name', 'with'], 'request');
+      const result = await openProject(root, registry, input);
+      await activity.log('launch', `${result.with} in projects/${result.name}`);
+      return result;
+    },
+    'GET /api/prompts': async () => store.load('prompts'),
+    'PUT /api/prompts': saver('prompts', (p) => `${p.prompts.length} prompt(s) in ${p.categories.length} categories`),
 
     'GET /api/workspace': async () => workspaceInfo(root, configDir),
 

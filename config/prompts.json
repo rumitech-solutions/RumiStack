@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "categories": [
+    { "id": "coding", "name": "Coding" },
+    { "id": "review", "name": "Review & testing" },
+    { "id": "debugging", "name": "Debugging" },
+    { "id": "writing", "name": "Writing" }
+  ],
+  "prompts": [
+    { "id": "explain-code", "title": "Explain this code", "category": "coding", "body": "Explain what {{file}} does, step by step. Point out anything surprising, and finish with three questions I should ask before changing it." },
+    { "id": "review-bugs", "title": "Review for bugs", "category": "review", "body": "Review {{file}} for bugs, edge cases and security problems. List findings by severity, with the line, why it is a problem and a minimal fix. Do not rewrite unrelated code." },
+    { "id": "write-tests", "title": "Write tests", "category": "review", "body": "Write tests for {{function}} using the project's existing test framework. Cover normal cases, edge cases and failure cases. Run them and show the result." },
+    { "id": "debug-error", "title": "Debug an error", "category": "debugging", "body": "I get this error: {{error}}\nFind the root cause before proposing a fix. Show the evidence, then the smallest change that fixes it, then how to verify." },
+    { "id": "plan-feature", "title": "Plan a feature", "category": "coding", "body": "Plan how to add {{feature}}. List the files to touch, the risks and a step order. Ask me questions if the request is ambiguous. Do not write code yet." }
+  ]
+}

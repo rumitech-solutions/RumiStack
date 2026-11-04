@@ -3,6 +3,7 @@
 import { findCommand } from './system.js';
 import { FILES } from './profiles.js';
 import { dockerAvailability } from './docker.js';
+import { keyStatus } from './keys.js';
 
 export async function runDoctor({ store, overview, gitState, sources }) {
   const checks = [];
@@ -43,6 +44,14 @@ export async function runDoctor({ store, overview, gitState, sources }) {
     } catch (err) {
       add(`profile-${kind}`, `${FILES[kind]} is valid`, 'fail', err.message);
     }
+  }
+
+  // API-key variables referenced by profiles (names only)
+  const keys = await keyStatus(store);
+  if (keys.keys.length) {
+    add('keys', 'API key variables are set', keys.missing === 0 ? 'ok' : 'info',
+      keys.missing === 0 ? `All ${keys.keys.length} referenced variable(s) are set.` : `${keys.missing} of ${keys.keys.length} referenced variable(s) are not set: ${keys.keys.filter((k) => !k.set).map((k) => k.name).join(', ')}.`,
+      keys.missing === 0 ? undefined : 'Open Keys in the dashboard');
   }
 
   // this laptop vs profile

@@ -23,6 +23,8 @@ export async function openPalette({ views, navigate, actions }) {
 
   let saved = { categories: [], links: [] };
   try { saved = await api('GET', '/api/links'); } catch { /* the palette still works without saved links */ }
+  let prompts = { prompts: [] };
+  try { prompts = await api('GET', '/api/prompts'); } catch { /* optional */ }
   let repos = { repos: [] };
   try { repos = await api('GET', '/api/repos'); } catch { /* optional */ }
   const categoryName = new Map(saved.categories.map((c) => [c.id, c.name]));
@@ -32,6 +34,7 @@ export async function openPalette({ views, navigate, actions }) {
     ...toolsCache.map((t) => ({ group: 'Tools', label: t.name, hint: t.category, icon: 'box', keywords: `${t.id} ${t.description}`, run: () => navigate('catalogue', { q: t.name }) })),
     ...saved.links.map((l) => ({ group: 'Saved links', label: l.title, hint: categoryName.get(l.category) ?? '', icon: 'external', keywords: `${l.url} ${l.note ?? ''}`, run: () => window.open(l.url, '_blank', 'noopener,noreferrer') })),
     ...repos.repos.map((r) => ({ group: 'Repositories', label: r.url.replace('https://github.com/', ''), hint: r.cloned ? 'cloned' : 'not cloned', icon: 'layers', keywords: r.id, run: () => navigate('repos') })),
+    ...prompts.prompts.map((p) => ({ group: 'Prompts', label: p.title, hint: 'prompt', icon: 'sparkles', keywords: p.body, run: () => navigate('prompts', { q: p.title }) })),
     ...actions.map((a) => ({ group: 'Actions', ...a }))
   ];
 

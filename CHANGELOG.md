@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.12.0 — Keys, Projects, Prompt library
+
+- **Keys**: lists every API-key environment variable referenced by your provider and MCP profiles and whether it is set on this laptop, with a copyable PowerShell command for each missing one. Only names and set/not-set are reported; values and lengths never leave the server process (a test asserts this). The doctor gets a matching informational check.
+- **Projects**: create a project folder under `projects/` with optional `git init -b main` and starter `AGENTS.md` / `CLAUDE.md` from the templates (existing files are never overwritten); add a missing template later; open a project in VS Code or a launchable assistant (Windows only). Names are restricted to a safe pattern and resolved inside `projects/`.
+- **Prompt library**: reusable prompts by category with `{{variable}}` placeholders; *Fill & copy* asks for each value and copies the finished text. New portable profile `config/prompts.json` (now eight profiles, included in bundles). Five starter prompts. Secrets in prompt text are rejected.
+- Shortcuts `g j` (Projects), `g i` (Prompt library), `g y` (Keys); the palette finds prompts.
+- Verification: 46 tests pass; all three views exercised in headless Chromium (create project, fill-and-copy to the clipboard, shortcuts, no console errors, no overflow at 390 px). **Not verified**: *Open in VS Code / assistant* (needs Windows) and the Windows scripts.
+
 ## 0.11.0 — Premium and advanced
 
 - **Settings** view: five accent colours (violet, ocean, emerald, rose, amber) that work in dark and light, theme, comfortable/compact density and reduced motion. Saved in this browser only and applied before first paint (no flash).

@@ -17,7 +17,8 @@ export const FILES = {
   agents: 'agent-profiles.json',
   mcp: 'mcp-servers.json',
   repos: 'repos.json',
-  links: 'saved-links.json'
+  links: 'saved-links.json',
+  prompts: 'prompts.json'
 };
 
 const EMPTY = {
@@ -27,7 +28,8 @@ const EMPTY = {
   agents: { schemaVersion: 1, profiles: [] },
   mcp: { schemaVersion: 1, servers: [] },
   repos: { schemaVersion: 1, repos: [] },
-  links: { schemaVersion: 1, categories: [], links: [] }
+  links: { schemaVersion: 1, categories: [], links: [] },
+  prompts: { schemaVersion: 1, categories: [], prompts: [] }
 };
 
 export const PROTOCOL_IDS = ['openai-chat', 'openai-responses', 'anthropic-messages'];
@@ -279,9 +281,39 @@ export function validateLinks(input) {
   return { schemaVersion: 1, categories, links };
 }
 
+// ---------------------------------------------------------------- prompt library
+
+export function validatePrompts(input) {
+  assertObject(input, 'profile');
+  rejectUnknown(input, ['schemaVersion', 'categories', 'prompts'], 'profile');
+  assertSchemaVersion(input, 'profile');
+  scanForSecrets(input, 'profile');
+
+  const categories = assertArray(input.categories ?? [], 'profile.categories', { max: 30 }).map((c, i) => {
+    const at = `profile.categories[${i}]`;
+    assertObject(c, at);
+    rejectUnknown(c, ['id', 'name'], at);
+    return { id: assertId(c.id, `${at}.id`), name: assertText(c.name, `${at}.name`, { max: 40 }) };
+  });
+  assertUnique(categories.map((c) => c.id), 'profile.categories');
+  assertUnique(categories.map((c) => c.name.toLowerCase()), 'profile.categories names');
+
+  const known = new Set(categories.map((c) => c.id));
+  const prompts = assertArray(input.prompts ?? [], 'profile.prompts', { max: 300 }).map((p, i) => {
+    const at = `profile.prompts[${i}]`;
+    assertObject(p, at);
+    rejectUnknown(p, ['id', 'title', 'category', 'body'], at);
+    const category = assertId(p.category, `${at}.category`);
+    if (!known.has(category)) throw new ValidationError(`${at}.category "${category}" does not exist.`);
+    return { id: assertId(p.id, `${at}.id`), title: assertText(p.title, `${at}.title`, { max: 100 }), category, body: assertText(p.body, `${at}.body`, { max: 4000 }) };
+  });
+  assertUnique(prompts.map((p) => p.id), 'profile.prompts');
+  return { schemaVersion: 1, categories, prompts };
+}
+
 // ---------------------------------------------------------------- persistence
 
-export const BACKUP_RE = /^(device|providers|skills|agents|mcp|repos|links)-\d{8}T\d{9}Z\.json$/;
+export const BACKUP_RE = /^(device|providers|skills|agents|mcp|repos|links|prompts)-\d{8}T\d{9}Z\.json$/;
 const BACKUPS_KEPT_PER_KIND = 20;
 
 /**
@@ -297,7 +329,8 @@ export function createProfileStore(configDir, registry, { backupsDir } = {}) {
     agents: validateAgents,
     mcp: validateMcp,
     repos: validateRepos,
-    links: validateLinks
+    links: validateLinks,
+    prompts: validatePrompts
   };
 
   async function load(kind) {

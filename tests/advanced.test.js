@@ -325,7 +325,7 @@ test('bundle: export, dry-run, import with backups, and rejection of bad bundles
     assert.match(exp.headers.get('content-disposition'), /rumistack-bundle\.json/);
     const bundle = exp.json;
     assert.equal(bundle.format, 'rumistack-bundle');
-    assert.deepEqual(Object.keys(bundle.profiles).sort(), ['agents', 'device', 'links', 'mcp', 'providers', 'repos', 'skills']);
+    assert.deepEqual(Object.keys(bundle.profiles).sort(), ['agents', 'device', 'links', 'mcp', 'prompts', 'providers', 'repos', 'skills']);
 
     // dry run changes nothing
     const dry = await b.post('/api/bundle/import', { bundle });

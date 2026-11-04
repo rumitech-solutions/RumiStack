@@ -12,6 +12,9 @@ import { renderSkills } from './views/skills.js';
 import { renderAgents } from './views/agents.js';
 import { renderMcp } from './views/mcp.js';
 import { renderActivity } from './views/activity.js';
+import { renderKeys } from './views/keys.js';
+import { renderProjects } from './views/projects.js';
+import { renderPrompts } from './views/prompts.js';
 import { renderSettings, showShortcuts } from './views/settings.js';
 import { THEMES, getTheme, setTheme, applyPrefs } from './prefs.js';
 applyPrefs();
@@ -22,8 +25,11 @@ const VIEWS = [
   { id: 'device', label: 'Device sync', icon: 'laptop', group: 'Workspace', render: renderDevice },
   { id: 'repos', label: 'Repositories', icon: 'layers', group: 'Workspace', render: renderRepos },
   { id: 'links', label: 'Saved links', icon: 'file', group: 'Workspace', render: renderLinks },
+  { id: 'projects', label: 'Projects', icon: 'terminal', group: 'Workspace', render: renderProjects },
   { id: 'sync', label: 'Sync & backups', icon: 'git', group: 'Workspace', render: renderSync },
   { id: 'gateways', label: 'Gateways (Docker)', icon: 'box', group: 'Configure', render: renderGateways },
+  { id: 'prompts', label: 'Prompt library', icon: 'sparkles', group: 'Configure', render: renderPrompts },
+  { id: 'keys', label: 'Keys', icon: 'shield', group: 'Configure', render: renderKeys },
   { id: 'providers', label: 'Provider manager', icon: 'server', group: 'Configure', render: renderProviders },
   { id: 'skills', label: 'Skills marketplace', icon: 'sparkles', group: 'Configure', render: renderSkills },
   { id: 'agents', label: 'Agent manager', icon: 'bot', group: 'Configure', render: renderAgents },
@@ -134,7 +140,7 @@ const actions = [
   { label: 'Restore a config backup', icon: 'restore', keywords: 'undo rollback', run: () => navigate('sync') }
 ];
 function palette() { openPalette({ views: VIEWS, navigate, actions }); }
-const GO = { o: 'overview', c: 'catalogue', d: 'device', r: 'repos', l: 'links', s: 'sync', w: 'gateways', p: 'providers', k: 'skills', a: 'agents', m: 'mcp', h: 'activity' };
+const GO = { j: 'projects', y: 'keys', i: 'prompts', o: 'overview', c: 'catalogue', d: 'device', r: 'repos', l: 'links', s: 'sync', w: 'gateways', p: 'providers', k: 'skills', a: 'agents', m: 'mcp', h: 'activity' };
 let chord = null;
 window.addEventListener('keydown', (e) => {
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); palette(); return; }

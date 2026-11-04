@@ -24,6 +24,8 @@ Only fixed operations in `server/lib/system.js`:
 | Git sync | Fixed arguments only: `status`, `diff`, `fetch`, `pull --ff-only`, `add -- config`, `commit -- config`, `push`. Never force, rebase or reset. Only `config/` is ever committed; commit messages are single-line and secret-scanned |
 | Provider test | One `GET <profile URL>/models` request (see below) |
 | Gateway containers | `docker compose [--profile <registry profile>] up -d \| down \| ps \| logs` in `sources/<id>`, only for registry entries with a `docker` block. Never `-v`, never the `cli` profile, never auto-update profiles. See [`GATEWAYS.md`](GATEWAYS.md) |
+| Project actions | `git init -b main` inside `projects/<name>`; copying `templates/AGENTS.md` / `CLAUDE.md` without overwriting; opening VS Code or an assistant in that folder (Windows). Names must match a strict pattern and are resolved inside `projects/` |
+| Key check | Reads `process.env[NAME]` for names from your profiles and returns only set / not set |
 | Launch assistant | A registry entry flagged `launchable`, found on PATH, opened in `projects/`. Windows only |
 
 Child processes are started without a shell. There is no endpoint that accepts a command line or a path from the browser. The only free-text input that reaches Git is a GitHub repository link, validated as described above.
