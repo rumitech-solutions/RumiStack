@@ -21,13 +21,18 @@ export async function openPalette({ views, navigate, actions }) {
     try { toolsCache = (await api('GET', '/api/registry/tools')).tools; } catch { toolsCache = []; }
   }
 
+  let saved = { categories: [], links: [] };
+  try { saved = await api('GET', '/api/links'); } catch { /* the palette still works without saved links */ }
+  const categoryName = new Map(saved.categories.map((c) => [c.id, c.name]));
+
   const items = [
     ...views.map((v) => ({ group: 'Go to', label: v.label, hint: '', icon: v.icon, keywords: v.id, run: () => navigate(v.id) })),
     ...toolsCache.map((t) => ({ group: 'Tools', label: t.name, hint: t.category, icon: 'box', keywords: `${t.id} ${t.description}`, run: () => navigate('catalogue', { q: t.name }) })),
+    ...saved.links.map((l) => ({ group: 'Saved links', label: l.title, hint: categoryName.get(l.category) ?? '', icon: 'external', keywords: `${l.url} ${l.note ?? ''}`, run: () => window.open(l.url, '_blank', 'noopener,noreferrer') })),
     ...actions.map((a) => ({ group: 'Actions', ...a }))
   ];
 
-  const input = h('input', { type: 'text', placeholder: 'Search views, tools and actions…', 'aria-label': 'Command palette', autocomplete: 'off', spellcheck: 'false' });
+  const input = h('input', { type: 'text', placeholder: 'Search views, tools, saved links and actions…', 'aria-label': 'Command palette', autocomplete: 'off', spellcheck: 'false' });
   const list = h('div', { class: 'pal-list', role: 'listbox' });
   const dialog = h('dialog', { class: 'palette', 'aria-label': 'Command palette' },
     h('div', { class: 'pal-input' }, icon('search', 18), input, h('kbd', {}, 'Esc')),

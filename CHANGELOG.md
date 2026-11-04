@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.1
+
+- Saved links now appear in the `Ctrl K` palette under "Saved links" and open in a new tab. Verified in headless Chromium.
+
 ## 0.10.0 — Saved links
 
 - New **Saved links** view: keep the tools, docs and sites you want to remember, grouped into categories you create (four starters: AI tools, Free APIs, Docs & learning, Skills & agents). Search, filter by category, open, copy, edit and delete. Stored in the new portable profile `config/saved-links.json`, so every laptop gets the same list after a pull.
