@@ -282,3 +282,34 @@ test('git routes are protected like every other mutation', async () => {
   assert.equal((await s.post('/api/providers/test', { id: 'good' }, { 'Sec-Fetch-Site': 'cross-site' })).status, 403);
   assert.equal((await s.post('/api/backups/restore', { file: 'device-20260101T000000000Z.json' }, { Origin: 'http://evil.example' })).status, 403);
 });
+
+test('saved links: categories, validation and persistence', async () => {
+  const t = await startTestServer();
+  try {
+    const empty = await t.get('/api/links');
+    assert.deepEqual(empty.json, { schemaVersion: 1, categories: [], links: [] });
+
+    const good = {
+      schemaVersion: 1,
+      categories: [{ id: 'ai-tools', name: 'AI tools' }, { id: 'docs', name: 'Docs' }],
+      links: [{ id: 'l-1', title: 'OmniRoute', url: 'https://github.com/diegosouzapw/OmniRoute', category: 'ai-tools', note: 'gateway' }]
+    };
+    const saved = await t.put('/api/links', good);
+    assert.equal(saved.status, 200, saved.text);
+    assert.deepEqual((await t.get('/api/links')).json.links[0].url, 'https://github.com/diegosouzapw/OmniRoute');
+
+    const bad = (links, categories = good.categories) => t.put('/api/links', { schemaVersion: 1, categories, links });
+    const link = (over) => ({ id: 'l-2', title: 'T', url: 'https://example.com', category: 'docs', ...over });
+    assert.equal((await bad([link({ url: 'javascript:alert(1)' })])).status, 400);
+    assert.equal((await bad([link({ url: 'file:///etc/passwd' })])).status, 400);
+    assert.equal((await bad([link({ url: 'https://user:pw@example.com' })])).status, 400);
+    assert.equal((await bad([link({ url: 'not a url' })])).status, 400);
+    assert.equal((await bad([link({ category: 'missing' })])).status, 400);
+    assert.equal((await bad([link({ extra: 1 })])).status, 400);
+    assert.equal((await bad([link({}), link({})])).status, 400); // duplicate id
+    assert.equal((await bad([link({ url: 'https://example.com/?api_key=sk-abcdefghijklmnopqrstuvwxyz123456' })])).status, 400); // secret in the address
+    assert.equal((await bad([], [{ id: 'a', name: 'X' }, { id: 'b', name: 'x' }])).status, 400); // duplicate names
+    assert.equal((await t.call('PUT', '/api/links', 'x', { 'Content-Type': 'text/plain' })).status, 415);
+    assert.equal((await t.get('/api/links')).json.links.length, 1, 'rejected saves change nothing');
+  } finally { await t.close(); }
+});

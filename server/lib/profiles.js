@@ -16,7 +16,8 @@ export const FILES = {
   skills: 'skills-profile.json',
   agents: 'agent-profiles.json',
   mcp: 'mcp-servers.json',
-  repos: 'repos.json'
+  repos: 'repos.json',
+  links: 'saved-links.json'
 };
 
 const EMPTY = {
@@ -25,7 +26,8 @@ const EMPTY = {
   skills: { schemaVersion: 1, selections: [] },
   agents: { schemaVersion: 1, profiles: [] },
   mcp: { schemaVersion: 1, servers: [] },
-  repos: { schemaVersion: 1, repos: [] }
+  repos: { schemaVersion: 1, repos: [] },
+  links: { schemaVersion: 1, categories: [], links: [] }
 };
 
 export const PROTOCOL_IDS = ['openai-chat', 'openai-responses', 'anthropic-messages'];
@@ -235,9 +237,51 @@ export function validateRepos(input) {
   return { schemaVersion: 1, repos };
 }
 
+// ---------------------------------------------------------------- saved links (bookmarks by category)
+
+export function validateLinkUrl(value, name) {
+  if (typeof value !== 'string' || value.length > 500) throw new ValidationError(`${name} must be a web address of at most 500 characters.`);
+  let u;
+  try { u = new URL(value.trim()); } catch { throw new ValidationError(`${name} is not a valid web address.`); }
+  if (u.protocol !== 'https:' && u.protocol !== 'http:') throw new ValidationError(`${name} must start with https:// or http://.`);
+  if (u.username || u.password) throw new ValidationError(`${name} must not contain a user name or password.`);
+  return u.href;
+}
+
+export function validateLinks(input) {
+  assertObject(input, 'profile');
+  rejectUnknown(input, ['schemaVersion', 'categories', 'links'], 'profile');
+  assertSchemaVersion(input, 'profile');
+  scanForSecrets(input, 'profile');
+
+  const categories = assertArray(input.categories ?? [], 'profile.categories', { max: 50 }).map((c, i) => {
+    const at = `profile.categories[${i}]`;
+    assertObject(c, at);
+    rejectUnknown(c, ['id', 'name'], at);
+    return { id: assertId(c.id, `${at}.id`), name: assertText(c.name, `${at}.name`, { max: 40 }) };
+  });
+  assertUnique(categories.map((c) => c.id), 'profile.categories');
+  assertUnique(categories.map((c) => c.name.toLowerCase()), 'profile.categories names');
+
+  const known = new Set(categories.map((c) => c.id));
+  const links = assertArray(input.links ?? [], 'profile.links', { max: 500 }).map((l, i) => {
+    const at = `profile.links[${i}]`;
+    assertObject(l, at);
+    rejectUnknown(l, ['id', 'title', 'url', 'category', 'note'], at);
+    const category = assertId(l.category, `${at}.category`);
+    if (!known.has(category)) throw new ValidationError(`${at}.category "${category}" does not exist.`);
+    const out = { id: assertId(l.id, `${at}.id`), title: assertText(l.title, `${at}.title`, { max: 100 }), url: validateLinkUrl(l.url, `${at}.url`), category };
+    const note = assertText(l.note, `${at}.note`, { max: 300, optional: true });
+    if (note) out.note = note;
+    return out;
+  });
+  assertUnique(links.map((l) => l.id), 'profile.links');
+  return { schemaVersion: 1, categories, links };
+}
+
 // ---------------------------------------------------------------- persistence
 
-export const BACKUP_RE = /^(device|providers|skills|agents|mcp|repos)-\d{8}T\d{9}Z\.json$/;
+export const BACKUP_RE = /^(device|providers|skills|agents|mcp|repos|links)-\d{8}T\d{9}Z\.json$/;
 const BACKUPS_KEPT_PER_KIND = 20;
 
 /**
@@ -252,7 +296,8 @@ export function createProfileStore(configDir, registry, { backupsDir } = {}) {
     skills: (v) => validateSkills(v, registry),
     agents: validateAgents,
     mcp: validateMcp,
-    repos: validateRepos
+    repos: validateRepos,
+    links: validateLinks
   };
 
   async function load(kind) {

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.0 — Saved links
+
+- New **Saved links** view: keep the tools, docs and sites you want to remember, grouped into categories you create (four starters: AI tools, Free APIs, Docs & learning, Skills & agents). Search, filter by category, open, copy, edit and delete. Stored in the new portable profile `config/saved-links.json`, so every laptop gets the same list after a pull.
+- Validation: only `http(s)` addresses (no `javascript:`/`file:`), no embedded user name or password, secret scan on every save, links must belong to an existing category, categories with links cannot be deleted from the UI.
+- Verification: 40 tests pass; the view was exercised in headless Chromium (add, reject a `javascript:` link, add a category, filter, no horizontal overflow).
+
 ## 0.9.1 — Workspace folders create themselves
 
 - The server now creates `config/`, `sources/`, `projects/`, `backups/`, `logs/` and `state/` on start, so `start.cmd` or `node server/index.js` works on a fresh clone without running `Setup-Workspace.ps1`. Existing folders are never touched.

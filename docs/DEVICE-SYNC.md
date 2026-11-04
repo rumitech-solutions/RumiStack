@@ -53,3 +53,7 @@ Export downloads the profile as JSON. Import loads a JSON file into the form; it
 ## Your own repositories (v0.9.0)
 
 The **Repositories** view keeps a list in `config/repos.json` (GitHub HTTPS links only) and clones each into `sources/<owner>-<repo>`. Commit and push `config/` from Sync & backups; on another laptop pull, then press *Clone missing*. Private repositories work if Git is already signed in to GitHub on that laptop (Git Credential Manager).
+
+## Saved links (v0.10.0)
+
+**Saved links** keeps bookmarks grouped by category in `config/saved-links.json`. It travels with `config/` through Sync & backups. Do not save addresses that contain tokens; they are rejected by the secret scan.

@@ -9,7 +9,7 @@ Browser (dashboard/, vanilla JS, no build step)
 server/index.js ── Node built-ins only, no npm dependencies
    ├─ lib/http.js       Host check, origin check, JSON-only writes, 256 KB body cap, CSP headers
    ├─ lib/validate.js   strict validators, secret detection
-   ├─ lib/profiles.js   schema + load/save for the six profile types
+   ├─ lib/profiles.js   schema + load/save for the seven profile types
    ├─ lib/snippets.js   config previews (Claude Code, OpenCode, Codex CLI, VS Code), agent exports
    ├─ lib/system.js     the only code that touches the machine: PATH checks, source clone/update, launch
    └─ lib/registry.js   read-only catalogues from registry/

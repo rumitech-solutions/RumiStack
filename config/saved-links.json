@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "categories": [
+    { "id": "ai-tools", "name": "AI tools" },
+    { "id": "free-apis", "name": "Free APIs" },
+    { "id": "docs", "name": "Docs & learning" },
+    { "id": "skills-agents", "name": "Skills & agents" }
+  ],
+  "links": []
+}

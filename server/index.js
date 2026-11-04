@@ -161,6 +161,10 @@ export async function createApp(options = {}) {
       return result;
     },
 
+    // ---- saved links (bookmarks grouped by category)
+    'GET /api/links': async () => store.load('links'),
+    'PUT /api/links': saver('links', (p) => `${p.links.length} link(s) in ${p.categories.length} categories`),
+
     'GET /api/workspace': async () => workspaceInfo(root, configDir),
 
     // ---- your own GitHub repositories (portable list + checkouts in sources/)
