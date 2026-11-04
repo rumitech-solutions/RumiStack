@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.7.0 — Premium dashboard and sync
+
+- Redesigned the dashboard ("Aurora"): dark, light and auto themes, command palette (`Ctrl K`), health ring, toasts, skeleton loading, staggered entrances, inline SVG icons, responsive layout. Still no build step and still CSP-clean (no inline script or style attributes).
+- New **Starter kits** (Web developer, Free-tier gateway, Agent workstation, Security & quality). Kits only merge into your profiles and back up what they replace.
+- New **Sync & backups** view: Git status, fetch, fast-forward pull, config diff, and commit/push of `config/` only; one-click restore of any of the last 20 backups per profile.
+- New **Activity** journal (`logs/activity.jsonl`) and an **Overview health score** from a new doctor engine (`/api/doctor`).
+- New **Test connection** on providers: reads the key from the server environment and calls `GET /models` on the profile URL only, without following redirects.
+- New update checks: installed versions (`--version`) compared with the latest npm release.
+- Stricter profile saves: backups on every change, unknown-field rejection retained.
+- Fixed: Git status lost all but the first changed file; gateway test reported unrecognised responses as connected; mobile horizontal overflow on Overview.
+
+### Verification
+
+- `npm run check` and `npm test` (31 tests, including a real Git repository sync flow and a stub gateway) pass in the development container.
+- Dashboard exercised in headless Chromium: all nine views, command palette, kit apply, diff view, provider test, theme persistence, no console or CSP errors, no horizontal overflow at 390 px. Dark, light and mobile screenshots were reviewed.
+- **Not verified**: PowerShell scripts (no PowerShell in the container), registry URLs (run `npm run verify-registry`), and third-party config field names. Run scripts with `-WhatIf` first.
+
 ## 0.6.0 — First complete code release
 
 The repository previously contained documentation only. This release adds the implementation behind everything the 0.2.0–0.5.0 notes describe, plus a few additions.

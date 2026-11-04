@@ -1,6 +1,7 @@
 // Validation + persistence for the five portable profile types.
 // Every validator returns a normalised copy and throws ValidationError on anything unexpected.
 
+import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { readJson, writeJsonAtomic } from './store.js';
 import {
@@ -214,7 +215,15 @@ export function validateMcp(input) {
 
 // ---------------------------------------------------------------- persistence
 
-export function createProfileStore(configDir, registry) {
+export const BACKUP_RE = /^(device|providers|skills|agents|mcp)-\d{8}T\d{9}Z\.json$/;
+const BACKUPS_KEPT_PER_KIND = 20;
+
+/**
+ * @param {string} configDir
+ * @param {object} registry
+ * @param {{backupsDir?: string}} [options] When set, the previous file is copied there before every change.
+ */
+export function createProfileStore(configDir, registry, { backupsDir } = {}) {
   const validators = {
     device: (v) => validateDevice(v, registry),
     providers: validateProviders,
@@ -228,11 +237,78 @@ export function createProfileStore(configDir, registry) {
     return validators[kind](raw);
   }
 
+  async function backupCurrent(kind, next) {
+    if (!backupsDir) return null;
+    let current;
+    try {
+      current = await fs.readFile(path.join(configDir, FILES[kind]), 'utf8');
+    } catch (err) {
+      if (err.code === 'ENOENT') return null;
+      throw err;
+    }
+    if (current === JSON.stringify(next, null, 2) + '\n') return null; // unchanged: no backup noise
+    await fs.mkdir(backupsDir, { recursive: true });
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const name = `${kind}-${new Date().toISOString().replace(/[-:.]/g, '')}.json`;
+      try {
+        await fs.writeFile(path.join(backupsDir, name), current, { encoding: 'utf8', flag: 'wx' });
+        await prune(kind);
+        return name;
+      } catch (err) {
+        if (err.code !== 'EEXIST') throw err;
+        await new Promise((r) => setTimeout(r, 3));
+      }
+    }
+    return null;
+  }
+
+  async function prune(kind) {
+    const names = (await fs.readdir(backupsDir)).filter((n) => n.startsWith(`${kind}-`) && BACKUP_RE.test(n)).sort();
+    for (const old of names.slice(0, Math.max(0, names.length - BACKUPS_KEPT_PER_KIND))) await fs.rm(path.join(backupsDir, old), { force: true });
+  }
+
   async function save(kind, input) {
     const clean = validators[kind](input);
+    await backupCurrent(kind, clean);
     await writeJsonAtomic(path.join(configDir, FILES[kind]), clean);
     return clean;
   }
 
-  return { load, save, validate: (kind, v) => validators[kind](v) };
+  async function listBackups() {
+    if (!backupsDir) return [];
+    let names;
+    try {
+      names = await fs.readdir(backupsDir);
+    } catch {
+      return [];
+    }
+    const out = [];
+    for (const file of names.filter((n) => BACKUP_RE.test(n)).sort().reverse()) {
+      const stat = await fs.stat(path.join(backupsDir, file));
+      const m = /^([a-z]+)-(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(\d{3})Z\.json$/.exec(file);
+      out.push({ file, kind: m[1], createdAt: `${m[2]}-${m[3]}-${m[4]}T${m[5]}:${m[6]}:${m[7]}.${m[8]}Z`, size: stat.size });
+    }
+    return out;
+  }
+
+  async function restoreBackup(file) {
+    if (typeof file !== 'string' || !BACKUP_RE.test(file)) throw new ValidationError('Invalid backup file name.');
+    const kind = file.slice(0, file.indexOf('-'));
+    let text;
+    try {
+      text = await fs.readFile(path.join(backupsDir, file), 'utf8');
+    } catch {
+      throw new ValidationError('Backup not found.', 404);
+    }
+    let parsed;
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      throw new ValidationError('Backup is not valid JSON.', 422);
+    }
+    // Re-validated like any other save, and the file being replaced is itself backed up first.
+    return { kind, profile: await save(kind, parsed) };
+  }
+
+  return { load, save, validate: (kind, v) => validators[kind](v), listBackups, restoreBackup };
 }

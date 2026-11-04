@@ -42,7 +42,7 @@ export async function startTestServer() {
     port, base, dir, call, raw,
     get: (r) => call('GET', r),
     put: (r, b, h) => call('PUT', r, b, h),
-    post: (r, b, h) => call('POST', r, b, h),
+    post: (r, b = {}, h) => call('POST', r, b, h), // like the dashboard, body-less writes send {}
     async close() {
       await app.close();
       await fs.rm(dir, { recursive: true, force: true });

@@ -6,7 +6,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { REPO_ROOT, loadRegistry } from '../server/lib/registry.js';
 import { createProfileStore, validateMcp, FILES } from '../server/lib/profiles.js';
-import { scanForSecrets } from '../server/lib/validate.js';
+import { scanForSecrets, VSCODE_EXT_RE } from '../server/lib/validate.js';
 
 const problems = [];
 const fail = (msg) => problems.push(msg);
@@ -84,6 +84,22 @@ try {
   fail(`registry/mcp.json templates: ${err.message}`);
 }
 if (providers.protocols.length !== 3) fail('registry/providers.json: expected 3 protocols');
+
+// 4b. Starter kits must only reference things that exist
+const toolById = new Map(tools.tools.map((t) => [t.id, t]));
+const mcpIds = new Set(mcp.templates.map((t) => t.id));
+const kitIds = new Set();
+for (const kit of registry.kits.kits) {
+  const at = `registry/kits.json:${kit.id}`;
+  if (kitIds.has(kit.id)) fail(`${at}: duplicate id`);
+  kitIds.add(kit.id);
+  for (const k of ['name', 'description']) if (!kit[k]) fail(`${at}: missing ${k}`);
+  for (const id of kit.tools ?? []) if (!toolById.has(id)) fail(`${at}: unknown tool "${id}"`);
+  for (const id of kit.sources ?? []) if (!toolById.get(id)?.clone) fail(`${at}: "${id}" is not on the clone allowlist`);
+  for (const id of kit.mcp ?? []) if (!mcpIds.has(id)) fail(`${at}: unknown MCP template "${id}"`);
+  for (const ext of kit.vscodeExtensions ?? []) if (!VSCODE_EXT_RE.test(ext)) fail(`${at}: invalid VS Code extension id "${ext}"`);
+}
+if (kitIds.size === 0) fail('registry/kits.json: no kits');
 
 // 5. Tracked config profiles validate and contain no secrets
 const store = createProfileStore(path.join(REPO_ROOT, 'config'), registry);

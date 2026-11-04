@@ -43,7 +43,7 @@ export async function renderAgents(root) {
   async function exportIt() {
     if (!editing) { toast('Save and select an agent first.', 'error'); return; }
     const res = await attempt(() => api('POST', '/api/agents/export', { id: editing, format: format.value }));
-    if (res) outBox.replaceChildren(h('h2', {}, 'Export'), h('p', { class: 'muted' }, `Suggested path: ${res.filename}`), codeBlock(res.content), ...notes(res.notes));
+    if (res) outBox.replaceChildren(h('h2', {}, 'Export'), h('p', { class: 'muted' }, `Suggested path: ${res.filename}`), codeBlock(res.content, 'markdown'), ...notes(res.notes));
   }
 
   function drawList() {
@@ -54,7 +54,7 @@ export async function renderAgents(root) {
   }
 
   root.append(
-    ...pageHeader('Agent manager', 'Reusable role prompts, stored once and exported to each assistant\'s format. Profiles hold prompts only: no credentials and no enforceable permissions.'),
+    ...pageHeader('Agent manager', 'Reusable role prompts, stored once and exported to each assistant\'s format. Profiles hold prompts only: no credentials and no enforceable permissions.', { iconName: 'bot' }),
     h('div', { class: 'split' },
       h('div', {}, h('h2', { style: 'margin-top:0' }, 'Profiles'), listBox, h('button', { class: 'btn', type: 'button', onclick: clear }, 'New agent')),
       h('div', {},

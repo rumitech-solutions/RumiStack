@@ -8,12 +8,63 @@ import { COMMAND_RE, ValidationError } from './validate.js';
 
 const IS_WINDOWS = process.platform === 'win32';
 
-function run(file, args, { cwd, timeout = 30_000 } = {}) {
+/**
+ * Runs a fixed executable with fixed arguments (never a shell string from the browser).
+ * `shell` is only used on Windows for npm/CLI shims (.cmd files cannot be spawned directly); callers
+ * pass names that were already matched against strict patterns, so no metacharacters can reach it.
+ */
+export function run(file, args, { cwd, timeout = 30_000, shell = false } = {}) {
   return new Promise((resolve) => {
-    execFile(file, args, { cwd, timeout, windowsHide: true, env: { ...process.env, GIT_TERMINAL_PROMPT: '0' }, maxBuffer: 4 * 1024 * 1024 }, (error, stdout, stderr) => {
+    execFile(file, args, { cwd, timeout, shell, windowsHide: true, env: { ...process.env, GIT_TERMINAL_PROMPT: '0' }, maxBuffer: 4 * 1024 * 1024 }, (error, stdout, stderr) => {
       resolve({ ok: !error, code: error?.code ?? 0, stdout: String(stdout).trim(), stderr: String(stderr).trim() });
     });
   });
+}
+
+// ---------------------------------------------------------------- versions
+
+const SEMVER_RE = /\d+\.\d+(?:\.\d+)?(?:-[0-9A-Za-z.-]+)?/;
+
+export function parseVersion(text) {
+  const m = SEMVER_RE.exec(String(text ?? ''));
+  return m ? m[0] : null;
+}
+
+/** Numeric dotted comparison; pre-release suffixes are ignored. Returns -1, 0 or 1. */
+export function compareVersions(a, b) {
+  const nums = (v) => String(v).split('-')[0].split('.').map((n) => Number.parseInt(n, 10) || 0);
+  const x = nums(a);
+  const y = nums(b);
+  for (let i = 0; i < Math.max(x.length, y.length); i++) {
+    const d = (x[i] ?? 0) - (y[i] ?? 0);
+    if (d !== 0) return d < 0 ? -1 : 1;
+  }
+  return 0;
+}
+
+/** Installed versions via `<command> --version` for tools that are on PATH. Local only, no network. */
+export async function installedVersions(tools, statuses) {
+  const entries = await Promise.all(tools.filter((t) => t.command && statuses[t.id]?.installed).map(async (tool) => {
+    const res = await run(tool.command, ['--version'], { timeout: 8_000, shell: IS_WINDOWS });
+    return [tool.id, parseVersion(res.stdout || res.stderr)];
+  }));
+  return Object.fromEntries(entries);
+}
+
+/** Latest published versions for npm-installed tools via `npm view`. Needs network; explicit user action only. */
+export async function latestNpmVersions(tools) {
+  const npmTools = tools.filter((t) => t.install.type === 'npm');
+  const out = {};
+  const queue = [...npmTools];
+  await Promise.all(Array.from({ length: 4 }, async () => {
+    while (queue.length) {
+      const tool = queue.shift();
+      if (!/^(@[a-z0-9][a-z0-9-._~]*\/)?[a-z0-9][a-z0-9-._~]*$/.test(tool.install.package)) continue;
+      const res = await run('npm', ['view', tool.install.package, 'version'], { timeout: 25_000, shell: IS_WINDOWS });
+      out[tool.id] = res.ok ? parseVersion(res.stdout) : null;
+    }
+  }));
+  return out;
 }
 
 export async function findCommand(command) {

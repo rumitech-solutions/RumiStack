@@ -42,3 +42,10 @@ API keys, provider credentials, login sessions, cookies, OAuth tokens, project c
 ## Import and export
 
 Export downloads the profile as JSON. Import loads a JSON file into the form; it is validated by the server when you save.
+
+## Git sync, backups and kits (v0.7.0)
+
+- **Sync & backups** in the dashboard shows branch, ahead/behind, `config/` changes and a diff. *Commit config* stages and commits only `config/`; *Push after commit* is optional. Pull is fast-forward only. Nothing is forced.
+- Every profile save keeps the previous file in `backups/` (last 20 per profile). Restore re-validates the file and backs up the current one first.
+- **Starter kits** merge into your profiles (never remove anything) and back up what they replace.
+- Actions are recorded in `logs/activity.jsonl` (local only).

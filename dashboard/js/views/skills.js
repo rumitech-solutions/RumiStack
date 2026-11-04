@@ -54,12 +54,12 @@ export async function renderSkills(root) {
     const res = await attempt(() => api('GET', '/api/skills/preview'));
     if (!res) return;
     previewBox.replaceChildren(h('h2', {}, 'Restore preview (saved profile)'),
-      res.commands.length ? codeBlock(res.commands.map((c) => (c.requiresProjectPath ? `# project scope: run from your project folder\n${c.command}` : c.command)).join('\n')) : h('div', { class: 'empty' }, 'Save a selection first.'),
+      res.commands.length ? codeBlock(res.commands.map((c) => (c.requiresProjectPath ? `# project scope: run from your project folder\n${c.command}` : c.command)).join('\n'), 'powershell') : h('div', { class: 'empty' }, 'Save a selection first.'),
       ...notes(res.notes));
   }
 
   root.append(
-    ...pageHeader('Skills marketplace', 'Curated skill sources. Choose assistants and scope, save the desired state, and restore it on any laptop with Restore-Skills.ps1.'),
+    ...pageHeader('Skills marketplace', 'Curated skill sources. Choose assistants and scope, save the desired state, and restore it on any laptop with Restore-Skills.ps1.', { iconName: 'sparkles' }),
     h('div', { class: 'notice' }, 'Skills are instructions and sometimes scripts that your assistant will follow. Read the source, licence and any hooks before installing. Plugin-style and discovery-only sources are shown for reference but are never installed by RumiStack. The profile does not yet pin exact upstream versions.'),
     h('div', { class: 'panel' }, h('div', { class: 'form-grid' },
       h('div', { class: 'field' }, h('label', {}, 'Install for'), assistantBox),

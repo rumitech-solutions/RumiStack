@@ -1,4 +1,4 @@
-import { h, api, attempt, field, checkboxes, readChecked, pageHeader, codeBlock, notes, badge, toast } from '../core.js';
+import { h, api, attempt, field, checkboxes, readChecked, pageHeader, codeBlock, notes, badge, toast, icon, fill } from '../core.js';
 
 export async function renderProviders(root) {
   const data = await api('GET', '/api/providers');
@@ -81,17 +81,35 @@ export async function renderProviders(root) {
   async function snippet(client) {
     if (!editing) { toast('Save the profile first, then select it.', 'error'); return; }
     const res = await attempt(() => api('POST', '/api/providers/snippet', { id: editing, client }));
-    if (res) outputBox.replaceChildren(h('h2', {}, `Config for ${client}`), res.filename ? h('p', { class: 'muted' }, `Target file: ${res.filename}`) : null, codeBlock(res.snippet), ...notes(res.notes));
+    if (res) fill(outputBox, h('h2', {}, `Config for ${client}`), res.filename ? h('p', { class: 'muted' }, `Target file: ${res.filename}`) : null, codeBlock(res.snippet, res.language), ...notes(res.notes));
   }
 
   async function discovery() {
     if (!editing) { toast('Save the profile first, then select it.', 'error'); return; }
     const res = await attempt(() => api('POST', '/api/providers/discovery', { id: editing }));
-    if (res) outputBox.replaceChildren(h('h2', {}, 'Model discovery'), codeBlock(res.command), ...notes(res.notes));
+    if (res) outputBox.replaceChildren(h('h2', {}, 'Model discovery'), codeBlock(res.command, 'powershell'), ...notes(res.notes));
+  }
+
+  async function testConnection(btn) {
+    if (!editing) { toast('Save the profile first, then select it.', 'error'); return; }
+    btn.disabled = true;
+    outputBox.replaceChildren(h('div', { class: 'skeleton-group' }, h('div', { class: 'skeleton', style: 'width:60%' }), h('div', { class: 'skeleton', style: 'width:40%' })));
+    const res = await attempt(() => api('POST', '/api/providers/test', { id: editing }));
+    btn.disabled = false;
+    if (!res) { outputBox.replaceChildren(); return; }
+    fill(outputBox,
+      h('h2', {}, icon('zap', 16), 'Connection test'),
+      h('div', { class: 'panel' },
+        h('div', { class: 'row' }, badge(res.ok ? 'connected' : 'failed', res.ok ? 'ok' : 'bad'),
+          res.status ? badge(`HTTP ${res.status}`) : null, res.latencyMs !== null ? badge(`${res.latencyMs} ms`) : null,
+          badge(res.keySet ? 'key found in environment' : 'no key in environment', res.keySet ? 'ok' : 'warn')),
+        h('p', { style: 'margin:12px 0 0' }, res.message),
+        res.models.length ? h('div', { style: 'margin-top:12px' }, h('label', {}, `Models (${res.modelCount})`), h('div', { class: 'chips' }, res.models.map((m) => badge(m, m === modelIn.value.trim() ? 'accent' : '')))) : null),
+      h('p', { class: 'faint' }, 'The key is read from this server\'s environment, sent only to this profile\'s URL, and never stored or shown. Redirects are not followed.'));
   }
 
   root.append(
-    ...pageHeader('Provider manager', 'Gateway profiles hold URLs, model IDs and the NAME of the environment variable that carries your key. Never the key itself.'),
+    ...pageHeader('Provider manager', 'Gateway profiles hold URLs, model IDs and the NAME of the environment variable that carries your key. Never the key itself.', { iconName: 'server' }),
     h('div', { class: 'notice' }, 'Open-source routers are not free inference: every upstream provider has its own quota, terms and pricing, and free tiers change often.'),
     h('h2', {}, 'Saved profiles'), listBox,
     h('div', { class: 'panel' },
@@ -108,7 +126,8 @@ export async function renderProviders(root) {
     h('h2', {}, 'Generate assistant config'),
     h('p', { class: 'muted' }, 'Select a saved profile above, then choose a target. Snippets are for review and manual merge; RumiStack never overwrites assistant config.'),
     h('div', { class: 'row' }, data.clients.map((c) => h('button', { class: 'btn', type: 'button', onclick: () => snippet(c.id) }, c.name)),
-      h('button', { class: 'btn', type: 'button', onclick: discovery }, 'Model discovery command')),
+      h('button', { class: 'btn', type: 'button', onclick: discovery }, 'Model discovery command'),
+      h('button', { class: 'btn primary', type: 'button', onclick: (e) => testConnection(e.currentTarget) }, icon('zap', 15), 'Test connection')),
     outputBox
   );
   drawList();

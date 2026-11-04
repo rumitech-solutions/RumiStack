@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "kits": [
+    {
+      "id": "web-dev",
+      "name": "Web developer",
+      "description": "Git, Node, two assistants, browser testing and the docs/GitHub MCP servers.",
+      "icon": "globe",
+      "tools": ["git", "nodejs", "github-cli", "vscode", "claude-code", "opencode", "playwright"],
+      "sources": [],
+      "vscodeExtensions": [],
+      "mcp": ["context7", "playwright", "github"]
+    },
+    {
+      "id": "free-gateway",
+      "name": "Free-tier gateway",
+      "description": "Run FreeLLMAPI or OmniRoute locally and point your assistants at it.",
+      "icon": "route",
+      "tools": ["git", "nodejs", "docker-desktop", "claude-code", "opencode", "freellmapi", "omniroute"],
+      "sources": ["freellmapi", "omniroute"],
+      "vscodeExtensions": [],
+      "mcp": []
+    },
+    {
+      "id": "agent-workstation",
+      "name": "Agent workstation",
+      "description": "Every supported assistant, skill reference repos and the full MCP template set.",
+      "icon": "cpu",
+      "tools": ["git", "nodejs", "github-cli", "vscode", "claude-code", "opencode", "gemini-cli", "codex-cli", "aider", "anthropic-skills", "superpowers", "vercel-skills-cli"],
+      "sources": ["anthropic-skills", "superpowers"],
+      "vscodeExtensions": ["saoudrizwan.claude-dev"],
+      "mcp": ["openai-docs", "context7", "playwright", "github"]
+    },
+    {
+      "id": "security-hardening",
+      "name": "Security & quality",
+      "description": "Secret scanning, dependency and image scanning, and prompt/agent red-teaming.",
+      "icon": "shield",
+      "tools": ["git", "nodejs", "gitleaks", "trivy", "osv-scanner", "promptfoo", "playwright", "vitest"],
+      "sources": [],
+      "vscodeExtensions": [],
+      "mcp": []
+    }
+  ]
+}

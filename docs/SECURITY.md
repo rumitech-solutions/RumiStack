@@ -19,6 +19,9 @@ Only fixed operations in `server/lib/system.js`:
 | PATH detection | `where.exe` / `which` with a command name taken from the registry and matched against `^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$` |
 | Source clone | `git clone --depth 1` of a registry entry flagged `clone`, GitHub HTTPS URLs only, into `sources/<id>` |
 | Source update | `git pull --ff-only`; skipped if the working tree is dirty |
+| Version check | `<command> --version` for registry commands, and `npm view <package> version` for registry npm packages |
+| Git sync | Fixed arguments only: `status`, `diff`, `fetch`, `pull --ff-only`, `add -- config`, `commit -- config`, `push`. Never force, rebase or reset. Only `config/` is ever committed; commit messages are single-line and secret-scanned |
+| Provider test | One `GET <profile URL>/models` request (see below) |
 | Launch assistant | A registry entry flagged `launchable`, found on PATH, opened in `projects/`. Windows only |
 
 Child processes are started without a shell. There is no endpoint that accepts a command line, a path or a Git URL from the browser.
@@ -26,6 +29,10 @@ Child processes are started without a shell. There is no endpoint that accepts a
 ## Secrets
 
 Profiles store environment-variable **names**. Every save is scanned for credential shapes (OpenAI-style keys, GitHub and Slack tokens, AWS and Google keys, bearer tokens, private-key blocks, `key = value` assignments) and rejected on a match. This is a safety net, not a guarantee: keep real keys in your gateway's credential store or a secret manager.
+
+**Provider connection test.** The only place a secret value is used. The key is read from the server's own environment variable named in the profile and sent as a bearer token **only** to that profile's validated URL. Redirects are not followed (`redirect: 'manual'`), so the key cannot be forwarded elsewhere. The key is never returned to the browser or written to the activity log or backups.
+
+**Backups and activity.** `backups/` holds the previous version of each profile (last 20 per kind); restore re-validates the file and only accepts names matching a fixed pattern. `logs/activity.jsonl` records what changed, never request bodies. Both are git-ignored.
 
 Provider URLs must be HTTPS, except loopback. They may not contain credentials, query strings or fragments.
 

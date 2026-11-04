@@ -6,6 +6,13 @@ RumiStack is a local-first control center for managing AI coding assistants, mod
 
 RumiStack does **not** merge third-party projects into one application. Each upstream tool keeps its own repository, licence, release cycle and configuration.
 
+## What's new in v0.7.0
+
+- Premium dashboard: dark/light/auto themes, command palette (`Ctrl K`), health score, responsive layout.
+- Starter kits that merge tool, source and MCP bundles into your profiles.
+- **Sync & backups**: Git status, fast-forward pull, config diff and commit/push of `config/` only, plus restore of the last 20 backups per profile.
+- Activity journal, provider **Test connection**, and installed-vs-latest version checks.
+
 ## What v0.6.0 includes
 
 v0.6.0 is the first release that ships the complete code (server, dashboard, registry, scripts, tests and docs) behind the features below. See [`CHANGELOG.md`](CHANGELOG.md) for what is verified and what still needs testing on Windows.

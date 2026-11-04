@@ -1,4 +1,4 @@
-import { h, api, attempt, field, checkboxes, readChecked, pageHeader, codeBlock, notes, badge, toast } from '../core.js';
+import { h, api, attempt, field, checkboxes, readChecked, pageHeader, codeBlock, notes, badge, toast, fill } from '../core.js';
 
 export async function renderMcp(root) {
   const data = await api('GET', '/api/mcp');
@@ -71,7 +71,7 @@ export async function renderMcp(root) {
   async function snippet(client) {
     if (!editing) { toast('Save and select a server first.', 'error'); return; }
     const res = await attempt(() => api('POST', '/api/mcp/snippet', { id: editing, client }));
-    if (res) outBox.replaceChildren(h('h2', {}, `Config for ${client}`), res.filename ? h('p', { class: 'muted' }, `Target file: ${res.filename}`) : null, codeBlock(res.snippet), ...notes(res.notes));
+    if (res) fill(outBox, h('h2', {}, `Config for ${client}`), res.filename ? h('p', { class: 'muted' }, `Target file: ${res.filename}`) : null, codeBlock(res.snippet, res.language), ...notes(res.notes));
   }
 
   function drawList() {
@@ -84,7 +84,7 @@ export async function renderMcp(root) {
   }
 
   root.append(
-    ...pageHeader('MCP server manager', 'Portable MCP definitions with per-client config previews. Saving a profile is not installation, connection or a health check.'),
+    ...pageHeader('MCP server manager', 'Portable MCP definitions with per-client config previews. Saving a profile is not installation, connection or a health check.', { iconName: 'plug' }),
     h('div', { class: 'notice' }, 'RumiStack never starts an MCP process, installs a package, performs OAuth or edits a client config. Credentials are referenced by environment-variable NAME only, so re-authenticate on each laptop.'),
     h('h2', {}, 'Saved servers'), listBox,
     h('h2', {}, 'Templates'),
