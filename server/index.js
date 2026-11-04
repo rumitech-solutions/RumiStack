@@ -16,6 +16,7 @@ import { gitStatus, gitDiff, gitFetch, gitPull, gitCommitPush } from './lib/git.
 import { testProvider } from './lib/gateway.js';
 import { applyKit } from './lib/kits.js';
 import { runDoctor } from './lib/doctor.js';
+import { repoStatus, addRepo, cloneRepo, updateRepo, removeRepo } from './lib/repos.js';
 import { gatewayStatus, prepareGateway, gatewayUp, gatewayDown, gatewayLogs } from './lib/docker.js';
 
 export const DEFAULT_PORT = 47821;
@@ -155,6 +156,29 @@ export async function createApp(options = {}) {
     'POST /api/launch': async (req) => {
       const result = await launchAssistant(root, registry, assertId((await body(req)).id, 'id'));
       await activity.log('launch', result.id);
+      return result;
+    },
+
+    // ---- your own GitHub repositories (portable list + checkouts in sources/)
+    'GET /api/repos': async () => repoStatus(root, await store.load('repos')),
+    'POST /api/repos/add': async (req) => {
+      const result = await addRepo(root, store, registry, (await body(req)).url);
+      await activity.log('repo:add', result.id);
+      return result;
+    },
+    'POST /api/repos/clone': async (req) => {
+      const result = await cloneRepo(root, store, assertId((await body(req)).id, 'id'));
+      await activity.log('repo:clone', result.id);
+      return result;
+    },
+    'POST /api/repos/update': async (req) => {
+      const result = await updateRepo(root, store, assertId((await body(req)).id, 'id'));
+      await activity.log('repo:update', `${result.id}: ${result.skipped ?? (result.updated ? 'updated' : 'up to date')}`);
+      return result;
+    },
+    'POST /api/repos/remove': async (req) => {
+      const result = await removeRepo(store, assertId((await body(req)).id, 'id'));
+      await activity.log('repo:remove', result.id);
       return result;
     },
 

@@ -178,7 +178,7 @@ h2 { font-size: 15px; font-weight: 650; margin: 26px 0 10px; display: flex; alig
 label { display: block; font-size: 12.5px; font-weight: 600; color: var(--text-2); margin-bottom: 5px; }
 .field { margin-bottom: 14px; }
 .field small { display: block; color: var(--text-3); font-weight: 400; margin-top: 4px; font-size: 12px; }
-input[type=text], input[type=search], select, textarea { width: 100%; font: inherit; color: var(--text); padding: 9px 12px; border-radius: 11px; border: 1px solid var(--border-strong); background: color-mix(in srgb, var(--panel-solid) 55%, transparent); transition: border-color .18s, box-shadow .18s; }
+input[type=text], input[type=search], input[type=url], select, textarea { width: 100%; font: inherit; color: var(--text); padding: 9px 12px; border-radius: 11px; border: 1px solid var(--border-strong); background: color-mix(in srgb, var(--panel-solid) 55%, transparent); transition: border-color .18s, box-shadow .18s; }
 input::placeholder, textarea::placeholder { color: var(--text-3); }
 input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--text-3) 50%), linear-gradient(135deg, var(--text-3) 50%, transparent 50%); background-position: calc(100% - 17px) 50%, calc(100% - 12px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 32px; }

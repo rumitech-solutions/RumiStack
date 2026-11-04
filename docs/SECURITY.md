@@ -18,6 +18,7 @@ Only fixed operations in `server/lib/system.js`:
 | --- | --- |
 | PATH detection | `where.exe` / `which` with a command name taken from the registry and matched against `^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$` |
 | Source clone | `git clone --depth 1` of a registry entry flagged `clone`, GitHub HTTPS URLs only, into `sources/<id>` |
+| Repository clone | `git clone --depth 1 --no-recurse-submodules -- <url>` for a link you paste. The URL must match `https://github.com/<owner>/<repo>` exactly and the folder name is derived from it, so no path or option can come from the browser. Cloned code is never executed |
 | Source update | `git pull --ff-only`; skipped if the working tree is dirty |
 | Version check | `<command> --version` for registry commands, and `npm view <package> version` for registry npm packages |
 | Git sync | Fixed arguments only: `status`, `diff`, `fetch`, `pull --ff-only`, `add -- config`, `commit -- config`, `push`. Never force, rebase or reset. Only `config/` is ever committed; commit messages are single-line and secret-scanned |
@@ -25,7 +26,7 @@ Only fixed operations in `server/lib/system.js`:
 | Gateway containers | `docker compose [--profile <registry profile>] up -d \| down \| ps \| logs` in `sources/<id>`, only for registry entries with a `docker` block. Never `-v`, never the `cli` profile, never auto-update profiles. See [`GATEWAYS.md`](GATEWAYS.md) |
 | Launch assistant | A registry entry flagged `launchable`, found on PATH, opened in `projects/`. Windows only |
 
-Child processes are started without a shell. There is no endpoint that accepts a command line, a path or a Git URL from the browser.
+Child processes are started without a shell. There is no endpoint that accepts a command line or a path from the browser. The only free-text input that reaches Git is a GitHub repository link, validated as described above.
 
 ## Secrets
 

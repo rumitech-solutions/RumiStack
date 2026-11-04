@@ -49,3 +49,7 @@ Export downloads the profile as JSON. Import loads a JSON file into the form; it
 - Every profile save keeps the previous file in `backups/` (last 20 per profile). Restore re-validates the file and backs up the current one first.
 - **Starter kits** merge into your profiles (never remove anything) and back up what they replace.
 - Actions are recorded in `logs/activity.jsonl` (local only).
+
+## Your own repositories (v0.9.0)
+
+The **Repositories** view keeps a list in `config/repos.json` (GitHub HTTPS links only) and clones each into `sources/<owner>-<repo>`. Commit and push `config/` from Sync & backups; on another laptop pull, then press *Clone missing*. Private repositories work if Git is already signed in to GitHub on that laptop (Git Credential Manager).

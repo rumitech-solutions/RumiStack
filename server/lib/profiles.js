@@ -4,6 +4,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { readJson, writeJsonAtomic } from './store.js';
+import { parseGitHubUrl } from './repos.js';
 import {
   ValidationError, assertObject, rejectUnknown, assertSchemaVersion, assertId, assertText, assertEnvName,
   assertModelId, assertArray, assertUnique, assertUrl, scanForSecrets, COMMAND_RE, VSCODE_EXT_RE, HEADER_RE
@@ -14,7 +15,8 @@ export const FILES = {
   providers: 'provider-profiles.json',
   skills: 'skills-profile.json',
   agents: 'agent-profiles.json',
-  mcp: 'mcp-servers.json'
+  mcp: 'mcp-servers.json',
+  repos: 'repos.json'
 };
 
 const EMPTY = {
@@ -22,7 +24,8 @@ const EMPTY = {
   providers: { schemaVersion: 1, profiles: [] },
   skills: { schemaVersion: 1, selections: [] },
   agents: { schemaVersion: 1, profiles: [] },
-  mcp: { schemaVersion: 1, servers: [] }
+  mcp: { schemaVersion: 1, servers: [] },
+  repos: { schemaVersion: 1, repos: [] }
 };
 
 export const PROTOCOL_IDS = ['openai-chat', 'openai-responses', 'anthropic-messages'];
@@ -213,9 +216,28 @@ export function validateMcp(input) {
   return { schemaVersion: 1, servers };
 }
 
+// ---------------------------------------------------------------- user-added repositories
+
+export function validateRepos(input) {
+  assertObject(input, 'profile');
+  rejectUnknown(input, ['schemaVersion', 'repos'], 'profile');
+  assertSchemaVersion(input, 'profile');
+  scanForSecrets(input, 'profile');
+  const repos = assertArray(input.repos ?? [], 'profile.repos', { max: 100 }).map((entry, i) => {
+    const at = `profile.repos[${i}]`;
+    assertObject(entry, at);
+    rejectUnknown(entry, ['id', 'url'], at);
+    const parsed = parseGitHubUrl(entry.url);
+    if (entry.id !== parsed.id) throw new ValidationError(`${at}.id must be "${parsed.id}" for ${parsed.url}.`);
+    return { id: parsed.id, url: parsed.url };
+  });
+  assertUnique(repos.map((r) => r.id), 'profile.repos');
+  return { schemaVersion: 1, repos };
+}
+
 // ---------------------------------------------------------------- persistence
 
-export const BACKUP_RE = /^(device|providers|skills|agents|mcp)-\d{8}T\d{9}Z\.json$/;
+export const BACKUP_RE = /^(device|providers|skills|agents|mcp|repos)-\d{8}T\d{9}Z\.json$/;
 const BACKUPS_KEPT_PER_KIND = 20;
 
 /**
@@ -229,7 +251,8 @@ export function createProfileStore(configDir, registry, { backupsDir } = {}) {
     providers: validateProviders,
     skills: (v) => validateSkills(v, registry),
     agents: validateAgents,
-    mcp: validateMcp
+    mcp: validateMcp,
+    repos: validateRepos
   };
 
   async function load(kind) {

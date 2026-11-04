@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.0 — Your own repositories and one-click start
+
+- New **Repositories** view: paste any `https://github.com/owner/repository` link; RumiStack clones it into `sources/<owner>-<repo>` and records it in a new portable profile, `config/repos.json`. On another laptop, pull the config and press *Clone missing*. Update is fast-forward only and skips checkouts with local changes. Remove only edits the list; the folder is kept.
+- Only plain GitHub HTTPS links are accepted (no other hosts, SSH, credentials, query strings or extra paths). A failed clone adds nothing and leaves no folder. Cloned code is never executed by RumiStack.
+- New `start.cmd`: double-click to start the dashboard (runs `scripts\Start-Workspace.ps1` with execution policy bypassed for that process only).
+- Verification: 38 tests pass (including a clone/update/remove flow through git URL rewriting, and URL attack strings); the view was exercised in headless Chromium. `start.cmd` and the PowerShell scripts were **not** run (no Windows here).
+
 ## 0.8.0 — Docker gateways
 
 - New **Gateways (Docker)** view: prepare `.env`, start, stop and read logs for FreeLLMAPI and OmniRoute using their own upstream compose files (see `docs/GATEWAYS.md`).

@@ -4,6 +4,7 @@ import { renderOverview } from './views/overview.js';
 import { renderCatalogue } from './views/catalogue.js';
 import { renderDevice } from './views/device.js';
 import { renderSync } from './views/sync.js';
+import { renderRepos } from './views/repos.js';
 import { renderGateways } from './views/gateways.js';
 import { renderProviders } from './views/providers.js';
 import { renderSkills } from './views/skills.js';
@@ -15,6 +16,7 @@ const VIEWS = [
   { id: 'overview', label: 'Overview', icon: 'home', group: 'Workspace', render: renderOverview },
   { id: 'catalogue', label: 'Catalogue', icon: 'grid', group: 'Workspace', render: renderCatalogue },
   { id: 'device', label: 'Device sync', icon: 'laptop', group: 'Workspace', render: renderDevice },
+  { id: 'repos', label: 'Repositories', icon: 'layers', group: 'Workspace', render: renderRepos },
   { id: 'sync', label: 'Sync & backups', icon: 'git', group: 'Workspace', render: renderSync },
   { id: 'gateways', label: 'Gateways (Docker)', icon: 'box', group: 'Configure', render: renderGateways },
   { id: 'providers', label: 'Provider manager', icon: 'server', group: 'Configure', render: renderProviders },
