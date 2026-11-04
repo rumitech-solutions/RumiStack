@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.11.0 — Premium and advanced
+
+- **Settings** view: five accent colours (violet, ocean, emerald, rose, amber) that work in dark and light, theme, comfortable/compact density and reduced motion. Saved in this browser only and applied before first paint (no flash).
+- **Getting started** checklist on Overview (tools, repository, link, gateway, provider, Git sync), derived from what already exists; it disappears when everything is done.
+- **Keyboard shortcuts**: `g` then a letter jumps to a view (`g l` Saved links, `g r` Repositories, ...), `t` cycles theme, `?` lists them all. The `Ctrl K` palette also searches your repositories and has new actions.
+- **Bundle export/import**: one JSON file with all seven portable profiles for moving laptops without Git. Import validates every profile first (a single bad profile rejects the whole bundle), shows what would change, and backs up what it replaces.
+- **Install as an app**: web manifest and icons so Chrome/Edge can install the dashboard as a standalone window (Install app in the address bar menu).
+- Verification: 43 tests pass (bundle round trip and rejection, progress, PWA assets). Exercised in headless Chromium: shortcuts, accent/density persistence across reload, light + emerald theme, no console errors, no overflow at 390 px. **Not verified**: the install-as-app prompt itself (needs real Chrome/Edge) and the Windows scripts.
+
 ## 0.10.1
 
 - Saved links now appear in the `Ctrl K` palette under "Saved links" and open in a new tab. Verified in headless Chromium.

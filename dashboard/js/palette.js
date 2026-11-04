@@ -23,12 +23,15 @@ export async function openPalette({ views, navigate, actions }) {
 
   let saved = { categories: [], links: [] };
   try { saved = await api('GET', '/api/links'); } catch { /* the palette still works without saved links */ }
+  let repos = { repos: [] };
+  try { repos = await api('GET', '/api/repos'); } catch { /* optional */ }
   const categoryName = new Map(saved.categories.map((c) => [c.id, c.name]));
 
   const items = [
     ...views.map((v) => ({ group: 'Go to', label: v.label, hint: '', icon: v.icon, keywords: v.id, run: () => navigate(v.id) })),
     ...toolsCache.map((t) => ({ group: 'Tools', label: t.name, hint: t.category, icon: 'box', keywords: `${t.id} ${t.description}`, run: () => navigate('catalogue', { q: t.name }) })),
     ...saved.links.map((l) => ({ group: 'Saved links', label: l.title, hint: categoryName.get(l.category) ?? '', icon: 'external', keywords: `${l.url} ${l.note ?? ''}`, run: () => window.open(l.url, '_blank', 'noopener,noreferrer') })),
+    ...repos.repos.map((r) => ({ group: 'Repositories', label: r.url.replace('https://github.com/', ''), hint: r.cloned ? 'cloned' : 'not cloned', icon: 'layers', keywords: r.id, run: () => navigate('repos') })),
     ...actions.map((a) => ({ group: 'Actions', ...a }))
   ];
 

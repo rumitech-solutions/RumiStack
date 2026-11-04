@@ -313,3 +313,72 @@ test('saved links: categories, validation and persistence', async () => {
     assert.equal((await t.get('/api/links')).json.links.length, 1, 'rejected saves change nothing');
   } finally { await t.close(); }
 });
+
+test('bundle: export, dry-run, import with backups, and rejection of bad bundles', async () => {
+  const a = await startTestServer();
+  const b = await startTestServer();
+  try {
+    await a.put('/api/links', { schemaVersion: 1, categories: [{ id: 'docs', name: 'Docs' }], links: [{ id: 'l-1', title: 'Claude docs', url: 'https://docs.claude.com', category: 'docs' }] });
+    await a.put('/api/profile', device(['git']));
+    const exp = await a.get('/api/bundle/export');
+    assert.equal(exp.status, 200);
+    assert.match(exp.headers.get('content-disposition'), /rumistack-bundle\.json/);
+    const bundle = exp.json;
+    assert.equal(bundle.format, 'rumistack-bundle');
+    assert.deepEqual(Object.keys(bundle.profiles).sort(), ['agents', 'device', 'links', 'mcp', 'providers', 'repos', 'skills']);
+
+    // dry run changes nothing
+    const dry = await b.post('/api/bundle/import', { bundle });
+    assert.equal(dry.json.applied, false);
+    assert.deepEqual(dry.json.profiles.filter((p) => p.changed).map((p) => p.kind).sort(), ['device', 'links']);
+    assert.equal((await b.get('/api/links')).json.links.length, 0);
+
+    const real = await b.post('/api/bundle/import', { bundle, dryRun: false });
+    assert.equal(real.json.applied, true);
+    assert.equal((await b.get('/api/links')).json.links[0].title, 'Claude docs');
+    assert.deepEqual((await b.get('/api/profile')).json.profile?.tools ?? (await b.get('/api/profile')).json.tools, ['git']);
+    assert.ok((await b.get('/api/activity')).json.entries.some((e) => e.action === 'bundle:import'));
+    // importing the same bundle again is a no-op
+    assert.ok((await b.post('/api/bundle/import', { bundle })).json.profiles.every((p) => !p.changed));
+
+    // bad bundles: nothing is written, even when only one profile is invalid
+    const bad = structuredClone(bundle);
+    bad.profiles.links.links[0].url = 'javascript:alert(1)';
+    bad.profiles.device.tools = ['git', 'github-cli'];
+    const rejected = await a.post('/api/bundle/import', { bundle: bad, dryRun: false });
+    assert.equal(rejected.status, 400);
+    assert.match(rejected.json.error, /links/);
+    assert.deepEqual((await a.get('/api/profile')).json.profile?.tools ?? (await a.get('/api/profile')).json.tools, ['git']);
+    assert.equal((await a.post('/api/bundle/import', { bundle: { format: 'other' } })).status, 400);
+    assert.equal((await a.post('/api/bundle/import', { bundle: { ...bundle, profiles: { ...bundle.profiles, extra: {} } } })).status, 400);
+    assert.equal((await a.post('/api/bundle/import', {})).status, 400);
+    assert.equal((await a.call('POST', '/api/bundle/import', '{}', { 'Content-Type': 'text/plain' })).status, 415);
+  } finally { await a.close(); await b.close(); }
+});
+
+test('getting-started progress reflects what exists', async () => {
+  const t = await startTestServer();
+  try {
+    const first = (await t.get('/api/progress')).json;
+    assert.equal(first.total, 6);
+    assert.equal(first.done, 0);
+    await t.put('/api/profile', device(['git']));
+    await t.put('/api/links', { schemaVersion: 1, categories: [{ id: 'docs', name: 'Docs' }], links: [{ id: 'l-1', title: 'T', url: 'https://example.com', category: 'docs' }] });
+    const next = (await t.get('/api/progress')).json;
+    assert.deepEqual(next.steps.filter((s) => s.done).map((s) => s.id).sort(), ['links', 'tools']);
+  } finally { await t.close(); }
+});
+
+test('PWA assets are served with the right types and meta exposes the workspace', async () => {
+  const t = await startTestServer();
+  try {
+    const manifest = await t.get('/manifest.webmanifest');
+    assert.equal(manifest.status, 200);
+    assert.match(manifest.headers.get('content-type'), /manifest\+json/);
+    assert.equal(manifest.json.display, 'standalone');
+    for (const icon of manifest.json.icons) assert.equal((await t.get(icon.src)).status, 200, icon.src);
+    assert.equal((await t.get('/icon-192.png')).headers.get('content-type'), 'image/png');
+    const meta = (await t.get('/api/meta')).json;
+    assert.equal(meta.root, t.dir);
+  } finally { await t.close(); }
+});

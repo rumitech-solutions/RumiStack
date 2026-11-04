@@ -16,12 +16,14 @@ import { gitStatus, gitDiff, gitFetch, gitPull, gitCommitPush } from './lib/git.
 import { testProvider } from './lib/gateway.js';
 import { applyKit } from './lib/kits.js';
 import { runDoctor } from './lib/doctor.js';
+import { exportBundle, importBundle } from './lib/bundle.js';
+import { setupProgress } from './lib/progress.js';
 import { ensureWorkspace, workspaceInfo } from './lib/workspace.js';
 import { repoStatus, addRepo, cloneRepo, updateRepo, removeRepo } from './lib/repos.js';
 import { gatewayStatus, prepareGateway, gatewayUp, gatewayDown, gatewayLogs } from './lib/docker.js';
 
 export const DEFAULT_PORT = 47821;
-const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml' };
+const MIME = { '.webmanifest': 'application/manifest+json', '.png': 'image/png', '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml' };
 
 /**
  * @param {{root?: string, configDir?: string, registryRoot?: string, port?: number}} options
@@ -55,7 +57,7 @@ export async function createApp(options = {}) {
   const routes = {
     'GET /api/meta': async () => ({
       name: 'RumiStack', version: pkg.version, platform: process.platform, node: process.version,
-      registryUpdated: registry.tools.updated, port: boundPort
+      registryUpdated: registry.tools.updated, port: boundPort, root, configDir
     }),
 
     'GET /api/registry/tools': async () => ({
@@ -164,6 +166,19 @@ export async function createApp(options = {}) {
     // ---- saved links (bookmarks grouped by category)
     'GET /api/links': async () => store.load('links'),
     'PUT /api/links': saver('links', (p) => `${p.links.length} link(s) in ${p.categories.length} categories`),
+
+    // ---- bundle (move everything without Git) and getting-started progress
+    'GET /api/bundle/export': async () => ({ __download: 'rumistack-bundle.json', data: await exportBundle(store, pkg.version) }),
+    'POST /api/bundle/import': async (req) => {
+      const input = await body(req);
+      const result = await importBundle(store, input.bundle, { dryRun: input.dryRun !== false });
+      if (result.applied) await activity.log('bundle:import', result.profiles.filter((p) => p.changed).map((p) => p.kind).join(', ') || 'no changes');
+      return result;
+    },
+    'GET /api/progress': async () => {
+      const [gitState, sources] = await Promise.all([gitStatus(root), sourceStatus(root, registry)]);
+      return setupProgress({ store, gitState, sources });
+    },
 
     'GET /api/workspace': async () => workspaceInfo(root, configDir),
 

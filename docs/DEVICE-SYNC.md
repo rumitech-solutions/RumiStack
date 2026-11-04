@@ -57,3 +57,7 @@ The **Repositories** view keeps a list in `config/repos.json` (GitHub HTTPS link
 ## Saved links (v0.10.0)
 
 **Saved links** keeps bookmarks grouped by category in `config/saved-links.json`. It travels with `config/` through Sync & backups. Do not save addresses that contain tokens; they are rejected by the secret scan.
+
+## Bundles (v0.11.0)
+
+Settings → *Export bundle* downloads `rumistack-bundle.json` with all seven profiles. On another laptop, Settings → *Import bundle…* validates the whole file, shows which profiles would change and backs up the current ones before replacing them (restore from Sync & backups). Bundles hold no keys or sessions, but do contain your repo and link lists, so treat the file like any personal config.

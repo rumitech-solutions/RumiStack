@@ -12,6 +12,9 @@ import { renderSkills } from './views/skills.js';
 import { renderAgents } from './views/agents.js';
 import { renderMcp } from './views/mcp.js';
 import { renderActivity } from './views/activity.js';
+import { renderSettings, showShortcuts } from './views/settings.js';
+import { THEMES, getTheme, setTheme, applyPrefs } from './prefs.js';
+applyPrefs();
 
 const VIEWS = [
   { id: 'overview', label: 'Overview', icon: 'home', group: 'Workspace', render: renderOverview },
@@ -25,36 +28,26 @@ const VIEWS = [
   { id: 'skills', label: 'Skills marketplace', icon: 'sparkles', group: 'Configure', render: renderSkills },
   { id: 'agents', label: 'Agent manager', icon: 'bot', group: 'Configure', render: renderAgents },
   { id: 'mcp', label: 'MCP servers', icon: 'plug', group: 'Configure', render: renderMcp },
-  { id: 'activity', label: 'Activity', icon: 'activity', group: 'System', render: renderActivity }
+  { id: 'activity', label: 'Activity', icon: 'activity', group: 'System', render: renderActivity },
+  { id: 'settings', label: 'Settings', icon: 'cpu', group: 'System', render: renderSettings }
 ];
 
 // ---------------------------------------------------------------- theme
-
-const THEMES = ['auto', 'light', 'dark'];
-function currentTheme() {
-  const t = document.documentElement.dataset.theme;
-  return t === 'light' || t === 'dark' ? t : 'auto';
-}
-function applyTheme(theme) {
-  if (theme === 'auto') delete document.documentElement.dataset.theme;
-  else document.documentElement.dataset.theme = theme;
-  try { if (theme === 'auto') localStorage.removeItem('rumistack-theme'); else localStorage.setItem('rumistack-theme', theme); } catch { /* storage unavailable */ }
-}
 
 // ---------------------------------------------------------------- shell
 
 const themeBtn = h('button', { class: 'icon-btn', type: 'button', onclick: cycleTheme });
 function paintThemeButton() {
-  const t = currentTheme();
+  const t = getTheme();
   themeBtn.replaceChildren(icon(t === 'light' ? 'sun' : t === 'dark' ? 'moon' : 'auto', 17));
   themeBtn.title = `Theme: ${t} (click to change)`;
   themeBtn.setAttribute('aria-label', `Theme: ${t}. Click to change.`);
 }
 function cycleTheme() {
-  applyTheme(THEMES[(THEMES.indexOf(currentTheme()) + 1) % THEMES.length]);
-  paintThemeButton();
-  toast(`Theme: ${currentTheme()}`);
+  setTheme(THEMES[(THEMES.indexOf(getTheme()) + 1) % THEMES.length]);
+  toast(`Theme: ${getTheme()}`);
 }
+document.addEventListener('rumistack-theme', () => paintThemeButton());
 
 const crumb = h('strong', {}, 'Overview');
 const statusPill = h('span', { class: 'status-pill', role: 'status' }, h('i'), 'Local server');
@@ -83,7 +76,9 @@ app.replaceChildren(h('div', { class: 'shell' },
       h('div', { class: 'crumbs' }, 'RumiStack', icon('chevron', 14), crumb),
       h('div', { class: 'spacer' }),
       h('button', { class: 'search-trigger', type: 'button', onclick: () => palette(), 'aria-label': 'Open command palette' }, icon('search', 16), h('span', {}, 'Search or jump to…'), h('kbd', {}, 'Ctrl K')),
-      themeBtn, statusPill),
+      themeBtn,
+      h('button', { class: 'icon-btn', type: 'button', title: 'Settings', 'aria-label': 'Settings', onclick: () => navigate('settings') }, icon('cpu', 17)),
+      statusPill),
     main)));
 paintThemeButton();
 
@@ -130,6 +125,8 @@ window.addEventListener('hashchange', show);
 // ---------------------------------------------------------------- palette + shortcuts
 
 const actions = [
+  { label: 'Keyboard shortcuts', icon: 'command', keywords: 'keys help hotkeys', run: showShortcuts },
+  { label: 'Export a bundle of all profiles', icon: 'download', keywords: 'backup move laptop', run: () => navigate('settings') },
   { label: 'Toggle theme (auto / light / dark)', icon: 'sun', keywords: 'dark light appearance', run: cycleTheme },
   { label: 'Check tools for updates', icon: 'refresh', keywords: 'outdated versions npm', run: () => navigate('catalogue', { check: '1' }) },
   { label: 'Apply a starter kit', icon: 'layers', keywords: 'bundle preset', run: () => navigate('device') },
@@ -137,9 +134,23 @@ const actions = [
   { label: 'Restore a config backup', icon: 'restore', keywords: 'undo rollback', run: () => navigate('sync') }
 ];
 function palette() { openPalette({ views: VIEWS, navigate, actions }); }
+const GO = { o: 'overview', c: 'catalogue', d: 'device', r: 'repos', l: 'links', s: 'sync', w: 'gateways', p: 'providers', k: 'skills', a: 'agents', m: 'mcp', h: 'activity' };
+let chord = null;
 window.addEventListener('keydown', (e) => {
-  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); palette(); }
-  else if (e.key === '/' && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName ?? '') && !document.querySelector('dialog[open]')) { e.preventDefault(); palette(); }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); palette(); return; }
+  const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName ?? '') || document.activeElement?.isContentEditable;
+  if (typing || e.ctrlKey || e.metaKey || e.altKey || document.querySelector('dialog[open]')) return;
+  if (chord) {
+    clearTimeout(chord);
+    chord = null;
+    const target = GO[e.key.toLowerCase()];
+    if (target) { e.preventDefault(); navigate(target); }
+    return;
+  }
+  if (e.key === '/') { e.preventDefault(); palette(); }
+  else if (e.key === '?') { e.preventDefault(); showShortcuts(); }
+  else if (e.key === 't') { cycleTheme(); }
+  else if (e.key === 'g') { chord = setTimeout(() => { chord = null; }, 1200); }
 });
 
 // ---------------------------------------------------------------- live status

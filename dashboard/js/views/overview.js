@@ -28,6 +28,7 @@ function healthRing(score) {
 }
 
 export async function renderOverview(root, { navigate }) {
+  const start = h('div', {});
   const hero = h('div', {});
   const stats = h('div', {});
   const checks = h('div', {});
@@ -39,7 +40,7 @@ export async function renderOverview(root, { navigate }) {
       iconName: 'home',
       actions: [h('button', { class: 'btn', type: 'button', onclick: () => navigate('overview') }, icon('refresh', 15), 'Refresh')]
     }),
-    hero, stats,
+    start, hero, stats,
     h('div', { class: 'two-col' },
       h('div', {}, h('h2', {}, icon('heart', 16), 'Health checks'), h('div', { class: 'panel' }, checks)),
       h('div', {}, h('h2', {}, icon('activity', 16), 'Recent activity'), h('div', { class: 'panel' }, recent),
@@ -54,6 +55,15 @@ export async function renderOverview(root, { navigate }) {
   let overviewPromise;
   const doctor = () => (doctorPromise ??= api('GET', '/api/doctor'));
   const overview = () => (overviewPromise ??= api('GET', '/api/overview'));
+
+  api('GET', '/api/progress').then((p) => {
+    if (p.done === p.total) return;
+    start.append(h('div', { class: 'panel', style: 'margin-bottom:18px' },
+      h('div', { class: 'row space' }, h('h2', { style: 'margin:0' }, icon('zap', 16), 'Getting started'), badge(`${p.done} of ${p.total} done`, 'accent')),
+      h('div', { class: 'progress', role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': String(p.total), 'aria-valuenow': String(p.done) }, h('i', { style: `width:${Math.round((p.done / p.total) * 100)}%` })),
+      h('div', { class: 'steps' }, p.steps.map((st) => h('div', { class: `step${st.done ? ' done' : ''}` }, statusIcon(st.done ? 'ok' : 'info'),
+        h('div', {}, h('b', {}, st.title), h('span', {}, st.detail), st.done ? null : h('button', { class: 'btn small', type: 'button', onclick: () => navigate(st.view) }, st.cta)))))));
+  }).catch(() => { /* the checklist is optional */ });
 
   loadInto(hero, doctor, (d) => {
     const fails = d.checks.filter((c) => c.status === 'fail').length;
