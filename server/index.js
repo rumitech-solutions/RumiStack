@@ -16,6 +16,7 @@ import { gitStatus, gitDiff, gitFetch, gitPull, gitCommitPush } from './lib/git.
 import { testProvider } from './lib/gateway.js';
 import { applyKit } from './lib/kits.js';
 import { runDoctor } from './lib/doctor.js';
+import { ensureWorkspace, workspaceInfo } from './lib/workspace.js';
 import { repoStatus, addRepo, cloneRepo, updateRepo, removeRepo } from './lib/repos.js';
 import { gatewayStatus, prepareGateway, gatewayUp, gatewayDown, gatewayLogs } from './lib/docker.js';
 
@@ -31,6 +32,7 @@ export async function createApp(options = {}) {
   const configDir = path.resolve(options.configDir ?? path.join(root, 'config'));
   const registry = await loadRegistry(options.registryRoot ?? REPO_ROOT);
   const store = createProfileStore(configDir, registry, { backupsDir: path.join(root, 'backups') });
+  const createdFolders = await ensureWorkspace(root, configDir);
   const activity = createActivityLog(root);
   const pkg = JSON.parse(await fs.readFile(path.join(REPO_ROOT, 'package.json'), 'utf8'));
   const dashboardDir = path.join(REPO_ROOT, 'dashboard');
@@ -159,6 +161,8 @@ export async function createApp(options = {}) {
       return result;
     },
 
+    'GET /api/workspace': async () => workspaceInfo(root, configDir),
+
     // ---- your own GitHub repositories (portable list + checkouts in sources/)
     'GET /api/repos': async () => repoStatus(root, await store.load('repos')),
     'POST /api/repos/add': async (req) => {
@@ -282,7 +286,7 @@ export async function createApp(options = {}) {
   });
 
   return {
-    server, root, configDir, registry,
+    server, root, configDir, registry, createdFolders,
     /** Always binds to loopback. Pass port 0 for an ephemeral port (tests). */
     listen(port = options.port ?? DEFAULT_PORT) {
       return new Promise((resolve, reject) => {
@@ -307,5 +311,7 @@ if (isMain) {
     console.error(err.code === 'EADDRINUSE' ? `Port ${port} is already in use. Is RumiStack already running? (set RUMISTACK_PORT to use another port)` : err);
     process.exit(1);
   }
+  console.log(`RumiStack workspace: ${app.root}`);
+  if (app.createdFolders.length) console.log(`Created folders: ${app.createdFolders.join(', ')}`);
   console.log(`RumiStack dashboard: http://127.0.0.1:${port}  (Ctrl+C to stop)`);
 }

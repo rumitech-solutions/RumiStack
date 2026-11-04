@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.1 — Workspace folders create themselves
+
+- The server now creates `config/`, `sources/`, `projects/`, `backups/`, `logs/` and `state/` on start, so `start.cmd` or `node server/index.js` works on a fresh clone without running `Setup-Workspace.ps1`. Existing folders are never touched.
+- The Repositories page shows the workspace structure and what each folder is for (`GET /api/workspace`).
+- Verification: 39 tests pass; started from an empty folder in the container and all six folders appeared. The Windows scripts were not run.
+
 ## 0.9.0 — Your own repositories and one-click start
 
 - New **Repositories** view: paste any `https://github.com/owner/repository` link; RumiStack clones it into `sources/<owner>-<repo>` and records it in a new portable profile, `config/repos.json`. On another laptop, pull the config and press *Clone missing*. Update is fast-forward only and skips checkouts with local changes. Remove only edits the list; the folder is kept.

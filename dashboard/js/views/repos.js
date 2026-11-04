@@ -2,6 +2,7 @@ import { h, api, attempt, icon, badge, avatar, confirmDialog, pageHeader, loadIn
 
 export async function renderRepos(root, { navigate }) {
   const box = h('div', {});
+  const structure = h('div', { class: 'panel' });
   const input = h('input', { type: 'url', placeholder: 'https://github.com/owner/repository', 'aria-label': 'GitHub repository link', autocomplete: 'off', spellcheck: 'false' });
   const addBtn = h('button', { class: 'btn primary', type: 'button' }, icon('plus', 15), 'Add & clone');
 
@@ -23,9 +24,12 @@ export async function renderRepos(root, { navigate }) {
       h('div', { class: 'row', style: 'gap:10px;align-items:stretch' }, h('div', { class: 'search-field', style: 'flex:1' }, icon('git', 16), input), addBtn),
       h('p', { class: 'faint', style: 'margin:10px 0 0' }, 'Public repositories and private ones your Git sign-in can access. Cloned code is never run by RumiStack.')),
     h('div', { style: 'height:18px' }),
-    box
+    box,
+    h('h2', {}, icon('layers', 16), 'Workspace structure'),
+    structure
   );
 
+  drawStructure(structure);
   await loadInto(box, () => api('GET', '/api/repos'), ({ folder, repos }) => {
     const missing = repos.filter((r) => !r.cloned);
     const out = [h('div', { class: 'row space', style: 'margin-bottom:10px;flex-wrap:wrap' },
@@ -57,4 +61,13 @@ export async function renderRepos(root, { navigate }) {
         } }, icon('trash', 13), 'Remove'))))));
     return out;
   });
+}
+
+export async function drawStructure(target) {
+  await loadInto(target, () => api('GET', '/api/workspace'), ({ root, folders }) => [
+    h('p', { class: 'muted', style: 'margin:0 0 10px' }, 'Created automatically when RumiStack starts. Everything lives under one folder:'),
+    h('div', { class: 'code' }, h('div', { class: 'code-bar' }, h('span', {}, 'workspace'), null),
+      h('pre', {}, [root, ...folders.map((f, i) => `${i === folders.length - 1 ? '└── ' : '├── '}${f.name}${f.synced ? '  (synced via Git)' : ''}  ${f.items ? `· ${f.items} item(s)` : '· empty'}`)].join('\n'))),
+    h('dl', { class: 'kv', style: 'margin-top:12px' }, folders.flatMap((f) => [h('dt', {}, f.name), h('dd', {}, f.purpose)]))
+  ]);
 }

@@ -1,6 +1,8 @@
 import test, { before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { startTestServer } from './helpers.js';
+import path from 'node:path';
+import { promises as fs } from 'node:fs';
 
 let s;
 before(async () => { s = await startTestServer(); });
@@ -205,4 +207,16 @@ test('unknown routes and oversized bodies', async () => {
   assert.equal((await s.get('/api/unknown')).status, 404);
   const big = await s.raw('PUT', '/api/profile', { 'Content-Type': 'application/json' }, JSON.stringify({ x: 'a'.repeat(300 * 1024) }));
   assert.equal(big.status, 413);
+});
+
+test('workspace folders are created automatically and described by the API', async () => {
+  const t = await startTestServer();
+  try {
+    const ws = (await t.get('/api/workspace')).json;
+    assert.deepEqual(ws.folders.map((f) => f.name), ['config', 'sources', 'projects', 'backups', 'logs', 'state']);
+    assert.ok(ws.folders.every((f) => f.exists));
+    for (const name of ['sources', 'projects', 'backups', 'logs', 'state', 'config']) {
+      assert.ok((await fs.stat(path.join(t.dir, name))).isDirectory(), name);
+    }
+  } finally { await t.close(); }
 });
