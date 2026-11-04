@@ -2,6 +2,7 @@
 
 import { findCommand } from './system.js';
 import { FILES } from './profiles.js';
+import { dockerAvailability } from './docker.js';
 
 export async function runDoctor({ store, overview, gitState, sources }) {
   const checks = [];
@@ -23,6 +24,11 @@ export async function runDoctor({ store, overview, gitState, sources }) {
   for (const [cmd, label, why] of [['gh', 'GitHub CLI', 'only needed for Publish-To-GitHub.ps1'], ['docker', 'Docker', 'needed for self-hosted gateways'], ['code', 'VS Code command', 'needed to restore VS Code extensions']]) {
     const found = await findCommand(cmd);
     add(cmd, label, found ? 'ok' : 'info', found ? `Found at ${found}.` : `Not found (${why}).`);
+  }
+  if (await findCommand('docker')) {
+    const d = await dockerAvailability();
+    if (!d.compose) add('docker-compose', 'Docker Compose', 'warn', 'The compose plugin was not found; gateways cannot be started from the dashboard.', 'Update Docker Desktop');
+    else add('docker-daemon', 'Docker engine running', d.daemon ? 'ok' : 'info', d.daemon ? `Engine ${d.engineVersion}.` : 'Docker is installed but the engine is not running. Start Docker Desktop before using Gateways.');
   }
   if (isWindows) {
     const winget = await findCommand('winget');

@@ -6,6 +6,10 @@ RumiStack is a local-first control center for managing AI coding assistants, mod
 
 RumiStack does **not** merge third-party projects into one application. Each upstream tool keeps its own repository, licence, release cycle and configuration.
 
+## What's new in v0.8.0
+
+- **Gateways (Docker)**: start, stop and inspect FreeLLMAPI and OmniRoute from their own upstream compose files, bound to `127.0.0.1`. See [`docs/GATEWAYS.md`](docs/GATEWAYS.md).
+
 ## What's new in v0.7.0
 
 - Premium dashboard: dark/light/auto themes, command palette (`Ctrl K`), health score, responsive layout.

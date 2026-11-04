@@ -16,6 +16,7 @@ import { gitStatus, gitDiff, gitFetch, gitPull, gitCommitPush } from './lib/git.
 import { testProvider } from './lib/gateway.js';
 import { applyKit } from './lib/kits.js';
 import { runDoctor } from './lib/doctor.js';
+import { gatewayStatus, prepareGateway, gatewayUp, gatewayDown, gatewayLogs } from './lib/docker.js';
 
 export const DEFAULT_PORT = 47821;
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml' };
@@ -156,6 +157,25 @@ export async function createApp(options = {}) {
       await activity.log('launch', result.id);
       return result;
     },
+
+    // ---- docker gateways (upstream compose files, fixed arguments)
+    'GET /api/gateways': async () => gatewayStatus(root, registry),
+    'POST /api/gateways/prepare': async (req) => {
+      const result = await prepareGateway(root, registry, assertId((await body(req)).id, 'id'));
+      await activity.log('gateway:prepare', `${result.id}: ${result.created ? 'created .env' : '.env already existed'}`);
+      return result;
+    },
+    'POST /api/gateways/up': async (req) => {
+      const result = await gatewayUp(root, registry, assertId((await body(req)).id, 'id'));
+      await activity.log('gateway:start', result.id);
+      return result;
+    },
+    'POST /api/gateways/down': async (req) => {
+      const result = await gatewayDown(root, registry, assertId((await body(req)).id, 'id'));
+      await activity.log('gateway:stop', result.id);
+      return result;
+    },
+    'POST /api/gateways/logs': async (req) => gatewayLogs(root, registry, assertId((await body(req)).id, 'id')),
 
     // ---- sync (git), backups, activity, health
     'GET /api/git/status': async () => gitStatus(root),

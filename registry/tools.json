@@ -85,7 +85,12 @@
       "docs": "https://github.com/tashfeenahmed/freellmapi#readme",
       "command": null,
       "install": { "type": "manual", "note": "Self-hosted service. Follow the upstream README; review its install scripts before running them." },
-      "clone": true
+      "clone": true,
+      "docker": {
+        "compose": "docker-compose.yml", "env": ".env", "envExample": ".env.example", "profile": null,
+        "url": "http://127.0.0.1:3001", "generate": ["ENCRYPTION_KEY"], "bindKeys": ["HOST_BIND"],
+        "note": "Uses the upstream docker-compose.yml. Its optional Watchtower self-update profile is never started from here because it needs the Docker socket."
+      }
     },
     {
       "id": "omniroute",
@@ -96,7 +101,12 @@
       "docs": "https://github.com/diegosouzapw/OmniRoute#readme",
       "command": null,
       "install": { "type": "manual", "note": "Self-hosted service. Follow the upstream README; several forks exist, so confirm you are using the project you intend." },
-      "clone": true
+      "clone": true,
+      "docker": {
+        "compose": "docker-compose.yml", "env": ".env", "envExample": ".env.example", "profile": "base",
+        "url": "http://127.0.0.1:20128", "generate": [], "bindKeys": ["APP_BIND_HOST"],
+        "note": "Runs the upstream \"base\" profile and builds the image locally on first start, which takes a while. Review .env before starting: the upstream example ships with REQUIRE_API_KEY=false. The \"cli\" profile is not offered because it mounts the Docker socket."
+      }
     },
     {
       "id": "litellm",

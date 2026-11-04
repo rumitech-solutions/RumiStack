@@ -62,6 +62,15 @@ for (const t of tools.tools) {
   if (t.install?.type === 'npm' && !NPM_RE.test(t.install.package ?? '')) fail(`${at}: invalid npm package name`);
   if (t.install?.type === 'winget' && !WINGET_RE.test(t.install.package ?? '')) fail(`${at}: invalid winget id`);
   if (t.install?.type === 'manual' && !t.install.note) fail(`${at}: manual installs need a note`);
+  if (t.docker) {
+    const d = t.docker;
+    if (!t.clone) fail(`${at}: docker entries need "clone": true (compose files come from sources/)`);
+    for (const k of ['compose', 'env', 'envExample']) if (!/^[A-Za-z0-9._-]{1,64}$/.test(d[k] ?? '')) fail(`${at}: docker.${k} must be a plain file name`);
+    if (d.profile !== null && !/^[a-z0-9-]{1,32}$/.test(d.profile ?? '')) fail(`${at}: docker.profile must be null or a plain profile name`);
+    if (d.profile === 'cli') fail(`${at}: the cli profile mounts the Docker socket and must not be offered`);
+    if (!/^http:\/\/127\.0\.0\.1:\d{2,5}$/.test(d.url ?? '')) fail(`${at}: docker.url must be a loopback http URL`);
+    for (const k of [...(d.generate ?? []), ...(d.bindKeys ?? [])]) if (!/^[A-Z][A-Z0-9_]{0,63}$/.test(k)) fail(`${at}: invalid env key "${k}"`);
+  }
   if (t.clone && !/^https:\/\/github\.com\/[\w.-]+\/[\w.-]+$/.test(t.repo)) fail(`${at}: clone allowlist requires a github.com HTTPS repo URL`);
   if (t.command !== null && !/^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/.test(t.command ?? '')) fail(`${at}: invalid command`);
 }

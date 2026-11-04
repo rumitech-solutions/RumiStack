@@ -22,6 +22,7 @@ Only fixed operations in `server/lib/system.js`:
 | Version check | `<command> --version` for registry commands, and `npm view <package> version` for registry npm packages |
 | Git sync | Fixed arguments only: `status`, `diff`, `fetch`, `pull --ff-only`, `add -- config`, `commit -- config`, `push`. Never force, rebase or reset. Only `config/` is ever committed; commit messages are single-line and secret-scanned |
 | Provider test | One `GET <profile URL>/models` request (see below) |
+| Gateway containers | `docker compose [--profile <registry profile>] up -d \| down \| ps \| logs` in `sources/<id>`, only for registry entries with a `docker` block. Never `-v`, never the `cli` profile, never auto-update profiles. See [`GATEWAYS.md`](GATEWAYS.md) |
 | Launch assistant | A registry entry flagged `launchable`, found on PATH, opened in `projects/`. Windows only |
 
 Child processes are started without a shell. There is no endpoint that accepts a command line, a path or a Git URL from the browser.

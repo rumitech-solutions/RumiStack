@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.0 — Docker gateways
+
+- New **Gateways (Docker)** view: prepare `.env`, start, stop and read logs for FreeLLMAPI and OmniRoute using their own upstream compose files (see `docs/GATEWAYS.md`).
+- Safety: fixed `docker compose` arguments, no volume removal, no `cli` or auto-update profiles, warning when `.env` publishes beyond `127.0.0.1`, generated secrets never returned or logged. `npm run check` now validates `docker` registry blocks.
+- Doctor reports Docker engine / Compose availability.
+- Verification: 35 tests pass, including a full lifecycle against a fake `docker` executable; the new view was exercised in headless Chromium without console errors.
+- **Not verified**: a real Docker engine and the real upstream images. Upstream compose layouts were read on 2026-11-04 and may change.
+
 ## 0.7.0 — Premium dashboard and sync
 
 - Redesigned the dashboard ("Aurora"): dark, light and auto themes, command palette (`Ctrl K`), health ring, toasts, skeleton loading, staggered entrances, inline SVG icons, responsive layout. Still no build step and still CSP-clean (no inline script or style attributes).
