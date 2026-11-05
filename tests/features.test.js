@@ -86,3 +86,42 @@ test('prompts: library validation and persistence', async () => {
     assert.equal((await t.get('/api/prompts')).json.prompts.length, 1);
   } finally { await t.close(); }
 });
+
+test('favourites: toggle, limit, validation and survival through profile saves', async () => {
+  const t = await startTestServer();
+  try {
+    assert.deepEqual((await t.get('/api/profile')).json.profile.favorites, []);
+    assert.deepEqual((await t.post('/api/favorites/toggle', { id: 'git' })).json, { favorites: ['git'], favorite: true });
+    assert.deepEqual((await t.post('/api/favorites/toggle', { id: 'claude-code' })).json.favorites, ['git', 'claude-code']);
+    assert.equal((await t.post('/api/favorites/toggle', { id: 'no-such-tool' })).status, 400);
+    assert.equal((await t.post('/api/favorites/toggle', { id: '../x' })).status, 400);
+    assert.equal((await t.post('/api/favorites/toggle', { id: 'git', extra: 1 })).status, 400);
+    // applying a kit must not drop favourites
+    await t.post('/api/kits/apply', { id: 'web-dev' });
+    assert.deepEqual((await t.get('/api/profile')).json.profile.favorites, ['git', 'claude-code']);
+    assert.equal((await t.post('/api/favorites/toggle', { id: 'git' })).json.favorite, false);
+    // limit of 12
+    const ids = (await t.get('/api/registry/tools')).json.tools.map((x) => x.id).slice(0, 13);
+    const over = await t.put('/api/profile', { schemaVersion: 1, tools: [], sources: [], vscodeExtensions: [], favorites: ids });
+    assert.equal(over.status, 400);
+  } finally { await t.close(); }
+});
+
+test('test-all providers reports each profile without exposing keys', async () => {
+  const t = await startTestServer();
+  const secret = 'sk-test-ALLKEYS-9876543210abcdef';
+  process.env.RUMISTACK_TEST_ALL_KEY = secret;
+  try {
+    assert.deepEqual((await t.post('/api/providers/test-all')).json.results, []);
+    await t.put('/api/providers', { schemaVersion: 1, profiles: [
+      { id: 'dead', name: 'Dead gateway', preset: 'custom', baseUrl: 'http://127.0.0.1:1/v1', model: 'm', apiKeyEnv: 'RUMISTACK_TEST_ALL_KEY', protocols: ['openai-chat'] }
+    ] });
+    const res = await t.post('/api/providers/test-all');
+    assert.equal(res.status, 200);
+    assert.equal(res.json.results.length, 1);
+    assert.equal(res.json.results[0].ok, false);
+    assert.equal(res.json.results[0].keySet, true);
+    assert.match(res.json.results[0].message, /refused|Request failed/);
+    assert.ok(!res.text.includes(secret));
+  } finally { delete process.env.RUMISTACK_TEST_ALL_KEY; await t.close(); }
+});

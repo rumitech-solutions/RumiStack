@@ -6,6 +6,10 @@ RumiStack is a local-first control center for managing AI coding assistants, mod
 
 RumiStack does **not** merge third-party projects into one application. Each upstream tool keeps its own repository, licence, release cycle and configuration.
 
+## What's new in v0.13.0
+
+- **Favourites** (star tools, quick-launch row on Overview) and **Test all** providers in one table.
+
 ## What's new in v0.12.0
 
 - **Keys** (which API-key variables are set on this laptop, never their values), **Projects** (new project with starter files, open in VS Code or an assistant) and a **Prompt library** with fill-in placeholders.

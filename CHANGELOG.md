@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.0 — Favourites and Test all
+
+- **Favourites**: star up to 12 tools in the Catalogue; they appear as a quick-launch row on Overview (Launch for installed assistants, otherwise a shortcut to the catalogue entry). Stored as `favorites` in the portable device profile, so they sync with everything else; applying a kit or saving the Device sync form keeps them.
+- **Test all** in Provider manager: checks every saved provider profile (a few at a time) and shows reachable/failed, latency and the reason in one table. Keys are read from the server environment exactly as in the single test and are never returned (asserted by a test).
+- Verification: 48 tests pass; exercised in headless Chromium (starring, Overview row, Test all against an unreachable gateway, no console errors).
+
 ## 0.12.0 — Keys, Projects, Prompt library
 
 - **Keys**: lists every API-key environment variable referenced by your provider and MCP profiles and whether it is set on this laptop, with a copyable PowerShell command for each missing one. Only names and set/not-set are reported; values and lengths never leave the server process (a test asserts this). The doctor gets a matching informational check.

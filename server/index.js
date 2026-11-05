@@ -79,6 +79,16 @@ export async function createApp(options = {}) {
     // ---- device profile
     'GET /api/profile': async () => ({ profile: await store.load('device') }),
     'PUT /api/profile': async (req) => ({ profile: await saver('device', (p) => `${p.tools.length} tools, ${p.sources.length} sources`)(req) }),
+    'POST /api/favorites/toggle': async (req) => {
+      const input = await body(req);
+      rejectUnknown(input, ['id'], 'request');
+      const id = assertId(input.id, 'id');
+      const device = await store.load('device');
+      const has = device.favorites.includes(id);
+      const saved = await store.save('device', { ...device, favorites: has ? device.favorites.filter((f) => f !== id) : [...device.favorites, id] });
+      await activity.log('favorite', `${id}: ${has ? 'removed' : 'added'}`);
+      return { favorites: saved.favorites, favorite: !has };
+    },
     'GET /api/profile/export': async () => ({ __download: 'portable-profile.json', data: await store.load('device') }),
     'GET /api/overview': async () => {
       const [profile, statuses] = await Promise.all([store.load('device'), toolStatuses(registry.tools.tools)]);
@@ -121,6 +131,19 @@ export async function createApp(options = {}) {
       const result = await testProvider(profile);
       await activity.log('test:provider', `${profile.id}: ${result.ok ? 'ok' : 'failed'}${result.status ? ` (HTTP ${result.status})` : ''}`);
       return result;
+    },
+
+    'POST /api/providers/test-all': async () => {
+      const { profiles } = await store.load('providers');
+      const results = [];
+      for (let i = 0; i < profiles.length; i += 4) { // a few at a time, so a slow gateway does not hold up the rest
+        results.push(...await Promise.all(profiles.slice(i, i + 4).map(async (p) => {
+          const r = await testProvider(p);
+          return { id: p.id, name: p.name, ok: r.ok, status: r.status, latencyMs: r.latencyMs, modelCount: r.modelCount, keySet: r.keySet, message: r.message };
+        })));
+      }
+      await activity.log('test:provider', `all: ${results.filter((r) => r.ok).length} of ${results.length} reachable`);
+      return { results };
     },
 
     // ---- skills

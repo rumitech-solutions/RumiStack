@@ -1,4 +1,4 @@
-import { h, api, icon, badge, codeBlock, loadInto, pageHeader, statusIcon, timeAgo, emptyState } from '../core.js';
+import { h, api, attempt, avatar, icon, badge, codeBlock, loadInto, pageHeader, statusIcon, timeAgo, emptyState } from '../core.js';
 import { svgEl } from '../icons.js';
 
 const ACTIVITY_ICON = { save: 'save', git: 'git', kit: 'layers', backup: 'restore', source: 'download', launch: 'play', test: 'zap', check: 'refresh' };
@@ -29,6 +29,7 @@ function healthRing(score) {
 
 export async function renderOverview(root, { navigate }) {
   const start = h('div', {});
+  const favs = h('div', {});
   const hero = h('div', {});
   const stats = h('div', {});
   const checks = h('div', {});
@@ -40,7 +41,7 @@ export async function renderOverview(root, { navigate }) {
       iconName: 'home',
       actions: [h('button', { class: 'btn', type: 'button', onclick: () => navigate('overview') }, icon('refresh', 15), 'Refresh')]
     }),
-    start, hero, stats,
+    start, favs, hero, stats,
     h('div', { class: 'two-col' },
       h('div', {}, h('h2', {}, icon('heart', 16), 'Health checks'), h('div', { class: 'panel' }, checks)),
       h('div', {}, h('h2', {}, icon('activity', 16), 'Recent activity'), h('div', { class: 'panel' }, recent),
@@ -64,6 +65,22 @@ export async function renderOverview(root, { navigate }) {
       h('div', { class: 'steps' }, p.steps.map((st) => h('div', { class: `step${st.done ? ' done' : ''}` }, statusIcon(st.done ? 'ok' : 'info'),
         h('div', {}, h('b', {}, st.title), h('span', {}, st.detail), st.done ? null : h('button', { class: 'btn small', type: 'button', onclick: () => navigate(st.view) }, st.cta)))))));
   }).catch(() => { /* the checklist is optional */ });
+
+  Promise.all([api('GET', '/api/profile'), api('GET', '/api/registry/tools'), api('GET', '/api/tools/status')]).then(([prof, reg, st]) => {
+    const tools = new Map(reg.tools.map((t) => [t.id, t]));
+    const items = (prof.profile.favorites ?? []).map((id) => tools.get(id)).filter(Boolean);
+    if (items.length === 0) return;
+    favs.append(h('div', { style: 'margin-bottom:18px' }, h('h2', { style: 'margin-top:0' }, icon('star', 16), 'Favourites'),
+      h('div', { class: 'fav-row' }, items.map((t) => {
+        const status = st.statuses[t.id] ?? {};
+        const launch = t.launchable && status.installed;
+        return h('div', { class: 'fav' }, avatar(t.id, t.name, 34),
+          h('div', {}, h('b', {}, t.name), h('small', {}, status.installed ? 'installed' : status.installed === false ? 'not installed' : 'manual')),
+          launch
+            ? h('button', { class: 'btn small primary', type: 'button', onclick: () => attempt(() => api('POST', '/api/launch', { id: t.id }), `Opened ${t.name} in projects/`) }, icon('play', 12), 'Launch')
+            : h('button', { class: 'btn small', type: 'button', onclick: () => navigate('catalogue', { q: t.name }) }, 'Open'));
+      }))));
+  }).catch(() => { /* favourites are optional */ });
 
   loadInto(hero, doctor, (d) => {
     const fails = d.checks.filter((c) => c.status === 'fail').length;

@@ -22,7 +22,7 @@ export const FILES = {
 };
 
 const EMPTY = {
-  device: { schemaVersion: 1, tools: [], sources: [], vscodeExtensions: [] },
+  device: { schemaVersion: 1, tools: [], sources: [], vscodeExtensions: [], favorites: [] },
   providers: { schemaVersion: 1, profiles: [] },
   skills: { schemaVersion: 1, selections: [] },
   agents: { schemaVersion: 1, profiles: [] },
@@ -40,7 +40,7 @@ export const SKILL_SCOPES = ['global', 'project'];
 
 export function validateDevice(input, registry) {
   assertObject(input, 'profile');
-  rejectUnknown(input, ['schemaVersion', 'tools', 'sources', 'vscodeExtensions'], 'profile');
+  rejectUnknown(input, ['schemaVersion', 'tools', 'sources', 'vscodeExtensions', 'favorites'], 'profile');
   assertSchemaVersion(input, 'profile');
   scanForSecrets(input, 'profile');
 
@@ -69,7 +69,14 @@ export function validateDevice(input, registry) {
   });
   assertUnique(vscodeExtensions.map((e) => e.toLowerCase()), 'profile.vscodeExtensions');
 
-  return { schemaVersion: 1, tools, sources, vscodeExtensions };
+  const favorites = assertArray(input.favorites ?? [], 'profile.favorites', { max: 12 }).map((id) => {
+    assertId(id, 'profile.favorites[]');
+    if (!toolIds.has(id)) throw new ValidationError(`profile.favorites contains unknown tool "${id}".`);
+    return id;
+  });
+  assertUnique(favorites, 'profile.favorites');
+
+  return { schemaVersion: 1, tools, sources, vscodeExtensions, favorites };
 }
 
 // ---------------------------------------------------------------- providers

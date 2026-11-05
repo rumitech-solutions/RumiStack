@@ -83,7 +83,8 @@ export async function renderDevice(root, { navigate }) {
       schemaVersion: 1,
       tools: readChecked(toolBox, 'tools'),
       sources: readChecked(sourceBox, 'sources'),
-      vscodeExtensions: extBox.value.split(/\r?\n/).map((l) => l.trim()).filter(Boolean)
+      vscodeExtensions: extBox.value.split(/\r?\n/).map((l) => l.trim()).filter(Boolean),
+      favorites: profile.favorites ?? []
     };
   }
 
@@ -97,7 +98,7 @@ export async function renderDevice(root, { navigate }) {
     if (!file) return;
     try {
       const parsed = JSON.parse(await file.text());
-      profile = { schemaVersion: 1, tools: parsed.tools ?? [], sources: parsed.sources ?? [], vscodeExtensions: parsed.vscodeExtensions ?? [] };
+      profile = { schemaVersion: 1, tools: parsed.tools ?? [], sources: parsed.sources ?? [], vscodeExtensions: parsed.vscodeExtensions ?? [], favorites: parsed.favorites ?? profile.favorites ?? [] };
       paint();
       toast('Imported into the form. Review it, then press Save profile (the server validates it).', 'info');
     } catch {

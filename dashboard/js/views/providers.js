@@ -1,4 +1,4 @@
-import { h, api, attempt, field, checkboxes, readChecked, pageHeader, codeBlock, notes, badge, toast, icon, fill } from '../core.js';
+import { h, api, attempt, field, checkboxes, readChecked, pageHeader, codeBlock, notes, badge, toast, icon, fill, modal } from '../core.js';
 
 export async function renderProviders(root) {
   const data = await api('GET', '/api/providers');
@@ -109,7 +109,25 @@ export async function renderProviders(root) {
   }
 
   root.append(
-    ...pageHeader('Provider manager', 'Gateway profiles hold URLs, model IDs and the NAME of the environment variable that carries your key. Never the key itself.', { iconName: 'server' }),
+    ...pageHeader('Provider manager', 'Gateway profiles hold URLs, model IDs and the NAME of the environment variable that carries your key. Never the key itself.', {
+      iconName: 'server',
+      actions: [h('button', { class: 'btn', type: 'button', onclick: async (e) => {
+        const btn = e.currentTarget;
+        btn.disabled = true;
+        const res = await attempt(() => api('POST', '/api/providers/test-all'));
+        btn.disabled = false;
+        if (!res) return;
+        if (res.results.length === 0) { toast('Save at least one provider profile first.', 'info'); return; }
+        await modal({
+          title: 'Test all providers', wide: true,
+          body: h('div', { class: 'table-wrap' }, h('table', {}, h('tbody', {}, res.results.map((r) => h('tr', {},
+            h('td', {}, h('strong', {}, r.name)), h('td', {}, r.ok ? badge('reachable', 'ok') : badge('failed', 'warn')),
+            h('td', {}, r.latencyMs != null ? `${r.latencyMs} ms` : '—'),
+            h('td', { class: 'muted' }, r.ok ? `${r.modelCount ?? 0} model(s)` : r.message)))))),
+          actions: [{ label: 'Close', value: true, kind: 'primary' }]
+        });
+      } }, icon('zap', 15), 'Test all')]
+    }),
     h('div', { class: 'notice' }, 'Open-source routers are not free inference: every upstream provider has its own quota, terms and pricing, and free tiers change often.'),
     h('h2', {}, 'Saved profiles'), listBox,
     h('div', { class: 'panel' },

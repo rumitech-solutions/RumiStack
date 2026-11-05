@@ -7,6 +7,7 @@ export async function renderCatalogue(root, { params }) {
     api('GET', '/api/tools/status'),
     api('GET', '/api/sources')
   ]);
+  const favorites = new Set((await api('GET', '/api/profile')).profile.favorites ?? []);
   const statuses = st.statuses;
   const sources = new Map(src.sources.map((s) => [s.id, s]));
   let versions = {};
@@ -48,6 +49,25 @@ export async function renderCatalogue(root, { params }) {
       outdated ? badge('update available', 'warn') : cur && lat ? badge('up to date', 'ok') : null);
   }
 
+  function starButton(tool) {
+    const btn = h('button', { class: 'icon-btn star', type: 'button', onclick: async () => {
+      const res = await attempt(() => api('POST', '/api/favorites/toggle', { id: tool.id }));
+      if (!res) return;
+      if (res.favorite) favorites.add(tool.id); else favorites.delete(tool.id);
+      paint();
+      toast(res.favorite ? `${tool.name} added to Favourites` : `${tool.name} removed from Favourites`, 'ok');
+    } });
+    const paint = () => {
+      const on = favorites.has(tool.id);
+      btn.setAttribute('aria-pressed', String(on));
+      btn.title = on ? 'Remove from Favourites' : 'Add to Favourites (max 12)';
+      btn.setAttribute('aria-label', btn.title);
+      btn.replaceChildren(icon('star', 16));
+    };
+    paint();
+    return btn;
+  }
+
   function card(tool) {
     const status = statuses[tool.id];
     const cmd = installCommand(tool);
@@ -59,7 +79,7 @@ export async function renderCatalogue(root, { params }) {
     return h('article', { class: 'card' },
       h('div', { class: 'card-head' }, avatar(tool.id, tool.name),
         h('div', {}, h('h3', {}, tool.name), h('div', { class: 'faint', style: 'font-size:12px' }, tool.category)),
-        status.installed === true ? badge('installed', 'ok') : status.installed === false ? badge('not installed') : badge(tool.command ? 'unknown' : 'manual', 'info')),
+        h('div', { class: 'row', style: 'gap:6px' }, status.installed === true ? badge('installed', 'ok') : status.installed === false ? badge('not installed') : badge(tool.command ? 'unknown' : 'manual', 'info'), starButton(tool))),
       h('p', {}, tool.description),
       versionLine(tool),
       tool.install.note ? h('p', { class: 'faint' }, tool.install.note) : null,
