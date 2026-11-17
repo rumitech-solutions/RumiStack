@@ -16,10 +16,10 @@ const guides = [
     title: '⚡ Model gateways: FreeLLMAPI & OmniRoute',
     description: 'Gateways connect coding assistants to model providers. They are separate services/repositories — Docker is not required by RumiStack.',
     steps: [
-      ['1. Get the repository', 'Open Tool library → Model & API gateways and use Clone repository on FreeLLMAPI or OmniRoute. This only downloads the source; it does not execute it.'],
-      ['2. Install using the upstream guide', 'Open the project README and follow its current Windows/Node/Python setup instructions. Review scripts and environment examples before running them.'],
-      ['3. Start the service', 'Start it using the upstream documented command. Keep its terminal open and confirm the local API endpoint is responding.'],
-      ['4. Connect it to your assistant', 'Open AI providers, choose the matching preset, enter the local Base URL and model, then save and test the connection. Store API keys in environment variables, not in a profile.']
+      ['1. Import or register the project', 'Open Projects. Import the GitHub repository into a folder you choose, or register an existing local folder if you already installed it. Registering does not move or overwrite files.'],
+      ['2. Install dependencies', 'For supported Node projects, use the Project Hub Install action after reviewing the detected package manager. For other runtimes, follow the upstream Windows installation guide.'],
+      ['3. Start and inspect', 'Use the Project Hub Start action for a detected Node script, or start it with the upstream documented command. Check Logs and confirm the local API endpoint responds.'],
+      ['4. Connect it to your assistant', 'Open AI providers, choose the FreeLLMAPI or OmniRoute preset, confirm the Base URL and model shown by your running service, then save and test the connection. Keep API key values in environment variables.']
     ],
     action: ['Configure AI provider', 'providers']
   },
