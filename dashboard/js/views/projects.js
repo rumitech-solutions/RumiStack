@@ -10,6 +10,7 @@ export async function renderProjects(root, { navigate }) {
   const launchable = reg.tools.filter((t) => t.launchable);
   const repoUrl = h('input', { type: 'url', placeholder: 'https://github.com/owner/repository', autocomplete: 'off', spellcheck: 'false' });
   const destination = h('input', { type: 'text', value: `${meta.root}${windows ? '\\' : '/'}projects`, placeholder: windows ? 'D:\\RumiStack\\projects' : '/home/user/projects' });
+  const driveSelect = h('select', { hidden: true, onchange: () => { destination.value = driveSelect.value + 'RumiStack' + (windows ? String.fromCharCode(92) : '/') + 'projects'; } });
   const folderName = h('input', { type: 'text', placeholder: 'Optional folder name (defaults to repository name)' });
   const importBtn = h('button', { class: 'btn primary', type: 'button', onclick: async () => {
     if (!repoUrl.value.trim() || !destination.value.trim()) return toast('Enter a GitHub URL and destination folder.', 'error');
