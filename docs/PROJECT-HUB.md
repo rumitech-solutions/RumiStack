@@ -1,8 +1,8 @@
-# Project Hub
+# 📁 Project Hub
 
 Project Hub extends Dashboard → Projects. It is intended for day-to-day web development while remaining useful as a library for non-web repositories.
 
-## Import and storage
+## 📥 Import and storage
 
 1. Paste a GitHub HTTPS repository URL.
 2. Choose a destination drive and folder. On Windows, the drive selector lists detected drives; the full destination path remains editable. Example: `E:\\WebProjects`.
@@ -13,7 +13,7 @@ The default destination is `<RumiStack>\\projects`. You can choose another drive
 
 Use **Register existing project** to add a folder already on disk. This does not copy, move or rewrite its source files. Unregister removes only the Project Hub record; it never deletes the folder.
 
-## Web projects
+## 🌐 Web projects
 
 Project Hub reads `package.json`, lockfiles and common framework dependencies to identify likely web projects and package managers:
 
@@ -27,13 +27,13 @@ Project Hub reads `package.json`, lockfiles and common framework dependencies to
 
 **Stop** terminates the tracked process tree (Windows uses taskkill /T /F; POSIX uses the process group). The process registry is in memory, so after restarting RumiStack, a process started before the restart may need to be stopped manually from Task Manager or the operating system.
 
-## Non-web projects and Docker
+## 🧱 Non-web projects and Docker
 
 Non-web repositories can still be imported and organized at the chosen destination. If a Node.js package exposes scripts, Project Hub can run them; otherwise the folder remains registered and available to open in an editor or terminal.
 
 Docker is optional and is not required for importing, organizing or running ordinary Node.js web projects. Existing Docker gateway controls remain separate.
 
-## Safety and limitations
+## 🛡️ Safety and limitations
 
 - The dashboard is loopback-only and its mutation APIs retain the existing host/origin protections.
 - GitHub imports accept normalized GitHub HTTPS repository URLs only.
