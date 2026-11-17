@@ -1,27 +1,48 @@
-# 🐳 Gateways in Docker
+# ⚡ Model Gateway Setup (FreeLLMAPI & OmniRoute)
 
-The **Gateways (Docker)** view starts and stops self-hosted gateways (FreeLLMAPI, OmniRoute) using **their own upstream `docker-compose.yml`**. RumiStack does not ship or edit compose files, so you always run what the upstream project documents.
+RumiStack treats **FreeLLMAPI** and **OmniRoute** as ordinary source repositories and local services. Docker is not required by RumiStack for either workflow.
 
-## 📋 Requirements
+## 🧭 Understand the pieces
 
-- Docker Desktop (`winget install --id Docker.DockerDesktop --exact`), started, with the compose plugin.
-- The gateway cloned into `sources/<id>` (Catalogue → *Clone source*, or apply the *Free-tier gateway* kit).
+- **AI coding platform:** Claude Code, OpenCode, Codex CLI, Gemini CLI, Aider or Cline — the tool you use to work on code.
+- **Model gateway:** FreeLLMAPI or OmniRoute — a local API endpoint that connects an assistant to one or more model providers.
+- **Provider profile:** The connection details saved in RumiStack → AI providers.
 
-## 🚀 Flow
+You can use a coding assistant without a gateway. Add a gateway only when you need one.
 
-1. **Prepare .env** copies the upstream `.env.example` to `.env` (never overwrites an existing one). For FreeLLMAPI a random `ENCRYPTION_KEY` is generated locally; it is never returned to the browser or written to the activity log. **Review the file before starting.**
-2. **Start** runs `docker compose up -d` (OmniRoute: `--profile base`). The first start downloads or builds images and can take several minutes.
-3. **Stop** runs `docker compose down`. Volumes are never removed, so gateway data survives.
-4. **Logs** shows the last 150 lines (capped at 64 KB).
-5. Add the gateway under Provider manager and use **Test connection**. Its API key lives in an environment variable on your laptop, never in the profile.
+## 🚀 Setup flow
 
-## 🛡️ Safety rules
+1. Open **Tool library → Model gateways & local runtimes**.
+2. Find FreeLLMAPI or OmniRoute and choose **Clone repository**. This downloads source code only; it does not execute it.
+3. Open the project's **Install guide** / upstream README and follow its current Windows installation instructions. Review scripts and environment examples before running them.
+4. Start the service using the upstream documented non-Docker command. Keep its terminal open.
+5. Confirm the service is responding at the local endpoint documented by the upstream project.
+6. Open **AI providers**, select the matching preset, enter the Base URL and model, save, then choose **Test connection**.
+7. Configure your coding assistant to use the gateway using the generated provider snippet or the assistant's own settings.
 
-- Only registry entries with a `docker` block can be controlled; the browser sends a tool id and nothing else.
-- Fixed arguments only. No `-v`/`--volumes`, no `cli` profile (it mounts the Docker socket) and no Watchtower auto-update profile.
-- The dashboard warns when `.env` publishes a gateway beyond `127.0.0.1` (`HOST_BIND` / `APP_BIND_HOST`).
-- `.env` files live in `sources/` and are git-ignored; they are not part of the portable profile.
+## 🔐 API keys and local settings
 
-## ⚠️ Not verified
+- Store secret values in environment variables on your computer.
+- In RumiStack provider profiles, save only the environment-variable name (for example, `FREELLMAPI_API_KEY`), not the secret itself.
+- Keep gateway bind addresses on loopback (`127.0.0.1`) unless you deliberately need LAN access and understand the security implications.
+- Do not commit upstream `.env` files, local databases, cookies or tokens.
 
-The compose layouts were read from the upstream repositories on 2026-11-04 and the flow was tested against a fake `docker` executable. It has **not** been run against a real Docker engine or the real images. Upstream may change file names, profiles or required `.env` values; if a start fails, open Logs and check the upstream README.
+## 🧰 What RumiStack does and does not do
+
+| RumiStack helps with | You still do in the upstream project |
+| --- | --- |
+| Keep the repository in your source list | Review and follow its installation guide |
+| Store the provider Base URL and model | Install the project's own dependencies |
+| Generate client configuration snippets | Complete provider sign-in / API-key setup |
+| Test a compatible endpoint | Start, stop and update the local service |
+
+RumiStack deliberately does not guess upstream install commands or execute an unreviewed repository's setup scripts.
+
+## 🩺 Troubleshooting
+
+- **Repository clone fails:** check Git is installed and the repository URL is still valid.
+- **Service does not start:** use the upstream README and logs from the terminal where you started it.
+- **Connection test fails:** check the service is running, the Base URL includes the correct API path (often `/v1`), and the selected environment variable is available to the RumiStack process.
+- **Wrong model name:** use a model identifier actually exposed by the gateway.
+
+> 💡 Start with one assistant and one provider. Add more integrations only when a real workflow needs them.
