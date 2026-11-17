@@ -137,7 +137,17 @@ export async function registerHubProject(stateDir, input) {
   return inspectProject(entry);
 }
 
-export async function unregisterHubProject(stateDir, id) {\n  const registry = await readRegistry(stateDir);\n  const entry = registry.projects.find((p) => p.id === projectId(id));\n  if (!entry) throw new ValidationError('Project not found in the Project Hub.', 404);\n  if (running.has(entry.id)) throw new ValidationError('Stop the project before removing it from the list.', 409);\n  registry.projects = registry.projects.filter((p) => p.id !== entry.id);\n  await saveRegistry(stateDir, registry);\n  return { id: entry.id, folderKept: entry.path };\n}\n\nasync function findProject(stateDir, id) {
+export async function unregisterHubProject(stateDir, id) {
+  const registry = await readRegistry(stateDir);
+  const entry = registry.projects.find((p) => p.id === projectId(id));
+  if (!entry) throw new ValidationError('Project not found in the Project Hub.', 404);
+  if (running.has(entry.id)) throw new ValidationError('Stop the project before removing it from the list.', 409);
+  registry.projects = registry.projects.filter((p) => p.id !== entry.id);
+  await saveRegistry(stateDir, registry);
+  return { id: entry.id, folderKept: entry.path };
+}
+
+async function findProject(stateDir, id) {
   const registry = await readRegistry(stateDir);
   const entry = registry.projects.find((p) => p.id === projectId(id));
   if (!entry) throw new ValidationError('Project not found in the Project Hub.', 404);
