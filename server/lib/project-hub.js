@@ -44,7 +44,7 @@ async function readRegistry(stateDir) {
     if (!data || data.schemaVersion !== 1 || !Array.isArray(data.projects)) throw new Error('invalid registry');
     return data;
   } catch (err) {
-    if (err.code !== 'ENOENT') throw new ValidationError('Project registry is invalid. Back up config/project-hub.json before repairing it.', 500);
+    if (err.code !== 'ENOENT') throw new ValidationError('Project registry is invalid. Back up state/project-hub.json before repairing it.', 500);
     return { schemaVersion: 1, projects: [] };
   }
 }
@@ -129,7 +129,7 @@ export async function registerHubProject(stateDir, input) {
   return inspectProject(entry);
 }
 
-async function findProject(stateDir, id) {
+export async function unregisterHubProject(stateDir, id) {\n  const registry = await readRegistry(stateDir);\n  const entry = registry.projects.find((p) => p.id === projectId(id));\n  if (!entry) throw new ValidationError('Project not found in the Project Hub.', 404);\n  if (running.has(entry.id)) throw new ValidationError('Stop the project before removing it from the list.', 409);\n  registry.projects = registry.projects.filter((p) => p.id !== entry.id);\n  await saveRegistry(stateDir, registry);\n  return { id: entry.id, folderKept: entry.path };\n}\n\nasync function findProject(stateDir, id) {
   const registry = await readRegistry(stateDir);
   const entry = registry.projects.find((p) => p.id === projectId(id));
   if (!entry) throw new ValidationError('Project not found in the Project Hub.', 404);
@@ -170,7 +170,7 @@ export async function startHubProject(stateDir, id, requestedScript) {
   const command = manager === 'pnpm' ? 'pnpm' : manager === 'yarn' ? 'yarn' : manager === 'bun' ? 'bun' : 'npm';
   // Running a package script executes project-owned code. This endpoint is only called by the
   // explicit Start button; import and detection never execute package scripts.
-  const child = spawn(command, ['run', script, ...(detected.isWeb ? [] : [])], {
+  const child = spawn(command, ['run', script], {
     cwd: entry.path, shell: IS_WINDOWS, detached: !IS_WINDOWS, stdio: ['ignore', stream, stream], windowsHide: true,
     env: { ...process.env, BROWSER: 'none', HOST: '127.0.0.1' }
   });
