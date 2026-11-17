@@ -6,6 +6,10 @@ RumiStack is a local-first control center for managing AI coding assistants, mod
 
 RumiStack does **not** merge third-party projects into one application. Each upstream tool keeps its own repository, licence, release cycle and configuration.
 
+## What's new in v0.14.0
+
+- **Project Hub**: import a GitHub repository into any selected Windows drive/folder, or register an existing local folder without moving it. Detect web frameworks and package managers, install dependencies, start/stop project scripts, inspect logs and open the detected local URL. Docker is optional. See [Project Hub](docs/PROJECT-HUB.md).
+
 ## What's new in v0.13.0
 
 - **Favourites** (star tools, quick-launch row on Overview) and **Test all** providers in one table.
