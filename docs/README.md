@@ -16,6 +16,7 @@
 | Guide | What you'll learn |
 | --- | --- |
 | [🚀 Installation](INSTALLATION.md) | Requirements, setup, first launch and troubleshooting |
+| [🧭 First-run Quickstart](QUICKSTART.md) | Guided assistant setup, optional gateways and safe next steps |
 | [🧭 Architecture](ARCHITECTURE.md) | How the dashboard, local API, profiles and registries fit together |
 | [📁 Project Hub](PROJECT-HUB.md) | Import GitHub repositories, choose storage locations and run web projects |
 
@@ -38,7 +39,7 @@
 
 ## 🧭 Recommended reading paths
 
-- **First installation:** Installation → Guides & help → Project Hub → Security Model
+- **First installation:** Installation → First-run Quickstart → Guides & help → Project Hub → Security Model
 - **AI gateway setup:** Model Gateway Setup → AI Providers → Security Model
 - **New laptop:** Device Sync → Installation → Maintenance
 - **Contributing or extending:** Architecture → Maintenance → Security Model
