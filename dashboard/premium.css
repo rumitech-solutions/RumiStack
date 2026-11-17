@@ -222,3 +222,48 @@ dialog.modal, dialog.palette {
 .nav-section > .nav-item { width: 100%; }
 .nav-section:not([open]) { margin-bottom: 5px; }
 .nav-section:not([open]) > summary { padding-bottom: 8px; }
+
+
+/* Ultra-level onboarding wizard */
+.wizard-hero { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:24px; padding:clamp(22px,3vw,34px); }
+.wizard-hero .eyebrow,.wizard-intro .eyebrow { display:inline-block; margin-bottom:8px; color:var(--signature-gold); font-size:10px; font-weight:850; letter-spacing:.16em; }
+.wizard-hero h2 { margin:0 0 8px; font-size:clamp(22px,3vw,32px); }
+.wizard-hero p,.wizard-intro p { max-width:760px; margin:0; color:var(--text-2); line-height:1.7; }
+.wizard-steps { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:22px 0 8px; }
+.wizard-step { display:flex; align-items:center; gap:10px; min-width:0; padding:12px 14px; border:1px solid var(--border); border-radius:13px; color:var(--text-3); background:var(--panel); }
+.wizard-step > span { display:grid; place-items:center; flex:0 0 28px; width:28px; height:28px; border-radius:50%; background:var(--panel-hover); font-weight:800; }
+.wizard-step small { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; font-weight:650; }
+.wizard-step.active { color:var(--text); border-color:color-mix(in srgb,var(--accent) 45%,var(--border)); background:var(--accent-soft); }
+.wizard-step.active > span,.wizard-step.done > span { color:#fff; background:var(--accent-grad); }
+.wizard-progress { height:5px; margin:0 0 18px; overflow:hidden; border-radius:99px; background:var(--panel-hover); }
+.wizard-progress > i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,var(--signature-emerald),var(--signature-gold)); transition:width .25s ease; }
+.wizard-panel { padding:clamp(18px,3vw,30px); }
+.wizard-intro { margin-bottom:22px; }
+.wizard-intro h2 { margin:0 0 7px; font-size:clamp(20px,2.5vw,26px); }
+.assistant-choices { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-bottom:18px; }
+.assistant-choice,.gateway-choice { position:relative; display:flex; flex-direction:column; align-items:flex-start; gap:9px; width:100%; min-width:0; padding:17px; border:1px solid var(--border); border-radius:15px; background:var(--panel); color:var(--text); text-align:left; cursor:pointer; transition:border-color .18s ease,background .18s ease,transform .18s ease; }
+.assistant-choice:hover,.gateway-choice:hover { transform:translateY(-2px); border-color:var(--border-strong); background:var(--panel-hover); }
+.assistant-choice.selected,.gateway-choice.selected { border-color:color-mix(in srgb,var(--accent) 62%,var(--border)); background:var(--accent-soft); box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 20%,transparent) inset; }
+.assistant-choice-top { display:flex; align-items:center; justify-content:space-between; gap:10px; width:100%; }
+.assistant-choice p,.gateway-choice p { margin:0; color:var(--text-2); font-size:12.5px; line-height:1.6; }
+.choice-check { position:absolute; right:14px; bottom:12px; color:var(--accent); }
+.gateway-choices { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-bottom:18px; }
+.gateway-choice { min-height:116px; }
+.gateway-config { padding:18px; margin:4px 0 18px; border:1px solid var(--border); border-radius:15px; background:var(--panel); }
+.gateway-config h3 { margin:0 0 14px; font-size:15px; }
+.review-list { display:grid; gap:10px; margin-bottom:18px; }
+.review-item { display:flex; align-items:center; gap:14px; padding:15px; border:1px solid var(--border); border-radius:13px; background:var(--panel); }
+.review-item > .icon { color:var(--accent); }
+.review-item p { margin:3px 0 0; color:var(--text-2); font-size:12px; }
+.install-command { padding:16px; margin:10px 0 18px; border:1px solid var(--border); border-radius:14px; background:var(--code-bg); }
+.install-command p { margin:3px 0 10px; font-size:12px; }
+.install-command pre { overflow-x:auto; padding:12px; border-radius:9px; background:var(--panel); color:var(--code-text); }
+.wizard-footer { margin-top:16px; }
+@media (max-width:760px) {
+  .wizard-hero { grid-template-columns:1fr; }
+  .assistant-choices { grid-template-columns:1fr; }
+  .gateway-choices { grid-template-columns:1fr; }
+  .wizard-steps { gap:5px; }
+  .wizard-step { flex-direction:column; align-items:flex-start; padding:9px; }
+  .wizard-step small { white-space:normal; font-size:10px; }
+}
