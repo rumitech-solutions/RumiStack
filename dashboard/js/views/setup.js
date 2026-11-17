@@ -12,16 +12,13 @@ export async function renderSetup(root, { navigate }) {
     api('GET', '/api/registry/tools'),
     api('GET', '/api/tools/status'),
     api('GET', '/api/profile'),
-    api('GET', '/api/providers'),
-    api('GET', '/api/sources')
+    api('GET', '/api/providers')
   ]);
   const tools = new Map(registry.tools.map((t) => [t.id, t]));
   const assistants = ASSISTANT_IDS.map((id) => tools.get(id)).filter(Boolean);
-  const sources = new Map(sourceData.sources.map((s) => [s.id, s]));
   let selectedAssistant = assistants.find((t) => profileData.profile.tools.includes(t.id))?.id ?? 'claude-code';
   let selectedGateway = '';
   let step = 1;
-  const current = h('div', {});
   const stepDots = h('div', { class: 'wizard-steps' });
   const progress = h('div', { class: 'wizard-progress' });
   const content = h('div', { class: 'panel wizard-panel' });
