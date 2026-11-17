@@ -18,8 +18,12 @@ test('meta and registry', async () => {
   assert.equal(meta.status, 200);
   assert.equal(meta.json.name, 'RumiStack');
   const reg = await s.get('/api/registry/tools');
-  assert.equal(reg.json.tools.length, 27);
+  assert.equal(reg.json.tools.length, 26);
   assert.equal(reg.json.categories.length, 7);
+  const progress = await s.get('/api/progress');
+  assert.equal(progress.status, 200);
+  assert.equal(progress.json.total, 1);
+  assert.equal(progress.json.steps.length, 3);
 });
 
 test('dashboard is served with a strict CSP; traversal and unknown files are 404', async () => {
