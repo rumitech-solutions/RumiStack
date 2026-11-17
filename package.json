@@ -1,11 +1,13 @@
 {
   "name": "rumistack",
-  "version": "0.14.2",
-  "description": "A premium local-first workspace for AI development tools, projects and integrations.",
+  "version": "0.15.0",
+  "description": "A user-friendly local-first workspace for AI coding platforms, model gateways and developer projects.",
   "private": true,
   "type": "module",
   "license": "UNLICENSED",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "start": "node server/index.js",
     "check": "node scripts/check.js",
