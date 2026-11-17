@@ -26,8 +26,14 @@ export async function renderProjects(root, { navigate }) {
   } }, icon('folder-plus', 15), 'Register existing folder');
 
   async function refreshHub() {
-    await loadInto(hub, () => api('GET', '/api/project-hub'), ({ projects, defaultDestination }) => {
+    await loadInto(hub, () => api('GET', '/api/project-hub'), ({ projects, defaultDestination, drives = [] }) => {
       destination.placeholder = defaultDestination;
+      if (drives.length) {
+        driveSelect.hidden = false;
+        driveSelect.replaceChildren(...drives.map((d) => h('option', { value: d }, d.slice(0, 2))));
+        const currentDrive = drives.find((d) => meta.root.toLowerCase().startsWith(d.toLowerCase()));
+        if (currentDrive) driveSelect.value = currentDrive;
+      }
       if (!projects.length) return h('div', { class: 'panel' }, emptyState('layers', 'No imported projects yet', 'Import a GitHub repository or register a folder already on your computer.'));
       return h('div', { class: 'grid' }, projects.map((p) => {
         const script = h('select', { 'aria-label': `Start script for ${p.name}`, style: 'max-width:150px' },
@@ -96,6 +102,7 @@ export async function renderProjects(root, { navigate }) {
     h('h2', {}, icon('download', 16), 'Import from GitHub'),
     h('div', { class: 'panel' },
       field('GitHub repository URL', repoUrl, 'Public repositories and private repositories available to your Git sign-in. Import only clones files; it does not execute them.'),
+      field('Destination drive', driveSelect, 'Select a detected Windows drive, or type any absolute path in the destination field below.'),
       field('Destination folder', destination, 'Choose any folder on the selected drive, for example D:\\RumiStack\\projects or E:\\WebProjects. The repository is placed in a new subfolder.'),
       field('Folder name (optional)', folderName, 'Leave blank to use the repository name.'),
       importBtn),
