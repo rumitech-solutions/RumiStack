@@ -11,7 +11,7 @@ import { ValidationError } from './validate.js';
 
 const IS_WINDOWS = process.platform === 'win32';
 const NAME_RE = /^[A-Za-z0-9][A-Za-z0-9._-]{0,62}$/;
-const SCRIPT_RE = /^[A-Za-z0-9:_-]{1,64}$/;
+const SCRIPT_RE = /^[A-Za-z0-9._:-]{1,64}$/;
 const running = new Map();
 
 async function exists(p) { return fs.stat(p).then(() => true, () => false); }
@@ -165,6 +165,9 @@ export async function startHubProject(stateDir, id, requestedScript) {
   if (!(await exists(path.join(entry.path, 'node_modules')))) throw new ValidationError('Dependencies are not installed yet. Run Install dependencies first.', 409);
   const existing = running.get(entry.id);
   if (existing && existing.exitCode === null && !existing.killed) throw new ValidationError('This project is already running.', 409);
+  const manager = detected.manager;
+  const command = manager === 'pnpm' ? 'pnpm' : manager === 'yarn' ? 'yarn' : manager === 'bun' ? 'bun' : 'npm';
+  if (!(await findCommand(command))) throw new ValidationError(`${command} was not found on PATH. Install it before starting this project.`, 409);
   const logDir = path.resolve(stateDir, '..', 'logs');
   await fs.mkdir(logDir, { recursive: true });
   const logFile = path.join(logDir, `project-${entry.id.replace(/[^a-z0-9-]/g, '-')}.log`);
@@ -172,9 +175,6 @@ export async function startHubProject(stateDir, id, requestedScript) {
   const current = await readRegistry(stateDir);
   const saved = current.projects.find((p) => p.id === entry.id);
   if (saved) { saved.logFile = logFile; await saveRegistry(stateDir, current); }
-  const manager = detected.manager;
-  const command = manager === 'pnpm' ? 'pnpm' : manager === 'yarn' ? 'yarn' : manager === 'bun' ? 'bun' : 'npm';
-  if (!(await findCommand(command))) throw new ValidationError(`${command} was not found on PATH. Install it before starting this project.`, 409);
   // Running a package script executes project-owned code. This endpoint is only called by the
   // explicit Start button; import and detection never execute package scripts.
   const child = spawn(command, ['run', script], {
