@@ -4,7 +4,7 @@
 
 - **Git for Windows**: `winget install --id Git.Git --exact`
 - **Node.js 20+** (22.20+ if you will use `Restore-Skills.ps1`): `winget install --id OpenJS.NodeJS.LTS --exact`
-- Optional: **GitHub CLI** (`winget install --id GitHub.cli --exact`) for `Publish-To-GitHub.ps1`; Docker Desktop for self-hosted gateways.
+- Optional: **GitHub CLI** (`winget install --id GitHub.cli --exact`) for `Publish-To-GitHub.ps1`.
 
 Open a new PowerShell window after installing so PATH is refreshed.
 
