@@ -5,7 +5,7 @@ const DEFAULTS = {
   omniroute: { id: 'omniroute-local', name: 'OmniRoute (local)', baseUrl: 'http://127.0.0.1:20128/v1', model: 'auto', apiKeyEnv: 'OMNIROUTE_API_KEY', protocols: ['openai-chat'] }
 };
 
-const ASSISTANT_IDS = ['claude-code', 'opencode', 'codex-cli', 'gemini-cli', 'aider', 'cline'];
+const ASSISTANT_IDS = ['claude-code', 'deepseek-harness', 'opencode', 'codex-cli', 'gemini-cli', 'aider', 'cline'];
 
 export async function renderSetup(root, { navigate }) {
   const [registry, status, profileData, providerData] = await Promise.all([
@@ -100,7 +100,7 @@ export async function renderSetup(root, { navigate }) {
       const assistant = tools.get(selectedAssistant);
       const gateway = selectedGateway ? tools.get(selectedGateway) : null;
       const existingProvider = selectedGateway ? providerData.profiles.find((p) => p.id === DEFAULTS[selectedGateway].id) : null;
-      const installCmd = assistant?.install.type === 'npm' ? `npm install -g ${assistant.install.package}`
+      const installCmd = assistant?.id === 'deepseek-harness' ? 'npx @deepseek-ai/dsh web' : assistant?.install.type === 'npm' ? `npm install -g ${assistant.install.package}`
         : assistant?.install.type === 'winget' ? `winget install --id ${assistant.install.package} --exact` : null;
       const alreadyInstalled = status.statuses[selectedAssistant]?.installed === true;
       content.replaceChildren(
@@ -111,7 +111,7 @@ export async function renderSetup(root, { navigate }) {
           h('div', { class: 'review-item' }, icon('terminal', 19), h('div', {}, h('strong', {}, assistant.name), h('p', {}, alreadyInstalled ? 'Already detected on this laptop.' : 'Selected as your primary coding platform.'))),
           gateway ? h('div', { class: 'review-item' }, icon('server', 19), h('div', {}, h('strong', {}, gateway.name), h('p', {}, existingProvider ? 'An existing provider profile will be updated.' : 'A local provider profile will be created.'))) :
             h('div', { class: 'review-item' }, icon('check-circle', 19), h('div', {}, h('strong', {}, 'No gateway selected'), h('p', {}, 'You can use your assistant’s built-in sign-in.')))),
-        installCmd && !alreadyInstalled ? h('div', { class: 'install-command' }, h('div', {}, h('strong', {}, 'Install command'), h('p', { class: 'muted' }, 'Review and run this in PowerShell when you are ready.')),
+        installCmd && !alreadyInstalled ? h('div', { class: 'install-command' }, h('div', {}, h('strong', {}, assistant.id === 'deepseek-harness' ? 'Launch command' : 'Install command'), h('p', { class: 'muted' }, 'Review and run this in PowerShell when you are ready.')),
           h('pre', {}, installCmd), h('button', { class: 'btn small', type: 'button', onclick: (e) => copyText(installCmd, e.currentTarget) }, icon('copy', 14), 'Copy command')) :
           !alreadyInstalled ? h('div', { class: 'notice info' }, icon('book-open', 16), h('span', {}, 'This assistant uses a manual installation path. Open its official guide from the Tool library.')) : null,
         h('div', { class: 'notice info' }, icon('lock', 16), h('span', {}, 'API keys and account passwords are never requested or saved by this wizard.'))
