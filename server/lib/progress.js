@@ -1,6 +1,6 @@
 // Core onboarding checklist. Optional integrations never block a usable workspace.
 
-const ASSISTANTS = new Set(['claude-code', 'opencode', 'codex-cli', 'gemini-cli', 'aider', 'cline']);
+const ASSISTANTS = new Set(['claude-code', 'deepseek-harness', 'opencode', 'codex-cli', 'gemini-cli', 'aider', 'cline']);
 
 export async function setupProgress({ store, gitState }) {
   const [device, providers] = await Promise.all([store.load('device'), store.load('providers')]);
