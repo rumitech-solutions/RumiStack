@@ -12,13 +12,12 @@ You can use a coding assistant without a gateway. Add a gateway only when you ne
 
 ## 🚀 Setup flow
 
-1. Open **Tool library → Model gateways & local runtimes**.
-2. Find FreeLLMAPI or OmniRoute and choose **Clone repository**. This downloads source code only; it does not execute it.
-3. Open the project's **Install guide** / upstream README and follow its current Windows installation instructions. Review scripts and environment examples before running them.
-4. Start the service using the upstream documented non-Docker command. Keep its terminal open.
-5. Confirm the service is responding at the local endpoint documented by the upstream project.
-6. Open **AI providers**, select the matching preset, enter the Base URL and model, save, then choose **Test connection**.
-7. Configure your coding assistant to use the gateway using the generated provider snippet or the assistant's own settings.
+1. Open **Projects** and choose **Import GitHub repository** to import FreeLLMAPI or OmniRoute into a folder you choose. If you already have the project on this laptop, use **Register existing folder** instead — this does not move or overwrite it.
+2. For supported Node.js projects, review the detected package manager and use **Install** to install dependencies. For other runtimes, follow the upstream Windows installation instructions.
+3. Use **Start** for a detected project script, or start the service with the upstream documented non-Docker command. Use **Logs** to inspect output.
+4. Confirm the service is responding at the local endpoint documented by the upstream project.
+5. Open **AI providers**, select the matching preset, confirm the Base URL and model, save, then choose **Test connection**.
+6. Configure your coding assistant to use the gateway with the generated provider snippet or the assistant's own settings.
 
 ## 🔐 API keys and local settings
 
@@ -31,7 +30,7 @@ You can use a coding assistant without a gateway. Add a gateway only when you ne
 
 | RumiStack helps with | You still do in the upstream project |
 | --- | --- |
-| Keep the repository in your source list | Review and follow its installation guide |
+| Import or register a project folder | Review the upstream setup requirements and confirm install/start actions |
 | Store the provider Base URL and model | Install the project's own dependencies |
 | Generate client configuration snippets | Complete provider sign-in / API-key setup |
 | Test a compatible endpoint | Start, stop and update the local service |
