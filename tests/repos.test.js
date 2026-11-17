@@ -22,7 +22,7 @@ test('repos API: add (clone), list, update, remove, validation and CSRF', async 
   // A local repository stands in for GitHub through git's url rewriting, so no network is needed.
   const upstream = await fs.mkdtemp(path.join(os.tmpdir(), 'rumistack-upstream-'));
   const git = (...args) => execFileSync('git', args, { cwd: upstream, stdio: 'pipe' });
-  const readText = async (file) => (await fs.readFile(file, 'utf8')).replace(/\\r\\n/g, '\\n');
+  const readText = async (file) => (await fs.readFile(file, 'utf8')).replace(/\r\n/g, '\n');
   git('init', '-q', '-b', 'main');
   await fs.writeFile(path.join(upstream, 'README.md'), 'hello\n');
   git('add', '.');
@@ -42,7 +42,7 @@ test('repos API: add (clone), list, update, remove, validation and CSRF', async 
     const add = await t.post('/api/repos/add', { url: 'https://github.com/demo/project.git' });
     assert.equal(add.status, 200, add.text);
     assert.deepEqual(add.json, { id: 'demo-project', path: 'sources/demo-project' });
-    assert.equal(await fs.readFile(path.join(t.dir, 'sources/demo-project/README.md'), 'utf8'), 'hello\n');
+    assert.equal(await readText(path.join(t.dir, 'sources/demo-project/README.md')), 'hello\n');
 
     const list = (await t.get('/api/repos')).json;
     assert.equal(list.folder, path.join(t.dir, 'sources'));
@@ -58,7 +58,7 @@ test('repos API: add (clone), list, update, remove, validation and CSRF', async 
     git('-c', 'user.name=t', '-c', 'user.email=t@example.com', 'commit', '-q', '-m', 'two');
     const upd = await t.post('/api/repos/update', { id: 'demo-project' });
     assert.equal(upd.json.updated, true);
-    assert.equal(await fs.readFile(path.join(t.dir, 'sources/demo-project/two.txt'), 'utf8'), '2\n');
+    assert.equal(await readText(path.join(t.dir, 'sources/demo-project/two.txt')), '2\n');
 
     // local edits are never overwritten
     await fs.writeFile(path.join(t.dir, 'sources/demo-project/README.md'), 'mine\n');
