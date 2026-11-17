@@ -37,11 +37,19 @@ export async function renderOverview(root, { navigate }) {
   const laptop = h('div', {});
 
   root.append(
-    ...pageHeader('Overview', 'This laptop compared with your portable profile, plus the health of your RumiStack setup.', {
+    ...pageHeader('Home', 'Your AI development workspace at a glance. Start a setup, open a project or explore tools.', {
       iconName: 'home',
       actions: [h('button', { class: 'btn', type: 'button', onclick: () => navigate('overview') }, icon('refresh', 15), 'Refresh')]
     }),
-    start, favs, hero, stats,
+    start,
+    h('section', { class: 'quick-actions panel' },
+      h('div', {}, h('h2', {}, 'Quick actions'), h('p', { class: 'muted' }, 'The things you are most likely to do next.')),
+      h('div', { class: 'quick-action-grid' },
+        h('button', { class: 'quick-action primary', type: 'button', onclick: () => navigate('setup') }, icon('wand-sparkles', 19), h('span', {}, h('strong', {}, 'Setup wizard'), h('small', {}, 'Configure your coding platform'))),
+        h('button', { class: 'quick-action', type: 'button', onclick: () => navigate('projects') }, icon('folder-plus', 19), h('span', {}, h('strong', {}, 'Open Projects'), h('small', {}, 'Import or register an app'))),
+        h('button', { class: 'quick-action', type: 'button', onclick: () => navigate('catalogue') }, icon('grid', 19), h('span', {}, h('strong', {}, 'Tool library'), h('small', {}, 'Discover coding tools'))),
+        h('button', { class: 'quick-action', type: 'button', onclick: () => navigate('guides') }, icon('book-open', 19), h('span', {}, h('strong', {}, 'Guides & help'), h('small', {}, 'Learn each workflow'))))),
+    favs, hero, stats,
     h('div', { class: 'two-col' },
       h('div', {}, h('h2', {}, icon('heart', 16), 'Health checks'), h('div', { class: 'panel' }, checks)),
       h('div', {}, h('h2', {}, icon('activity', 16), 'Recent activity'), h('div', { class: 'panel' }, recent),
