@@ -32,7 +32,7 @@ export async function renderProjects(root, { navigate }) {
       if (drives.length) {
         driveSelect.hidden = false;
         driveSelect.replaceChildren(...drives.map((d) => h('option', { value: d }, d.slice(0, 2))));
-        const currentDrive = drives.find((d) => meta.root.toLowerCase().startsWith(d.toLowerCase()));
+        const currentDrive = drives.find((d) => destination.value.toLowerCase().startsWith(d.toLowerCase())) ?? drives.find((d) => meta.root.toLowerCase().startsWith(d.toLowerCase()));
         if (currentDrive) driveSelect.value = currentDrive;
       }
       if (!projects.length) return h('div', { class: 'panel' }, emptyState('layers', 'No imported projects yet', 'Import a GitHub repository or register a folder already on your computer.'));
