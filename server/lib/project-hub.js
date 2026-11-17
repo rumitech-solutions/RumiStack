@@ -6,7 +6,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { parseGitHubUrl } from './repos.js';
-import { run } from './system.js';
+import { run, findCommand } from './system.js';
 import { ValidationError } from './validate.js';
 
 const IS_WINDOWS = process.platform === 'win32';
@@ -174,6 +174,7 @@ export async function startHubProject(stateDir, id, requestedScript) {
   if (saved) { saved.logFile = logFile; await saveRegistry(stateDir, current); }
   const manager = detected.manager;
   const command = manager === 'pnpm' ? 'pnpm' : manager === 'yarn' ? 'yarn' : manager === 'bun' ? 'bun' : 'npm';
+  if (!(await findCommand(command))) throw new ValidationError(`${command} was not found on PATH. Install it before starting this project.`, 409);
   // Running a package script executes project-owned code. This endpoint is only called by the
   // explicit Start button; import and detection never execute package scripts.
   const child = spawn(command, ['run', script], {
