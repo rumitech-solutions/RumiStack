@@ -33,9 +33,9 @@ const VIEWS = [
   { id: 'mcp', label: 'MCP integrations', icon: 'plug', group: 'AI setup', render: renderMcp },
   { id: 'device', label: 'Setup profile', icon: 'laptop', group: 'More & advanced', render: renderDevice },
   { id: 'links', label: 'Saved resources', icon: 'file', group: 'More & advanced', render: renderLinks },
-  { id: 'sync', label: 'Backup & sync', icon: 'git', group: 'Manage', render: renderSync },
-  { id: 'prompts', label: 'Prompt library', icon: 'sparkles', group: 'Manage', render: renderPrompts },
-  { id: 'keys', label: 'API keys', icon: 'shield', group: 'Manage', render: renderKeys },
+  { id: 'sync', label: 'Backup & sync', icon: 'git', group: 'More & advanced', render: renderSync },
+  { id: 'prompts', label: 'Prompt library', icon: 'sparkles', group: 'More & advanced', render: renderPrompts },
+  { id: 'keys', label: 'API keys', icon: 'shield', group: 'More & advanced', render: renderKeys },
   { id: 'activity', label: 'Activity', icon: 'activity', group: 'More & advanced', render: renderActivity },
   { id: 'settings', label: 'Settings', icon: 'cpu', group: 'More & advanced', render: renderSettings }
 ];
