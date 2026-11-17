@@ -1,4 +1,13 @@
-# Changelog
+# 📝 Changelog
+
+## 0.14.2 — ✨ Signature UI & documentation refresh
+
+- Refined the premium dashboard with more intentional spacing, deeper glass surfaces, emerald/gold-inspired signature accents, clearer navigation hierarchy and elevated content cards.
+- Improved mobile navigation, responsive page headers, buttons, forms, empty states, dialogs and notification surfaces.
+- Preserved theme and accent preferences, reduced-motion support, local-first behavior and the zero-build frontend.
+- Rebuilt the root README as an emoji-led product showcase with feature areas, setup instructions, architecture overview, privacy notes and documentation links.
+- Added a dedicated documentation hub and refreshed guide headings with consistent emoji-led navigation.
+- No project files, credentials, local profiles or existing FreeLLMAPI installation are changed by this release.
 
 ## 0.14.1 — Premium dashboard refresh
 
@@ -8,7 +17,7 @@
 - Kept the existing dark/light/auto themes, accent colours, density preferences, CSP approach and zero-build dashboard architecture.
 - This is a visual-only enhancement: no project folders, credentials, settings, or existing FreeLLMAPI installation are changed.
 
-## 0.14.0 — Project Hub and web project runner
+## 0.14.0 — 📁 Project Hub and web project runner
 
 - Added a Project Hub inside Projects: import GitHub repositories directly into a user-selected folder on any available Windows drive, or register an existing local folder without copying or moving it.
 - Detect common Node.js web stacks and package managers (Vite, Next.js, Nuxt, Angular, Vue, React, Svelte; npm, pnpm, Yarn and Bun) from project metadata without running project code.
@@ -18,7 +27,7 @@
 - Added tests for framework detection, package-manager selection, local folder registration, and non-destructive unregister.
 - Verification note: the GitHub connector can commit source changes but does not provide a Windows runtime. Run `npm run check` and `npm test` on the target Windows machine before relying on process launch/stop behaviour.
 
-## 0.13.0 — Favourites and Test all
+## 0.13.0 — ⭐ Favourites and Test all
 
 - **Favourites**: star up to 12 tools in the Catalogue; they appear as a quick-launch row on Overview (Launch for installed assistants, otherwise a shortcut to the catalogue entry). Stored as `favorites` in the portable device profile, so they sync with everything else; applying a kit or saving the Device sync form keeps them.
 - **Test all** in Provider manager: checks every saved provider profile (a few at a time) and shows reachable/failed, latency and the reason in one table. Keys are read from the server environment exactly as in the single test and are never returned (a test asserts this).
