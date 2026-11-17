@@ -267,3 +267,19 @@ dialog.modal, dialog.palette {
   .wizard-step { flex-direction:column; align-items:flex-start; padding:9px; }
   .wizard-step small { white-space:normal; font-size:10px; }
 }
+
+
+/* Home command deck */
+.quick-actions { display:grid; grid-template-columns:minmax(170px,.7fr) minmax(0,2fr); align-items:center; gap:18px; margin:0 0 18px; padding:18px; }
+.quick-actions h2 { margin:0 0 4px; font-size:16px; }
+.quick-actions p { margin:0; font-size:12px; }
+.quick-action-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+.quick-action { display:flex; align-items:center; gap:11px; min-width:0; padding:12px; border:1px solid var(--border); border-radius:12px; background:var(--panel); color:var(--text); text-align:left; cursor:pointer; transition:transform .18s ease,border-color .18s ease,background .18s ease; }
+.quick-action:hover { transform:translateY(-2px); border-color:var(--border-strong); background:var(--panel-hover); }
+.quick-action > .icon { flex:0 0 auto; color:var(--accent); }
+.quick-action > span { display:grid; min-width:0; gap:2px; }
+.quick-action strong { font-size:12px; }
+.quick-action small { color:var(--text-2); font-size:10.5px; line-height:1.35; }
+.quick-action.primary { border-color:color-mix(in srgb,var(--signature-emerald) 40%,var(--border)); background:color-mix(in srgb,var(--signature-emerald) 8%,var(--panel)); }
+@media (max-width:900px) { .quick-actions { grid-template-columns:1fr; } }
+@media (max-width:520px) { .quick-action-grid { grid-template-columns:1fr; } }
