@@ -57,7 +57,7 @@ async function saveRegistry(stateDir, data) {
   await fs.rename(temp, file);
 }
 
-function detectProject(dir, packageJson) {
+export function detectProject(dir, packageJson) {
   const scripts = packageJson?.scripts && typeof packageJson.scripts === 'object' ? packageJson.scripts : {};
   const files = new Set();
   return fs.readdir(dir).then((names) => {
@@ -72,9 +72,9 @@ function detectProject(dir, packageJson) {
     else if (deps.react) framework = 'React';
     else if (deps.svelte || deps['@sveltejs/kit']) framework = 'Svelte';
     else if (deps.express || deps.fastify || deps.nestjs) framework = 'Node.js server';
-    const manager = files.has('pnpm-lock.yaml') ? 'pnpm' : files.has('yarn.lock') ? 'yarn' : files.has('bun.lockb') || files.has('bun.lock') ? 'bun' : 'npm';
+    const manager = String(packageJson?.packageManager ?? '').startsWith('pnpm@') ? 'pnpm' : String(packageJson?.packageManager ?? '').startsWith('yarn@') ? 'yarn' : String(packageJson?.packageManager ?? '').startsWith('bun@') ? 'bun' : files.has('pnpm-lock.yaml') ? 'pnpm' : files.has('yarn.lock') ? 'yarn' : files.has('bun.lockb') || files.has('bun.lock') ? 'bun' : 'npm';
     const preferred = ['dev', 'start', 'serve', 'preview'].find((s) => typeof scripts[s] === 'string' && SCRIPT_RE.test(s)) ?? null;
-    const isWeb = Boolean(packageJson && (preferred || files.has('index.html') || files.has('next.config.js') || files.has('vite.config.js') || files.has('vite.config.ts')));
+    const isWeb = Boolean(packageJson && (framework !== 'Node.js' || ['dev', 'serve', 'preview'].some((s) => typeof scripts[s] === 'string') || files.has('index.html') || files.has('next.config.js') || files.has('vite.config.js') || files.has('vite.config.ts')));
     return { framework, manager, scripts: Object.keys(scripts).filter((s) => SCRIPT_RE.test(s)).slice(0, 40), preferredScript: preferred, isWeb, hasPackageJson: Boolean(packageJson) };
   });
 }
@@ -162,7 +162,6 @@ export async function startHubProject(stateDir, id, requestedScript) {
   await fs.mkdir(logDir, { recursive: true });
   const logFile = path.join(logDir, `project-${entry.id.replace(/[^a-z0-9-]/g, '-')}.log`);
   const fd = await fs.open(logFile, 'a');
-  const stream = fd.createWriteStream();
   const current = await readRegistry(stateDir);
   const saved = current.projects.find((p) => p.id === entry.id);
   if (saved) { saved.logFile = logFile; await saveRegistry(stateDir, current); }
@@ -171,14 +170,12 @@ export async function startHubProject(stateDir, id, requestedScript) {
   // Running a package script executes project-owned code. This endpoint is only called by the
   // explicit Start button; import and detection never execute package scripts.
   const child = spawn(command, ['run', script], {
-    cwd: entry.path, shell: IS_WINDOWS, detached: !IS_WINDOWS, stdio: ['ignore', stream, stream], windowsHide: true,
+    cwd: entry.path, shell: IS_WINDOWS, detached: !IS_WINDOWS, stdio: ['ignore', fd.fd, fd.fd], windowsHide: true,
     env: { ...process.env, BROWSER: 'none', HOST: '127.0.0.1' }
   });
   running.set(entry.id, child);
-  child.on('error', () => { running.delete(entry.id); });
-  child.on('exit', () => { running.delete(entry.id); });
-  await new Promise((resolve) => stream.once('open', resolve));
-  stream.on('close', () => fd.close().catch(() => {}));
+  child.on('error', () => { running.delete(entry.id); fd.close().catch(() => {}); });
+  child.on('exit', () => { running.delete(entry.id); fd.close().catch(() => {}); });
   return { id, script, pid: child.pid, logFile, message: 'Start requested. Check project logs for the local URL and startup errors.' };
 }
 
