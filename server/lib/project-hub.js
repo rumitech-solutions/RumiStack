@@ -5,6 +5,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
 import { parseGitHubUrl } from './repos.js';
 import { run, findCommand } from './system.js';
 import { ValidationError } from './validate.js';
@@ -116,7 +117,7 @@ export async function importHubRepo(root, stateDir, input) {
     await fs.rm(dir, { recursive: true, force: true });
     throw new ValidationError(`Git clone failed: ${cloned.stderr.split('\n').filter(Boolean).pop() || 'unknown error'}`, 502);
   }
-  const entry = { id: `${Date.now().toString(36)}-${parsed.id.slice(0, 48)}`.toLowerCase(), name, path: dir, source: parsed.url, importedAt: new Date().toISOString() };
+  const entry = { id: `${randomUUID().replace(/-/g, '').slice(0, 12)}-${parsed.id.slice(0, 48)}`.toLowerCase(), name, path: dir, source: parsed.url, importedAt: new Date().toISOString() };
   registry.projects.push(entry);
   await saveRegistry(stateDir, registry);
   return inspectProject(entry);
@@ -130,7 +131,7 @@ export async function registerHubProject(stateDir, input) {
   const registry = await readRegistry(stateDir);
   if (registry.projects.some((p) => p.path.toLowerCase() === dir.toLowerCase())) throw new ValidationError('This folder is already registered.', 409);
   const name = path.basename(dir);
-  const entry = { id: `${Date.now().toString(36)}-local-${name.toLowerCase().replace(/[^a-z0-9-]/g, '-').slice(0, 32)}`, name, path: dir, source: null, importedAt: new Date().toISOString() };
+  const entry = { id: `${randomUUID().replace(/-/g, '').slice(0, 12)}-local-${name.toLowerCase().replace(/[^a-z0-9-]/g, '-').slice(0, 32)}`, name, path: dir, source: null, importedAt: new Date().toISOString() };
   registry.projects.push(entry);
   await saveRegistry(stateDir, registry);
   return inspectProject(entry);
