@@ -1,16 +1,39 @@
-// "Getting started" checklist, derived from what already exists on disk. Nothing extra is stored.
+// Core onboarding checklist. Optional integrations never block a usable workspace.
 
-export async function setupProgress({ store, gitState, sources }) {
-  const [device, providers, repos, links] = await Promise.all([store.load('device'), store.load('providers'), store.load('repos'), store.load('links')]);
-  const gatewayCloned = sources.some((s) => ['freellmapi', 'omniroute'].includes(s.id) && s.cloned);
+const ASSISTANTS = new Set(['claude-code', 'opencode', 'codex-cli', 'gemini-cli', 'aider', 'cline']);
+
+export async function setupProgress({ store, gitState }) {
+  const [device, providers] = await Promise.all([store.load('device'), store.load('providers')]);
+  const selectedAssistant = device.tools.find((id) => ASSISTANTS.has(id));
   const steps = [
-    { id: 'tools', title: 'Choose your tools', detail: 'Apply a starter kit or pick tools for this laptop.', done: device.tools.length > 0, view: 'device', cta: 'Open Device sync' },
-    { id: 'repos', title: 'Add a repository', detail: 'Paste a GitHub link to clone it into your workspace.', done: repos.repos.length > 0, view: 'repos', cta: 'Add a repo' },
-    { id: 'links', title: 'Save a link', detail: 'Keep a tool or doc you want to remember.', done: links.links.length > 0, view: 'links', cta: 'Save a link' },
-    { id: 'gateway', title: 'Set up a gateway', detail: 'Clone FreeLLMAPI or OmniRoute and run it in Docker.', done: gatewayCloned, view: 'gateways', cta: 'Open Gateways' },
-    { id: 'provider', title: 'Add a provider profile', detail: 'Point your assistants at the gateway.', done: providers.profiles.length > 0, view: 'providers', cta: 'Open Providers' },
-    { id: 'sync', title: 'Sync to Git', detail: 'Commit config/ so your other laptops can pull it.', done: Boolean(gitState.repo && gitState.remote && gitState.configChanges.length === 0 && gitState.lastCommit), view: 'sync', cta: 'Open Sync' }
+    {
+      id: 'assistant',
+      title: 'Choose your coding platform',
+      detail: 'Select Claude Code, OpenCode, Codex or another assistant. This is the only required setup step.',
+      done: Boolean(selectedAssistant),
+      required: true,
+      view: 'setup',
+      cta: 'Start setup'
+    },
+    {
+      id: 'gateway',
+      title: 'Connect a model gateway',
+      detail: 'Optional: configure FreeLLMAPI, OmniRoute or another compatible endpoint when you need it.',
+      done: providers.profiles.length > 0,
+      required: false,
+      view: 'setup',
+      cta: 'Configure provider'
+    },
+    {
+      id: 'sync',
+      title: 'Back up your setup',
+      detail: 'Optional: connect Git sync to move your portable configuration between laptops.',
+      done: Boolean(gitState.repo && gitState.remote && gitState.configChanges.length === 0 && gitState.lastCommit),
+      required: false,
+      view: 'sync',
+      cta: 'Set up backup'
+    }
   ];
-  const doneCount = steps.filter((s) => s.done).length;
-  return { steps, done: doneCount, total: steps.length };
+  const required = steps.filter((s) => s.required);
+  return { steps, done: required.filter((s) => s.done).length, total: required.length };
 }
