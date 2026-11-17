@@ -118,6 +118,7 @@ async function show() {
   for (const [vid, btn] of navButtons) {
     if (vid === id) btn.setAttribute('aria-current', 'page'); else btn.removeAttribute('aria-current');
   }
+  for (const section of nav.querySelectorAll('.nav-section')) section.open = section.contains(navButtons.get(id));
   crumb.textContent = view.label;
   document.title = `${view.label} · RumiStack`;
   main.replaceChildren(h('div', { class: 'view' }, skeleton(4)));
