@@ -170,3 +170,44 @@ dialog.modal, dialog.palette {
   #toasts { right: 12px; bottom: 12px; }
 }
 @media (prefers-reduced-motion: reduce) { html, body { scroll-behavior: auto; } }
+
+
+/* Guided workflows: approachable defaults with enough detail to learn each area. */
+.guide-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) auto;
+  align-items: center;
+  gap: 24px;
+  padding: clamp(22px, 3vw, 34px);
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--line));
+  background:
+    radial-gradient(ellipse at 90% 0%, color-mix(in srgb, var(--accent-2) 13%, transparent), transparent 46%),
+    var(--panel);
+}
+.guide-hero .eyebrow {
+  display: inline-flex;
+  margin-bottom: 9px;
+  color: var(--accent-2);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .16em;
+}
+.guide-hero h2 { margin: 0 0 8px; font-size: clamp(21px, 2.5vw, 29px); }
+.guide-hero p { max-width: 760px; margin: 0; color: var(--muted); line-height: 1.7; }
+.guide-grid { align-items: stretch; }
+.guide-card { display: flex; flex-direction: column; gap: 12px; }
+.guide-card h2 { margin: 0; font-size: 17px; }
+.guide-card > p { margin: 0; line-height: 1.65; }
+.guide-steps { display: grid; gap: 10px; margin: 2px 0 4px; }
+.guide-step {
+  padding: 12px 13px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--panel-2, var(--panel)) 72%, transparent);
+}
+.guide-step strong { display: block; margin-bottom: 4px; font-size: 13px; }
+.guide-step p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
+.guide-card > .btn { align-self: flex-start; margin-top: auto; }
+@media (max-width: 760px) {
+  .guide-hero { grid-template-columns: 1fr; }
+}
