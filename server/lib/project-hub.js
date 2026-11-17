@@ -94,7 +94,7 @@ export async function listHubProjects(root, stateDir) {
   const drives = [];
   if (IS_WINDOWS) {
     for (let code = 65; code <= 90; code++) {
-      const drive = String.fromCharCode(code) + ':\\\\';
+      const drive = String.fromCharCode(code) + ':' + String.fromCharCode(92);
       if (await fs.stat(drive).then((s) => s.isDirectory(), () => false)) drives.push(drive);
     }
   }
