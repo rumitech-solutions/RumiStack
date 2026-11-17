@@ -16,6 +16,7 @@ export async function renderCatalogue(root, { params }) {
 
   const search = h('input', { type: 'search', placeholder: 'Search tools…', 'aria-label': 'Search tools', value: params?.q ?? '' });
   const chips = h('div', { class: 'chips', role: 'group', 'aria-label': 'Categories' });
+  const helper = h('div', { class: 'notice info' });
   const summary = h('p', { class: 'muted' });
   const list = h('div', { class: 'grid' });
   const checkBtn = h('button', { class: 'btn', type: 'button', onclick: checkUpdates }, icon('refresh', 15), 'Check for updates');
@@ -24,7 +25,7 @@ export async function renderCatalogue(root, { params }) {
   root.append(
     ...pageHeader('Tool library', `${reg.tools.length} curated tools across ${reg.categories.length} practical groups. Pick a coding platform first; everything else is optional.`, { iconName: 'grid', actions: [checkBtn] }),
     h('div', { class: 'search-field', style: 'margin-bottom:14px' }, icon('search', 16), search),
-    chips, summary, h('div', { style: 'height:14px' }), list
+    chips, helper, summary, h('div', { style: 'height:14px' }), list
   );
 
   function drawChips() {
@@ -35,6 +36,16 @@ export async function renderCatalogue(root, { params }) {
   function draw() {
     const q = search.value.trim().toLowerCase();
     const shown = reg.tools.filter((t) => (!category || t.category === category) && (!q || `${t.name} ${t.description} ${t.id}`.toLowerCase().includes(q)));
+    const tips = {
+      assistants: 'Start here: choose one AI coding platform, install it and complete its sign-in. You do not need a gateway to begin.',
+      gateways: 'Optional: gateways connect assistants to model APIs. Clone FreeLLMAPI or OmniRoute, follow its upstream install guide, then configure the endpoint in AI providers. Docker is not required.',
+      'skills-agents': 'Optional add-ons: skills provide reusable workflows; agent profiles provide reusable role instructions.',
+      mcp: 'Optional integrations: add an MCP server only when your assistant supports it and your workflow needs it.',
+      testing: 'Project-level utilities: install these inside the project that needs them unless the upstream guide says otherwise.',
+      security: 'Quality and security tools: review their scan scope and permissions before running them on a repository.',
+      infrastructure: 'Developer essentials: these support your local environment. Only install the tools your workflow requires.'
+    };
+    helper.replaceChildren(icon('info', 15), h('span', {}, tips[category] ?? 'New to RumiStack? Start with AI coding platforms. Gateways, skills, agents and MCP are optional — add them only when you need them.'));
     summary.textContent = `${shown.length} shown · ${installed} of ${reg.tools.length} detected on this laptop`;
     list.replaceChildren(...(shown.length ? shown.map(card) : [emptyState('search', 'No tools match', 'Try another word or clear the category filter.')]));
     list.querySelectorAll('.card').forEach((el, i) => el.style.setProperty('--i', String(Math.min(i, 14))));
