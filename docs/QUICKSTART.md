@@ -16,12 +16,12 @@ Open the local dashboard URL printed in the terminal.
 ## 2. Choose one coding platform
 
 1. Open **Setup wizard**.
-2. Pick one primary assistant: Claude Code, OpenCode, Codex CLI, Gemini CLI, Aider or Cline.
+2. Pick one primary assistant: Claude Code, DeepSeek Harness, OpenCode, Codex CLI, Gemini CLI, Aider or Cline.
 3. Review the install command or official install guide.
 4. Run the command yourself in PowerShell, complete the assistant's sign-in, and return to RumiStack.
 5. Save your setup profile.
 
-You can add other assistants later. You do not need to install every tool in the library.
+For DeepSeek Harness, run `npx @deepseek-ai/dsh web` to launch its local Web UI (default port 3080). It is currently a developer preview, so read the upstream safety notice and expect breaking changes. You can add other assistants later. You do not need to install every tool in the library.
 
 ## 3. Decide whether you need a model gateway
 
