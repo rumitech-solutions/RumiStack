@@ -15,7 +15,7 @@ if (Test-Command 'git')  { Write-Ok ((& git --version)) } else { Write-Warning '
 $nv = Get-NodeVersion
 if ($nv -and $nv -ge [version]'20.0.0') { Write-Ok "node $nv" } else { Write-Warning 'Node.js 20+ missing'; $issues++ }
 if ($nv -and $nv -ge [version]'22.20.0') { Write-Ok 'Node meets the Skills CLI requirement (22.20+)' } else { Write-Skip 'Node is below 22.20; Restore-Skills.ps1 will refuse to install' }
-foreach ($c in 'winget', 'gh', 'docker', 'code') {
+foreach ($c in 'winget', 'gh', 'code') {
     if (Test-Command $c) { Write-Ok $c } else { Write-Skip "$c not found (optional)" }
 }
 
