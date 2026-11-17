@@ -46,9 +46,10 @@ export async function renderSetup(root, { navigate }) {
   function paintGatewayFields() {
     const preset = gatewayPreset();
     if (!preset) { gatewayUrl.value = ''; gatewayModel.value = 'auto'; gatewayEnv.value = ''; return; }
-    gatewayUrl.value = preset.baseUrl;
-    gatewayModel.value = preset.model;
-    gatewayEnv.value = preset.apiKeyEnv;
+    const saved = providerData.profiles.find((p) => p.id === DEFAULTS[selectedGateway].id);
+    gatewayUrl.value = saved?.baseUrl ?? preset.baseUrl;
+    gatewayModel.value = saved?.model ?? preset.model;
+    gatewayEnv.value = saved?.apiKeyEnv ?? preset.apiKeyEnv;
   }
 
   function renderStep() {
@@ -137,16 +138,18 @@ export async function renderSetup(root, { navigate }) {
     if (!saved) { if (btn) { btn.disabled = false; btn.textContent = 'Save my setup'; } return; }
     if (selectedGateway) {
       const preset = gatewayPreset();
+      const existing = providerData.profiles.find((p) => p.id === DEFAULTS[selectedGateway].id);
       const next = {
-        id: DEFAULTS[selectedGateway].id, name: `${gateway.name} (local)`, preset: selectedGateway,
+        id: DEFAULTS[selectedGateway].id, name: existing?.name ?? `${gateway.name} (local)`, preset: selectedGateway,
         baseUrl: gatewayUrl.value.trim() || preset.baseUrl,
         model: gatewayModel.value.trim() || preset.model,
         apiKeyEnv: gatewayEnv.value.trim() || preset.apiKeyEnv,
-        protocols: preset.protocols
+        protocols: existing?.protocols ?? preset.protocols,
+        ...(existing?.notes ? { notes: existing.notes } : {})
       };
       const others = providerData.profiles.filter((p) => p.id !== next.id);
       const result = await attempt(() => api('PUT', '/api/providers', { schemaVersion: 1, profiles: [...others, next] }), 'Local provider profile saved.');
-      if (!result) return;
+      if (!result) { if (btn) { btn.disabled = false; btn.textContent = 'Save my setup'; } return; }
       toast('Next: import or register the gateway in Projects, then install and start it using its upstream guide.', 'info');
       navigate('projects');
       return;
