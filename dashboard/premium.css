@@ -211,3 +211,14 @@ dialog.modal, dialog.palette {
 @media (max-width: 760px) {
   .guide-hero { grid-template-columns: 1fr; }
 }
+
+
+/* Compact, collapsible navigation keeps everyday actions visible. */
+.nav-section { min-width: 0; margin: 0 0 8px; }
+.nav-section > summary { display: flex; align-items: center; justify-content: space-between; cursor: pointer; list-style: none; user-select: none; }
+.nav-section > summary::-webkit-details-marker { display: none; }
+.nav-section > summary::after { content: '›'; color: var(--muted); font-size: 17px; transition: transform .18s ease; }
+.nav-section[open] > summary::after { transform: rotate(90deg); }
+.nav-section > .nav-item { width: 100%; }
+.nav-section:not([open]) { margin-bottom: 5px; }
+.nav-section:not([open]) > summary { padding-bottom: 8px; }
