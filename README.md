@@ -228,7 +228,7 @@ Read the full [Security Model](docs/SECURITY.md).
 
 ## ⚡ Model gateways without Docker
 
-FreeLLMAPI and OmniRoute are treated as normal source repositories and local services. Clone the repository, follow its upstream installation guide, start it using the documented non-Docker method, then add its endpoint in AI providers. Docker is not part of this workflow.
+FreeLLMAPI and OmniRoute are treated as normal projects. Import their repositories through Projects (or register an existing folder), follow the upstream installation guide, start the service using its documented Windows method, then add its endpoint in AI providers. Docker is not part of this workflow.
 
 See [Model Gateway Setup](docs/GATEWAYS.md).
 
@@ -254,13 +254,14 @@ See [Device Sync Guide](docs/DEVICE-SYNC.md).
 
 New to RumiStack? Start with the [Documentation Hub](docs/README.md).
 
+- 🧭 [First-run Quickstart](docs/QUICKSTART.md)
 - 🚀 [Installation & Quick Start](docs/INSTALLATION.md)
 - 🧭 [Architecture Overview](docs/ARCHITECTURE.md)
 - 📁 [Project Hub](docs/PROJECT-HUB.md)
 - ⚡ [Provider Manager](docs/PROVIDER-MANAGER.md)
 - 🔌 [MCP Server Manager](docs/MCP-MANAGER.md)
 - 🔄 [Device Sync](docs/DEVICE-SYNC.md)
-- 🐳 [Docker Gateways](docs/GATEWAYS.md)
+- ⚡ [Model Gateway Setup](docs/GATEWAYS.md)
 - 🛡️ [Security Model](docs/SECURITY.md)
 - 🧰 [Maintenance & Updates](docs/MAINTENANCE.md)
 - 📝 [Changelog](CHANGELOG.md)
