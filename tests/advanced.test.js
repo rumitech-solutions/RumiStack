@@ -356,16 +356,25 @@ test('bundle: export, dry-run, import with backups, and rejection of bad bundles
   } finally { await a.close(); await b.close(); }
 });
 
-test('getting-started progress reflects what exists', async () => {
+test('getting-started progress reflects essential and optional setup', async () => {
   const t = await startTestServer();
   try {
     const first = (await t.get('/api/progress')).json;
-    assert.equal(first.total, 6);
+    assert.equal(first.total, 1);
     assert.equal(first.done, 0);
-    await t.put('/api/profile', device(['git']));
-    await t.put('/api/links', { schemaVersion: 1, categories: [{ id: 'docs', name: 'Docs' }], links: [{ id: 'l-1', title: 'T', url: 'https://example.com', category: 'docs' }] });
+    assert.deepEqual(first.steps.map((s) => s.id), ['assistant', 'gateway', 'sync']);
+    assert.equal(first.steps[1].required, false);
+    await t.put('/api/profile', device(['claude-code']));
     const next = (await t.get('/api/progress')).json;
-    assert.deepEqual(next.steps.filter((s) => s.done).map((s) => s.id).sort(), ['links', 'tools']);
+    assert.equal(next.done, 1);
+    assert.deepEqual(next.steps.filter((s) => s.done).map((s) => s.id), ['assistant']);
+    await t.put('/api/providers', { schemaVersion: 1, profiles: [{
+      id: 'freellmapi-local', name: 'FreeLLMAPI (local)', preset: 'freellmapi',
+      baseUrl: 'http://127.0.0.1:3001/v1', model: 'auto', apiKeyEnv: 'FREELLMAPI_API_KEY', protocols: ['openai-chat']
+    }] });
+    const withGateway = (await t.get('/api/progress')).json;
+    assert.equal(withGateway.steps.find((s) => s.id === 'gateway').done, true);
+    assert.equal(withGateway.done, 1, 'optional steps do not increase required progress');
   } finally { await t.close(); }
 });
 
