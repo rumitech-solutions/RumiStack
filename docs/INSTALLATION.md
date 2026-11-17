@@ -1,6 +1,6 @@
-# Installation (Windows 10/11)
+# 🚀 Installation (Windows 10/11)
 
-## Prerequisites
+## 📋 Prerequisites
 
 - **Git for Windows**: `winget install --id Git.Git --exact`
 - **Node.js 20+** (22.20+ if you will use `Restore-Skills.ps1`): `winget install --id OpenJS.NodeJS.LTS --exact`
@@ -8,7 +8,7 @@
 
 Open a new PowerShell window after installing so PATH is refreshed.
 
-## Get RumiStack
+## 📦 Get RumiStack
 
 ```powershell
 git clone https://github.com/rumitech-solutions/RumiStack.git D:\RumiStack
@@ -24,14 +24,14 @@ The dashboard opens at `http://127.0.0.1:47821`. Keep the window open; press `Ct
 
 There is nothing to `npm install`: the server uses Node built-ins only.
 
-## Without PowerShell scripts
+## 🧑‍💻 Without PowerShell scripts
 
 ```bash
 node server/index.js          # starts the dashboard
 RUMISTACK_PORT=48000 node server/index.js
 ```
 
-## Troubleshooting
+## 🩺 Troubleshooting
 
 - **Port in use**: another RumiStack is running, or pick another port.
 - **Scripts blocked**: run `Set-ExecutionPolicy -Scope Process Bypass -Force` in that window.
