@@ -91,7 +91,14 @@ async function inspectProject(entry) {
 
 export async function listHubProjects(root, stateDir) {
   const registry = await readRegistry(stateDir);
-  return { projects: await Promise.all(registry.projects.map(inspectProject)), defaultDestination: path.join(root, 'projects') };
+  const drives = [];
+  if (IS_WINDOWS) {
+    for (let code = 65; code <= 90; code++) {
+      const drive = String.fromCharCode(code) + ':\\\\';
+      if (await fs.stat(drive).then((s) => s.isDirectory(), () => false)) drives.push(drive);
+    }
+  }
+  return { projects: await Promise.all(registry.projects.map(inspectProject)), defaultDestination: path.join(root, 'projects'), drives };
 }
 
 export async function importHubRepo(root, stateDir, input) {
