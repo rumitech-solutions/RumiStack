@@ -1,3 +1,24 @@
+# Changelog
+
+## [0.15.0] - 2026-11-18
+
+### ✨ User-friendly workspace
+- Added an in-dashboard Guides & help area with step-by-step workflows for coding assistants, model gateways, skills, MCP, repositories and device sync.
+- Simplified navigation into Workspace, AI setup, Manage and System groups.
+- Renamed Catalogue to Tool library and clarified AI coding platforms vs model gateways and add-ons.
+- Added category deep links so guides can open the relevant filtered tool list.
+
+### ⚡ Docker-free model gateway workflow
+- FreeLLMAPI and OmniRoute remain in the tool library and repository clone list.
+- Removed Docker-specific gateway controls, API routes, registry configuration and test suite.
+- Replaced Docker gateway instructions with direct upstream installation and AI provider configuration guidance.
+- Removed Docker Desktop from the curated required-tools catalogue. Docker is not required for the standard RumiStack workflow.
+
+### 🛡️ Safety & clarity
+- Repository cloning remains download-only; it does not run setup scripts.
+- Gateway installation and service startup remain explicit user actions using upstream documentation.
+- Existing local service folders and user data are not migrated or deleted by this release.
+
 # 📝 Changelog
 
 ## 0.14.2 — ✨ Signature UI & documentation refresh
