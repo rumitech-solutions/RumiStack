@@ -38,3 +38,12 @@ test('selecting any supported coding assistant completes core setup', async () =
   assert.equal(result.steps[0].done, true);
   assert.equal(result.steps[1].done, false);
 });
+
+test('DeepSeek Harness is recognized as a primary coding platform', async () => {
+  const result = await setupProgress({
+    store: storeWith({ tools: ['deepseek-harness'], sources: [], vscodeExtensions: [], favorites: [] }, { profiles: [] }),
+    gitState
+  });
+  assert.equal(result.done, 1);
+  assert.equal(result.steps[0].done, true);
+});
