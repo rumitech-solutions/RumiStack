@@ -1,7 +1,7 @@
 {
   "name": "rumistack",
-  "version": "0.14.1",
-  "description": "Local-first control center for AI coding assistants, gateways, skills, agents and MCP servers.",
+  "version": "0.14.2",
+  "description": "A premium local-first workspace for AI development tools, projects and integrations.",
   "private": true,
   "type": "module",
   "license": "UNLICENSED",
