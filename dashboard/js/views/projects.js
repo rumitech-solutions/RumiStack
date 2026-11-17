@@ -43,7 +43,7 @@ export async function renderProjects(root, { navigate }) {
         async function showLogs() {
           const result = await attempt(() => api('POST', '/api/project-hub/logs', { id: p.id }));
           if (!result) return;
-          const match = [...result.lines.matchAll(/https?:\\/\\/(?:localhost|127\\.0\\.0\\.1):\\d+(?:\\/[^\\s]*)?/g)].pop();
+          const match = [...result.lines.matchAll(/https?:\/\/(?:localhost|127\.0\.0\.1):\d+(?:\/[^\s]*)?/g)].pop();
           if (match) { openUrl.href = match[0].replace(/[),.;]+$/, ''); openUrl.hidden = false; }
           await modal({ title: `Logs · ${p.name}`, wide: true, body: h('pre', { class: 'code', style: 'white-space:pre-wrap;max-height:60vh;overflow:auto' }, result.lines || 'No log output yet.'), actions: [{ label: 'Close', value: true, kind: 'primary' }] });
         }
