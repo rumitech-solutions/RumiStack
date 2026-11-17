@@ -1,7 +1,7 @@
 {
   "name": "rumistack",
-  "version": "0.15.0",
-  "description": "A user-friendly local-first workspace for AI coding platforms, model gateways and developer projects.",
+  "version": "0.16.0",
+  "description": "An ultra-friendly local-first AI developer control center with guided setup, model gateways and project workflows.",
   "private": true,
   "type": "module",
   "license": "UNLICENSED",
