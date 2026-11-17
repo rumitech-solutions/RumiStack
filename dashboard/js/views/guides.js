@@ -5,7 +5,7 @@ const guides = [
     title: '🤖 AI coding assistants',
     description: 'These are the coding platforms you work inside. Pick one primary assistant first; you can add more later.',
     steps: [
-      ['1. Choose a platform', 'Open Tool library → AI coding assistants. Examples include Claude Code, OpenCode, Codex CLI, Gemini CLI, Aider and Cline.'],
+      ['1. Choose a platform', 'Open Tool library → AI coding assistants. Examples include Claude Code, DeepSeek Harness, OpenCode, Codex CLI, Gemini CLI, Aider and Cline.'],
       ['2. Install it', 'Use the install command shown on its card, or open its official installation guide when the method is manual.'],
       ['3. Sign in and launch', 'Complete the provider login required by that assistant, then launch it from its own terminal or editor.'],
       ['4. Add capabilities later', 'Once the assistant works, explore Skills, Agents and MCP integrations. These are optional add-ons, not prerequisites.']
