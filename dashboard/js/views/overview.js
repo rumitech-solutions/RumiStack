@@ -70,7 +70,7 @@ export async function renderOverview(root, { navigate }) {
     start.append(h('div', { class: 'panel onboarding-panel', style: 'margin-bottom:18px' },
       h('div', { class: 'row space' }, h('div', {}, h('h2', { style: 'margin:0' }, icon('zap', 16), coreDone ? 'Core setup complete' : 'Your first setup'), h('p', { class: 'muted', style: 'margin:4px 0 0' }, coreDone ? 'Your coding platform is selected. Optional upgrades are here whenever you need them.' : 'One essential step gets your workspace ready.')), badge(coreDone ? 'Ready to build' : `${p.done} of ${p.total} required`, 'accent')),
       h('div', { class: 'progress', role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': String(p.total), 'aria-valuenow': String(p.done) }, h('i', { style: `width:${Math.round((p.done / p.total) * 100)}%` })),
-      h('div', { class: 'steps' }, p.steps.map((st) => h('div', { class: `step${st.done ? ' done' : ''}` }, statusIcon(st.done ? 'ok' : st.required ? 'info' : 'warn'),
+      h('div', { class: 'steps' }, p.steps.map((st) => h('div', { class: `step${st.done ? ' done' : ''}` }, statusIcon(st.done ? 'ok' : 'info'),
         h('div', {}, h('b', {}, st.title), h('span', {}, st.detail), st.done ? null : h('button', { class: 'btn small', type: 'button', onclick: () => navigate(st.view) }, st.cta)))))));
   }).catch(() => { /* the checklist is optional */ });
 
