@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.16.0] - 2026-11-18
+
+### 🧭 Guided setup experience
+- Added a three-step Setup Wizard: choose one primary coding assistant, optionally select FreeLLMAPI or OmniRoute, then review and save.
+- Detects installed assistants and shows a copyable install command or official manual-install route.
+- Saves the selected assistant into the portable device profile and can create/update a local gateway provider profile.
+- Keeps gateway setup optional; no Docker, automatic package execution, service startup or credential collection.
+- Added a first-run quickstart guide and a clearer home checklist that distinguishes required setup from optional upgrades.
+
+### ✨ Workspace polish
+- Added a dedicated Setup Wizard entry and command-palette action.
+- Navigation now groups secondary capabilities into one collapsible More & advanced section and opens only the active section.
+- Added responsive premium styling for wizard steps, assistant choices, gateway selection and review panels.
+- Added tests for required-vs-optional onboarding progress.
+
+### 🛡️ Safety
+- Gateway configuration stores only Base URL, model ID and environment-variable name; secret values remain outside RumiStack.
+- Existing profiles are preserved and selected tools are merged rather than replacing the user's profile.
+- Gateway repositories remain separate Project Hub imports; saving a provider profile does not clone, install or start gateway code.
+
+# Changelog
+
 ## [0.15.0] - 2026-11-18
 
 ### ✨ User-friendly workspace
