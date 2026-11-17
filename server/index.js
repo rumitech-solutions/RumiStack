@@ -22,7 +22,6 @@ import { exportBundle, importBundle } from './lib/bundle.js';
 import { setupProgress } from './lib/progress.js';
 import { ensureWorkspace, workspaceInfo } from './lib/workspace.js';
 import { repoStatus, addRepo, cloneRepo, updateRepo, removeRepo } from './lib/repos.js';
-import { gatewayStatus, prepareGateway, gatewayUp, gatewayDown, gatewayLogs } from './lib/docker.js';
 import { listHubProjects, importHubRepo, registerHubProject, installHubDependencies, startHubProject, stopHubProject, hubProjectLogs, unregisterHubProject } from './lib/project-hub.js';
 
 export const DEFAULT_PORT = 47821;
@@ -307,25 +306,6 @@ export async function createApp(options = {}) {
       await activity.log('repo:remove', result.id);
       return result;
     },
-
-    // ---- docker gateways (upstream compose files, fixed arguments)
-    'GET /api/gateways': async () => gatewayStatus(root, registry),
-    'POST /api/gateways/prepare': async (req) => {
-      const result = await prepareGateway(root, registry, assertId((await body(req)).id, 'id'));
-      await activity.log('gateway:prepare', `${result.id}: ${result.created ? 'created .env' : '.env already existed'}`);
-      return result;
-    },
-    'POST /api/gateways/up': async (req) => {
-      const result = await gatewayUp(root, registry, assertId((await body(req)).id, 'id'));
-      await activity.log('gateway:start', result.id);
-      return result;
-    },
-    'POST /api/gateways/down': async (req) => {
-      const result = await gatewayDown(root, registry, assertId((await body(req)).id, 'id'));
-      await activity.log('gateway:stop', result.id);
-      return result;
-    },
-    'POST /api/gateways/logs': async (req) => gatewayLogs(root, registry, assertId((await body(req)).id, 'id')),
 
     // ---- sync (git), backups, activity, health
     'GET /api/git/status': async () => gitStatus(root),
