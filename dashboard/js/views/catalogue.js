@@ -38,7 +38,7 @@ export async function renderCatalogue(root, { params }) {
     const shown = reg.tools.filter((t) => (!category || t.category === category) && (!q || `${t.name} ${t.description} ${t.id}`.toLowerCase().includes(q)));
     const tips = {
       assistants: 'Start here: choose one AI coding platform, install it and complete its sign-in. You do not need a gateway to begin.',
-      gateways: 'Optional: gateways connect assistants to model APIs. Clone FreeLLMAPI or OmniRoute, follow its upstream install guide, then configure the endpoint in AI providers. Docker is not required.',
+      gateways: 'Optional: gateways connect assistants to model APIs. Import FreeLLMAPI or OmniRoute in Projects (or register an existing folder), use Install/Start when supported, then configure the endpoint in AI providers. Docker is not required.',
       'skills-agents': 'Optional add-ons: skills provide reusable workflows; agent profiles provide reusable role instructions.',
       mcp: 'Optional integrations: add an MCP server only when your assistant supports it and your workflow needs it.',
       testing: 'Project-level utilities: install these inside the project that needs them unless the upstream guide says otherwise.',
