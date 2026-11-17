@@ -1,6 +1,7 @@
 import { h, api, icon, toast, skeleton } from './core.js';
 import { openPalette } from './palette.js';
 import { renderGuides } from './views/guides.js';
+import { renderSetup } from './views/setup.js';
 import { renderOverview } from './views/overview.js';
 import { renderCatalogue } from './views/catalogue.js';
 import { renderDevice } from './views/device.js';
@@ -21,6 +22,7 @@ applyPrefs();
 
 const VIEWS = [
   { id: 'overview', label: 'Home', icon: 'home', group: 'Workspace', render: renderOverview },
+  { id: 'setup', label: 'Setup wizard', icon: 'wand-sparkles', group: 'Workspace', render: renderSetup },
   { id: 'guides', label: 'Guides & help', icon: 'book-open', group: 'Workspace', render: renderGuides },
   { id: 'catalogue', label: 'Tool library', icon: 'grid', group: 'Workspace', render: renderCatalogue },
   { id: 'projects', label: 'Projects', icon: 'terminal', group: 'Workspace', render: renderProjects },
@@ -30,12 +32,12 @@ const VIEWS = [
   { id: 'agents', label: 'Agents', icon: 'bot', group: 'AI setup', render: renderAgents },
   { id: 'mcp', label: 'MCP integrations', icon: 'plug', group: 'AI setup', render: renderMcp },
   { id: 'device', label: 'Setup profile', icon: 'laptop', group: 'More & advanced', render: renderDevice },
-  { id: 'links', label: 'Saved resources', icon: 'file', group: 'Manage', render: renderLinks },
+  { id: 'links', label: 'Saved resources', icon: 'file', group: 'More & advanced', render: renderLinks },
   { id: 'sync', label: 'Backup & sync', icon: 'git', group: 'Manage', render: renderSync },
   { id: 'prompts', label: 'Prompt library', icon: 'sparkles', group: 'Manage', render: renderPrompts },
   { id: 'keys', label: 'API keys', icon: 'shield', group: 'Manage', render: renderKeys },
   { id: 'activity', label: 'Activity', icon: 'activity', group: 'More & advanced', render: renderActivity },
-  { id: 'settings', label: 'Settings', icon: 'cpu', group: 'System', render: renderSettings }
+  { id: 'settings', label: 'Settings', icon: 'cpu', group: 'More & advanced', render: renderSettings }
 ];
 
 // ---------------------------------------------------------------- theme
@@ -137,6 +139,7 @@ window.addEventListener('hashchange', show);
 // ---------------------------------------------------------------- palette + shortcuts
 
 const actions = [
+  { label: 'Start setup wizard', icon: 'wand-sparkles', keywords: 'first run onboarding setup', run: () => navigate('setup') },
   { label: 'Keyboard shortcuts', icon: 'command', keywords: 'keys help hotkeys', run: showShortcuts },
   { label: 'Export a bundle of all profiles', icon: 'download', keywords: 'backup move laptop', run: () => navigate('settings') },
   { label: 'Toggle theme (auto / light / dark)', icon: 'sun', keywords: 'dark light appearance', run: cycleTheme },
@@ -146,7 +149,7 @@ const actions = [
   { label: 'Restore a config backup', icon: 'restore', keywords: 'undo rollback', run: () => navigate('sync') }
 ];
 function palette() { openPalette({ views: VIEWS, navigate, actions }); }
-const GO = { j: 'projects', y: 'keys', i: 'prompts', o: 'overview', c: 'catalogue', d: 'device', r: 'repos', l: 'links', s: 'sync', g: 'guides', p: 'providers', k: 'skills', a: 'agents', m: 'mcp', h: 'activity' };
+const GO = { u: 'setup', j: 'projects', y: 'keys', i: 'prompts', o: 'overview', c: 'catalogue', d: 'device', r: 'repos', l: 'links', s: 'sync', g: 'guides', p: 'providers', k: 'skills', a: 'agents', m: 'mcp', h: 'activity' };
 let chord = null;
 window.addEventListener('keydown', (e) => {
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); palette(); return; }
