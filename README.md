@@ -47,7 +47,7 @@ No cloud account is required to run the dashboard. Your tools continue running l
 ### 🤖 AI & developer tools
 - 🔎 Curated tool catalogue
 - ⭐ Favourite tools and quick launch
-- 🧠 AI coding assistant discovery
+- 🧠 AI coding platforms: Claude Code, DeepSeek Harness, OpenCode, Codex CLI and more
 - 🧩 Skills marketplace
 - 🛠️ Reusable agent profiles
 - ✍️ Prompt library with placeholders
