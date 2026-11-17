@@ -54,7 +54,6 @@ No cloud account is required to run the dashboard. Your tools continue running l
 - 🧪 Provider connection checks
 - 🔗 MCP server profiles
 - 📋 Client configuration previews
-- 🐳 Optional Docker gateway controls
 
 </td>
 </tr>
@@ -105,7 +104,7 @@ Keep provider metadata, tool selections, skills, agents and MCP definitions in v
 - 🟢 Node.js 20 or later
 - 🧬 Git for Windows
 - 🐙 GitHub CLI is optional
-- 🐳 Docker Desktop is optional — not required for Project Hub or normal Node.js web projects
+- 🐳 Docker is not required for the standard RumiStack workflow
 
 ### 1. Clone RumiStack
 
@@ -190,7 +189,7 @@ D:\RumiStack\
 | Area | What it helps you do |
 | --- | --- |
 | 🏠 Overview | Review your environment health and setup progress |
-| 🧰 Catalogue | Discover tools, assistants and developer utilities |
+| 🧰 Tool library | Discover AI coding platforms, gateways and developer utilities |
 | 💻 Device sync | Define the tools and extensions you want on each laptop |
 | 📦 Repositories | Import and update GitHub source repositories |
 | 📁 Projects | Create, register, import and run projects |
@@ -198,11 +197,10 @@ D:\RumiStack\
 | 🔄 Sync & backups | Review profile changes, commit config and restore backups |
 | ✍️ Prompt library | Reuse prompts with fill-in variables |
 | 🔐 Keys | Check whether referenced environment variables are configured |
-| ⚡ Provider manager | Manage model gateway profiles and connection checks |
+| ⚡ AI providers | Connect FreeLLMAPI, OmniRoute and compatible model endpoints |
 | 🧩 Skills marketplace | Browse and select reusable skills |
 | 🛠️ Agent manager | Manage reusable agent instruction profiles |
 | 🔌 MCP servers | Manage MCP metadata and generate client snippets |
-| 🐳 Gateways (Docker) | Optionally control supported local gateway containers |
 | 📈 Activity | Review local workspace activity |
 | ⚙️ Settings | Customize appearance, density, motion and bundles |
 
@@ -221,11 +219,11 @@ D:\RumiStack\
 
 Read the full [Security Model](docs/SECURITY.md).
 
-## 🐳 Docker is optional
+## ⚡ Model gateways without Docker
 
-RumiStack can manage supported FreeLLMAPI and OmniRoute gateway containers through their upstream Compose files. Docker Desktop is an optional integration — not a prerequisite for the dashboard, repository imports, project organization or ordinary Node.js web workflows.
+FreeLLMAPI and OmniRoute are treated as normal source repositories and local services. Clone the repository, follow its upstream installation guide, start it using the documented non-Docker method, then add its endpoint in AI providers. Docker is not part of this workflow.
 
-See [Gateway Management](docs/GATEWAYS.md).
+See [Model Gateway Setup](docs/GATEWAYS.md).
 
 ## 🔄 Move your workspace to another laptop
 
