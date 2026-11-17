@@ -49,6 +49,20 @@
       "launchable": true
     },
     {
+      "id": "deepseek-harness",
+      "name": "DeepSeek Harness",
+      "category": "assistants",
+      "description": "DeepSeek's open-source, plugin-based agent harness with a local Web UI and developer tooling.",
+      "repo": "https://github.com/deepseek-ai/deepseek-harness",
+      "docs": "https://deepseek-harness.github.io/deepseek-harness/",
+      "command": null,
+      "install": {
+        "type": "manual",
+        "note": "Run `npx @deepseek-ai/dsh web` from a terminal to launch the local Web UI (default http://127.0.0.1:3080). Developer preview: review the official safety notice and expect compatibility-breaking changes."
+      },
+      "clone": true
+    },
+    {
       "id": "opencode",
       "name": "OpenCode",
       "category": "assistants",
