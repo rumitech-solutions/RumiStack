@@ -203,6 +203,15 @@ test('launch refuses non-launchable tools and arbitrary ids', async () => {
   assert.equal((await s.post('/api/launch', { id: 'cmd /c calc' })).status, 400);
 });
 
+test('Project Hub API starts empty and validates local-folder registration', async () => {
+  const hub = await s.get('/api/project-hub');
+  assert.equal(hub.status, 200);
+  assert.deepEqual(hub.json.projects, []);
+  assert.equal(hub.json.defaultDestination, path.join(s.dir, 'projects'));
+  assert.equal((await s.post('/api/project-hub/register', { path: path.join(s.dir, 'missing') })).status, 400);
+  assert.equal((await s.post('/api/project-hub/register', { path: path.join(s.dir, 'missing'), extra: true })).status, 400);
+});
+
 test('unknown routes and oversized bodies', async () => {
   assert.equal((await s.get('/api/unknown')).status, 404);
   const big = await s.raw('PUT', '/api/profile', { 'Content-Type': 'application/json' }, JSON.stringify({ x: 'a'.repeat(300 * 1024) }));
