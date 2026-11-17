@@ -4,7 +4,7 @@
 
 ### 🧭 Guided setup experience
 - Added a three-step Setup Wizard: choose one primary coding assistant, optionally select FreeLLMAPI or OmniRoute, then review and save.
-- Detects installed assistants and shows a copyable install command or official manual-install route.
+- Detects installed assistants and shows a copyable install command or official manual-install route, including DeepSeek Harness.
 - Saves the selected assistant into the portable device profile and can create/update a local gateway provider profile.
 - Keeps gateway setup optional; no Docker, automatic package execution, service startup or credential collection.
 - Added a first-run quickstart guide and a clearer home checklist that distinguishes required setup from optional upgrades.
