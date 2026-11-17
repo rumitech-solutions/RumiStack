@@ -1,193 +1,293 @@
+<div align="center">
+
+<img src="dashboard/icon.svg" width="76" height="76" alt="RumiStack logo">
+
 # RumiStack
 
-**Your entire AI development stack. One portable home.**
+### ✨ Your entire AI development stack. One premium, portable workspace.
 
-RumiStack is a local-first control center for managing AI coding assistants, model/API gateways, skills, agents, MCP servers, testing tools, security utilities and developer infrastructure. GitHub stores the manager, curated registry, safe templates and a portable profile; each Windows laptop runs the tools locally.
+**Discover · Organize · Configure · Launch · Sync**
 
-RumiStack does **not** merge third-party projects into one application. Each upstream tool keeps its own repository, licence, release cycle and configuration.
+A local-first command center for AI coding assistants, model gateways, web projects, skills, agents, MCP servers and developer tools — built to keep your development setup organized across Windows laptops.
 
-## What's new in v0.14.0
+<br>
 
-- **Project Hub**: import a GitHub repository into any selected Windows drive/folder, or register an existing local folder without moving it. Detect web frameworks and package managers, install dependencies, start/stop project scripts, inspect logs and open the detected local URL. Docker is optional. See [Project Hub](docs/PROJECT-HUB.md).
+![Version](https://img.shields.io/badge/version-0.14.2-10b981?style=for-the-badge)
+![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-64748b?style=for-the-badge)
+![Runtime](https://img.shields.io/badge/Node.js-20%2B-16a34a?style=for-the-badge)
+![Architecture](https://img.shields.io/badge/architecture-Local--first-d6b56d?style=for-the-badge)
 
-## What's new in v0.13.0
+[🚀 Quick Start](#-quick-start) · [🧰 Features](#-everything-in-one-workspace) · [📚 Documentation](docs/README.md) · [🛡️ Security](docs/SECURITY.md)
 
-- **Favourites** (star tools, quick-launch row on Overview) and **Test all** providers in one table.
+</div>
 
-## What's new in v0.12.0
+---
 
-- **Keys** (which API-key variables are set on this laptop, never their values), **Projects** (new project with starter files, open in VS Code or an assistant) and a **Prompt library** with fill-in placeholders.
+## 🌟 Meet your new development workspace
 
-## What's new in v0.11.0
+RumiStack brings your everyday developer setup into one calm, organized dashboard. Keep track of the tools you use, manage your AI providers, import repositories, launch web projects, organize reusable prompts and move your portable configuration between devices.
 
-- **Settings** (accent colours, density, motion), a **Getting started** checklist, keyboard shortcuts (`?`), one-file **bundle export/import** to move laptops without Git, and an installable app window.
+No cloud account is required to run the dashboard. Your tools continue running locally, under your control.
 
-## What's new in v0.10.0
+> **The idea:** one workspace for managing your development environment — without forcing every tool into one application.
 
-- **Saved links**: bookmark tools and sites by your own categories; synced with the rest of your portable profile.
+## 🧰 Everything in one workspace
 
-## What's new in v0.9.0
+<table>
+<tr>
+<td width="50%" valign="top">
 
-- **Repositories**: paste a GitHub link and RumiStack clones it into the `sources\` folder and remembers it in your portable profile. Double-click `start.cmd` to launch the dashboard.
+### 🤖 AI & developer tools
+- 🔎 Curated tool catalogue
+- ⭐ Favourite tools and quick launch
+- 🧠 AI coding assistant discovery
+- 🧩 Skills marketplace
+- 🛠️ Reusable agent profiles
+- ✍️ Prompt library with placeholders
 
-## What's new in v0.8.0
+</td>
+<td width="50%" valign="top">
 
-- **Gateways (Docker)**: start, stop and inspect FreeLLMAPI and OmniRoute from their own upstream compose files, bound to `127.0.0.1`. See [`docs/GATEWAYS.md`](docs/GATEWAYS.md).
+### 🔌 Models & integrations
+- ⚡ FreeLLMAPI and OmniRoute profiles
+- 🔐 Environment-variable based credentials
+- 🧪 Provider connection checks
+- 🔗 MCP server profiles
+- 📋 Client configuration previews
+- 🐳 Optional Docker gateway controls
 
-## What's new in v0.7.0
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
 
-- Premium dashboard: dark/light/auto themes, command palette (`Ctrl K`), health score, responsive layout.
-- Starter kits that merge tool, source and MCP bundles into your profiles.
-- **Sync & backups**: Git status, fast-forward pull, config diff and commit/push of `config/` only, plus restore of the last 20 backups per profile.
-- Activity journal, provider **Test connection**, and installed-vs-latest version checks.
+### 📁 Projects & repositories
+- 🌐 Import GitHub repositories by URL
+- 💻 Register existing local project folders
+- 🗂️ Choose your destination drive and folder
+- 🚀 Install dependencies and run Node.js scripts
+- 📟 Per-project logs and local URL detection
+- 🔄 Update and organize source repositories
 
-## What v0.6.0 includes
+</td>
+<td width="50%" valign="top">
 
-v0.6.0 is the first release that ships the complete code (server, dashboard, registry, scripts, tests and docs) behind the features below. See [`CHANGELOG.md`](CHANGELOG.md) for what is verified and what still needs testing on Windows.
+### ☁️ Sync & productivity
+- 💻 Portable device profiles
+- 📦 Export/import configuration bundles
+- 🔁 Git-based sync and backups
+- 🔖 Saved links and resource collections
+- 🩺 Local health checks and activity journal
+- ⌨️ Command palette and keyboard shortcuts
 
-- Local-only dashboard for tool discovery, install guidance, health checks and agent launching.
-- **Overview** that compares your device profile with what is really installed on this laptop.
-- Curated GitHub registry covering 27 projects across 7 categories.
-- **Portable Device Sync profile**: choose the tool IDs, optional source checkouts and VS Code extensions you want on each laptop.
-- Profile import/export through the dashboard and a tracked `config/portable-profile.json` file.
-- **Provider Manager** for secret-free FreeLLMAPI, OmniRoute and custom endpoint profiles.
-- Explicit protocol compatibility flags for OpenAI Chat Completions, OpenAI Responses and Anthropic Messages.
-- Generated config templates for Claude Code, OpenCode and Codex CLI, with environment-variable references instead of embedded keys.
-- **Skills marketplace** with curated official, vendor and community sources, searchable skill IDs, assistant target selection, global/project scope and portable desired-state profile.
-- **Agent Manager** with reusable Planner, Code Reviewer, Test Engineer, Security Reviewer and UI/UX Designer profiles; create/edit custom prompts and export reviewable Claude Code, OpenCode, Codex or universal instruction files.
-- `Restore-Skills.ps1` with allow-listed source/skill IDs, `-WhatIf` / `-Confirm`, Node.js version checking and project-path protection; plugin installers remain manual.
-- Copyable PowerShell model-discovery command that uses the selected provider environment variable without printing or storing its value.
-- Strict validation of provider URLs, protocols, model IDs and environment-variable names; remote HTTP endpoints and secret-bearing fields are rejected.
-- Windows restore script with `-WhatIf` preview, typed installer allowlists and clear manual-install notices.
-- Safe setup, status/doctor, fast-forward-only update and optional GitHub publish scripts.
-- **MCP Server Manager** with curated templates for OpenAI Developer Docs, Context7, Playwright MCP and GitHub MCP Server; portable stdio/Streamable HTTP profiles; and per-client configuration previews for Claude Code, OpenCode, Codex CLI and VS Code.
-- Example MCP/agent configuration plus reusable `AGENTS.md` / `CLAUDE.md` templates.
-- Security boundaries: secrets, sessions, actual projects, downloaded sources, logs and backups remain local-only.
+</td>
+</tr>
+</table>
 
-## Recommended Windows layout
+## 💎 A closer look
 
-Extract or clone RumiStack as `D:\RumiStack`:
+### 🖥️ A focused dashboard
+A refined interface with dark, light and automatic themes, configurable accent colours, comfortable or compact density, responsive navigation and a searchable command palette.
 
-```text
-D:\RumiStack\
-├── dashboard\             # Local web UI
-├── server\                 # Local API, Node built-ins only
-├── registry\               # Curated tool, provider and skills catalogues (tracked)
-├── config\                 # Portable device, provider, skills, agent and MCP profiles (tracked)
-├── docs\                   # Architecture, security, sync and operations
-├── scripts\                # Windows setup / restore / update / doctor scripts
-├── templates\              # Reusable agent instructions
-├── sources\                # Optional shallow clones (ignored by Git)
-├── projects\               # Your real projects (ignored by this repo)
-├── logs\                   # Local-only logs
-├── backups\                # Local-only backups
-└── state\                  # Local-only runtime state
-```
+### 📂 Your projects, your folders
+Import a GitHub repository into a destination you choose — for example, `D:\\WebProjects`, `E:\\ClientWork` or another drive. Existing folders can be registered in place without copying or moving their files.
 
-The `.gitignore` intentionally excludes `sources/`, `projects/`, logs, backups, state and machine-specific settings. Do not remove those safeguards casually.
+### 🌐 Built for web development
+Project Hub detects common Node.js frameworks and package managers, presents available scripts, and gives you explicit Install, Start, Stop and Logs controls. Importing a repository never runs its code.
 
-## Quick start (Windows 10/11)
+### 🧩 Your AI setup, kept portable
+Keep provider metadata, tool selections, skills, agents and MCP definitions in version-controlled profiles. Move your setup to another laptop without putting API keys or login sessions in Git.
 
-Prerequisites: Git for Windows, Node.js 20+, and GitHub CLI (`gh`) for creating/pushing the private control-plane repository. The portable restore script uses WinGet and/or npm only for tools that have a typed, allow-listed installer in the registry. The optional Vercel Skills CLI used by `Restore-Skills.ps1` requires Node.js 22.20 or later.
+## 🚀 Quick start
 
-1. Clone the repository to `D:\RumiStack`: `git clone https://github.com/rumitech-solutions/RumiStack.git D:\RumiStack`.
-2. Ensure Git and Node are available in a new PowerShell window.
-3. In PowerShell:
+### Requirements
+- 🪟 Windows 10 or Windows 11
+- 🟢 Node.js 20 or later
+- 🧬 Git for Windows
+- 🐙 GitHub CLI is optional
+- 🐳 Docker Desktop is optional — not required for Project Hub or normal Node.js web projects
+
+### 1. Clone RumiStack
 
 ```powershell
+git clone https://github.com/rumitech-solutions/RumiStack.git D:\RumiStack
 Set-Location D:\RumiStack
+```
+
+### 2. Set up and verify
+
+```powershell
 Set-ExecutionPolicy -Scope Process Bypass -Force
 .\scripts\Setup-Workspace.ps1
 npm run check
 npm test
+```
+
+### 3. Launch your workspace
+
+```powershell
 .\scripts\Start-Workspace.ps1
 ```
 
-The local dashboard opens at `http://127.0.0.1:47821`. Keep the PowerShell window open; press `Ctrl+C` to stop the server. There is nothing to `npm install`: the server uses Node built-ins only. See [`docs/INSTALLATION.md`](docs/INSTALLATION.md) for options and troubleshooting.
+<div align="center">
 
-`Publish-To-GitHub.ps1` is only for creating a **new** repository elsewhere. It refuses an existing repository or an unexpected remote, so it is not needed for `rumitech-solutions/RumiStack`, which already exists. Use ordinary Git commands there after reviewing the status and diff.
+### ✨ Your dashboard is ready
 
-## Provider Manager: connect your assistants
+**http://127.0.0.1:47821**
 
-Open Dashboard → Provider manager. Add the FreeLLMAPI or OmniRoute preset, verify the base URL and model ID on your local gateway, select only the protocols your installed release supports, and save. Choose Claude Code, OpenCode or Codex CLI to generate a secret-free config snippet. Merge generated JSON/TOML into existing assistant configuration manually; RumiStack never overwrites those files.
+Keep the PowerShell window open while using RumiStack. Press `Ctrl + C` to stop the local server.
 
-The tracked `config/provider-profiles.json` contains URLs, model IDs and environment-variable names only. The tracked `config/skills-profile.json` and `config/agent-profiles.json` store desired skill selections and prompt profiles without credentials; `config/mcp-servers.json` stores MCP connection metadata without secret values. Keep the actual gateway key in the gateway credential store / a local secret manager. Never paste an API key into RumiStack. See [`docs/PROVIDER-MANAGER.md`](docs/PROVIDER-MANAGER.md) for compatibility notes and [`docs/MCP-MANAGER.md`](docs/MCP-MANAGER.md) for MCP client export formats and security limitations.
+</div>
 
-## MCP Server Manager
+> 💡 **No npm install required for RumiStack itself.** The dashboard and server use Node.js built-ins and a vanilla JavaScript frontend.
 
-Open Dashboard → **MCP servers**. Add a curated template or define a local stdio / remote Streamable HTTP server, choose target clients, and save the profile. Select a server and generate a snippet for Claude Code, OpenCode, Codex CLI or VS Code. Review and merge the single server entry manually; RumiStack never rewrites a client config, launches an MCP process, installs a package, performs OAuth or claims a server is connected. For a remote server, use HTTPS (HTTP is allowed only for loopback development). For authentication, define a local environment variable and save only its name in the profile. See [`docs/MCP-MANAGER.md`](docs/MCP-MANAGER.md) for transport and client-specific notes.
+## 🗺️ How it works
 
-## Device sync: move to another laptop
-
-1. Open RumiStack → **Device sync**. Select the tools, optional source checkouts and VS Code extensions you want on your devices, then choose **Save profile**.
-2. Commit and push the portable profile from your current laptop:
-
-```powershell
-git add config/portable-profile.json config/provider-profiles.json config/skills-profile.json config/agent-profiles.json config/mcp-servers.json
-git commit -m "Update RumiStack device, provider, skills, agent and MCP profiles"
-git push
+```text
+                     RUMISTACK WORKSPACE
+                              │
+          ┌───────────────────┼───────────────────┐
+          │                   │                   │
+     DISCOVER              ORGANIZE            CONFIGURE
+          │                   │                   │
+    Tool catalogue       GitHub repos        AI providers
+    Skills & agents      Project Hub         MCP servers
+    Saved resources      Local folders       Prompts & profiles
+          │                   │                   │
+          └───────────────────┼───────────────────┘
+                              │
+                         TAKE ACTION
+                              │
+                 Install · Start · Inspect · Sync
+                              │
+                     YOUR LOCAL MACHINE
 ```
 
-3. On a new laptop, clone the private RumiStack repository (or `git pull --ff-only` if it is already present), then preview and restore:
+## 🗃️ Workspace structure
+
+By default, RumiStack lives at `D:\\RumiStack`.
+
+```text
+D:\RumiStack\
+├── dashboard\       # ✨ Web interface
+├── server\          # ⚙️ Local API and application logic
+├── registry\        # 🧰 Curated tools and integration catalogue
+├── config\          # 🔄 Portable profiles (no credential values)
+├── docs\            # 📚 Guides and technical documentation
+├── scripts\         # 🪟 Windows setup and maintenance scripts
+├── templates\       # 🧩 Reusable assistant instructions
+├── sources\         # 📦 Optional upstream repository clones
+├── projects\        # 💻 Your workspace projects
+├── logs\            # 📟 Local runtime logs
+├── backups\         # 🛟 Local profile backups
+└── state\           # 🧠 Local application state
+```
+
+**Choose another drive whenever you import a project.** Project Hub stores the imported files at the destination you select. Its registry and runtime state remain local to RumiStack.
+
+## 🧭 Explore the dashboard
+
+| Area | What it helps you do |
+| --- | --- |
+| 🏠 Overview | Review your environment health and setup progress |
+| 🧰 Catalogue | Discover tools, assistants and developer utilities |
+| 💻 Device sync | Define the tools and extensions you want on each laptop |
+| 📦 Repositories | Import and update GitHub source repositories |
+| 📁 Projects | Create, register, import and run projects |
+| 🔖 Saved links | Organize useful sites, docs, APIs and resources |
+| 🔄 Sync & backups | Review profile changes, commit config and restore backups |
+| ✍️ Prompt library | Reuse prompts with fill-in variables |
+| 🔐 Keys | Check whether referenced environment variables are configured |
+| ⚡ Provider manager | Manage model gateway profiles and connection checks |
+| 🧩 Skills marketplace | Browse and select reusable skills |
+| 🛠️ Agent manager | Manage reusable agent instruction profiles |
+| 🔌 MCP servers | Manage MCP metadata and generate client snippets |
+| 🐳 Gateways (Docker) | Optionally control supported local gateway containers |
+| 📈 Activity | Review local workspace activity |
+| ⚙️ Settings | Customize appearance, density, motion and bundles |
+
+## 🔐 Privacy & safety by design
+
+- 🔒 The dashboard binds to `127.0.0.1` only.
+- 🧱 Mutating requests use same-origin protections and strict input validation.
+- 🔑 Portable profiles store environment-variable names, not API key values.
+- 🚫 RumiStack does not expose an arbitrary shell-command endpoint.
+- 🧪 Importing a repository only downloads its files; it does not execute project code.
+- ⚠️ Dependency installation and project scripts require separate user actions.
+- 🛟 Git updates are fast-forward-only; dirty repositories are skipped.
+- 📁 Projects, downloaded sources, logs, backups and runtime state remain local and are git-ignored.
+
+**Important:** Only import and run repositories you trust. Dependency installation can execute package lifecycle scripts, and starting a project runs its selected script.
+
+Read the full [Security Model](docs/SECURITY.md).
+
+## 🐳 Docker is optional
+
+RumiStack can manage supported FreeLLMAPI and OmniRoute gateway containers through their upstream Compose files. Docker Desktop is an optional integration — not a prerequisite for the dashboard, repository imports, project organization or ordinary Node.js web workflows.
+
+See [Gateway Management](docs/GATEWAYS.md).
+
+## 🔄 Move your workspace to another laptop
+
+1. Save your portable profiles in Dashboard → **Device sync**.
+2. Review changes in **Sync & backups**.
+3. Commit and push the tracked `config/` files.
+4. Clone or pull RumiStack on your next Windows device.
+5. Run the restore scripts with `-WhatIf` first, then approve the actions you want.
 
 ```powershell
-Set-Location D:\RumiStack
 .\scripts\Restore-Profile.ps1 -WhatIf
-.\scripts\Restore-Profile.ps1 -Confirm
 .\scripts\Restore-Skills.ps1 -WhatIf
-.\scripts\Restore-Skills.ps1 -Confirm
 .\scripts\Doctor.ps1
 ```
 
-`-WhatIf` previews allow-listed tool installs, source/extension actions and selected skill installs without applying them. Review each preview, then use `-Confirm` to approve each action. Project-scoped skills require `-ProjectPath` pointing to the actual target project. After pulling `config/mcp-servers.json` to a new laptop, open MCP Servers, regenerate snippets for the installed assistant clients and merge them manually; verify each connection in the client. MCP definitions do not copy OAuth sessions or token values. The skills profile records source/skill selection but does not yet pin exact upstream content versions. Some products (including FreeLLMAPI and Codex CLI) are intentionally listed as manual setup items rather than running remote installer scripts automatically.
+🔐 API keys, OAuth sessions, cookies, project code and local databases are not copied as part of portable profiles. Re-authenticate tools on each device.
 
-The device profile stores only tool IDs, selected cloneable source IDs and VS Code extension IDs. The skills profile stores selected source/skill IDs, target assistants and scope; project-scoped skills require an explicit `-ProjectPath`. Agent profiles store reusable prompts, not credentials or enforceable permissions. The provider profile stores connection metadata and environment-variable names only. The MCP profile stores local command names/arguments or remote HTTPS URLs and environment-variable names, never credential values. They never store API keys, provider credentials, login sessions, cookies, project code or local databases. Re-authenticate and re-enter credentials on each laptop.
+See [Device Sync Guide](docs/DEVICE-SYNC.md).
 
-## Dashboard capabilities
+## 📚 Documentation
 
-- Search and filter the repository catalogue.
-- Open upstream repositories and documentation.
-- Copy install/setup commands.
-- Clone selected, size-reviewed reference repositories into the ignored `sources/` folder from a fixed registry allowlist.
-- Check common CLI tools on `PATH` and launch Claude Code, OpenCode, Codex or Gemini CLI in `projects/` when installed.
-- Run health checks and update clean repositories using fast-forward-only Git pulls; dirty repositories are skipped.
-- Edit, validate, import and export the portable device profile.
-- Manage local model gateway profiles and generate client configuration for Claude Code, OpenCode and Codex CLI.
-- Search curated skills, select compatible assistants, save portable skill profiles and preview restore commands.
-- Create portable agent role profiles and export them to supported assistant-specific formats without overwriting existing files.
-- Manage MCP definitions, keep environment-variable names (not secrets), and generate reviewable target-client snippets without executing server commands or rewriting client configuration.
+New to RumiStack? Start with the [Documentation Hub](docs/README.md).
 
-The dashboard binds to `127.0.0.1` only. It does not accept arbitrary shell commands or arbitrary Git URLs from the browser, does not enable CORS, and validates the origin for mutating requests.
+- 🚀 [Installation & Quick Start](docs/INSTALLATION.md)
+- 🧭 [Architecture Overview](docs/ARCHITECTURE.md)
+- 📁 [Project Hub](docs/PROJECT-HUB.md)
+- ⚡ [Provider Manager](docs/PROVIDER-MANAGER.md)
+- 🔌 [MCP Server Manager](docs/MCP-MANAGER.md)
+- 🔄 [Device Sync](docs/DEVICE-SYNC.md)
+- 🐳 [Docker Gateways](docs/GATEWAYS.md)
+- 🛡️ [Security Model](docs/SECURITY.md)
+- 🧰 [Maintenance & Updates](docs/MAINTENANCE.md)
+- 📝 [Changelog](CHANGELOG.md)
 
-## Important: open source is not the same as free inference
+## 🧪 Validation
 
-Open-source agents and routers do not make paid model APIs free. Every upstream provider has its own authentication, quota, acceptable-use policy and pricing. Free-tier offers change frequently and may be rate-limited, unavailable or unsuitable for production. RumiStack does not promise unlimited free models or tokens.
-
-## Safe installation philosophy
-
-RumiStack does not silently install every item in the catalogue. The restore script only executes typed `winget` or `npm` package specifications included in the trusted local registry; the script requests confirmation before each install/clone step. Tools whose package install scripts need additional human review remain manual. Manual products are reported with their official documentation/release link. Review upstream licences, package scripts, permissions and quotas before use.
-
-## Validation
+Run these checks from the RumiStack folder:
 
 ```powershell
 npm run check
 npm test
+npm run verify-registry
 ```
 
-GitHub Actions runs the same checks on Windows and Linux (Node 20 and 22) for pushes and pull requests. The PowerShell scripts could not be executed in the Linux development environment, so run each with `-WhatIf` on your Windows machine before treating them as verified. The registry URLs are curated by hand: run `npm run verify-registry` to re-check them from a networked machine.
+The automated checks do not replace testing on your actual Windows machine. PowerShell scripts, real Docker engines, third-party provider connectivity and project-specific package scripts should be validated on the target device before relying on them.
 
-## Useful scripts
+## 🛣️ Product direction
 
-```powershell
-.\scripts\Setup-Workspace.ps1
-.\scripts\Doctor.ps1
-.\scripts\Restore-Profile.ps1 -WhatIf
-.\scripts\Restore-Profile.ps1 -Confirm
-.\scripts\Restore-Skills.ps1 -WhatIf
-.\scripts\Restore-Skills.ps1 -Confirm
-.\scripts\Update-Workspace.ps1
-.\scripts\Clone-Sources.ps1 -Ids superpowers,playwright-mcp
-.\scripts\Start-Workspace.ps1
-```
+RumiStack is designed to grow as a modular local developer workspace. The current focus is reliable project organization, AI tooling management, safe integrations, portable configuration and a polished everyday workflow.
 
-See `docs/` for architecture, security, provider profiles, device sync, installation and maintenance details.
+Feature support depends on the upstream tool and runtime. RumiStack does not claim that every language, framework, package manager or container workflow can be launched automatically.
+
+## 🏢 Built by RumiTech Solutions
+
+**Building Ideas Into Digital Products.**
+
+RumiStack is part of the RumiTech Solutions product ecosystem.
+
+<div align="center">
+
+**✨ One workspace. Your tools. Your projects. Your control.**
+
+[⬆ Back to top](#rumistack)
+
+</div>
