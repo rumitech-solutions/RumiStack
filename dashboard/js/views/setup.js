@@ -8,7 +8,7 @@ const DEFAULTS = {
 const ASSISTANT_IDS = ['claude-code', 'opencode', 'codex-cli', 'gemini-cli', 'aider', 'cline'];
 
 export async function renderSetup(root, { navigate }) {
-  const [registry, status, profileData, providerData, sourceData] = await Promise.all([
+  const [registry, status, profileData, providerData] = await Promise.all([
     api('GET', '/api/registry/tools'),
     api('GET', '/api/tools/status'),
     api('GET', '/api/profile'),
