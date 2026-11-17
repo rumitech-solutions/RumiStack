@@ -1,4 +1,4 @@
-# Architecture
+# 🧭 Architecture
 
 RumiStack is a small local control plane. GitHub stores the manager, the curated registry, safe templates and a portable profile. Each Windows laptop runs the real tools locally.
 
@@ -15,7 +15,7 @@ server/index.js ── Node built-ins only, no npm dependencies
    └─ lib/registry.js   read-only catalogues from registry/
 ```
 
-## Data
+## 🗂️ Data
 
 | Location | Tracked | Purpose |
 | --- | --- | --- |
@@ -27,7 +27,7 @@ server/index.js ── Node built-ins only, no npm dependencies
 
 All profile writes are validated first and written atomically (temporary file, then rename), so a rejected save never changes the stored file.
 
-## Profile types
+## 🧩 Profile types
 
 - **Device** (`portable-profile.json`): tool IDs, optional source-checkout IDs, VS Code extension IDs.
 - **Providers** (`provider-profiles.json`): base URL, model ID, API-key environment-variable *name*, protocol flags.
@@ -35,10 +35,10 @@ All profile writes are validated first and written atomically (temporary file, t
 - **Agents** (`agent-profiles.json`): role prompts only.
 - **MCP** (`mcp-servers.json`): stdio command/args or remote URL, environment-variable names, header-to-variable mappings.
 
-## What RumiStack deliberately does not do
+## 🚫 What RumiStack deliberately does not do
 
 It never merges third-party projects into one application, never executes arbitrary commands or URLs from the browser, never rewrites assistant configuration files, never starts MCP processes, and never stores or transmits credentials.
 
-## Extending the catalogue
+## 🛠️ Extending the catalogue
 
 Add an entry to `registry/tools.json` with a typed installer (`winget`, `npm` or `manual`). Set `"clone": true` only for GitHub HTTPS repositories you want on the clone allowlist. Update the `updated` date, then run `npm run check`.
