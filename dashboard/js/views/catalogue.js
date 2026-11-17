@@ -12,7 +12,7 @@ export async function renderCatalogue(root, { params }) {
   const sources = new Map(src.sources.map((s) => [s.id, s]));
   let versions = {};
   let latest = {};
-  let category = '';
+  let category = params?.category ?? '';
 
   const search = h('input', { type: 'search', placeholder: 'Search tools…', 'aria-label': 'Search tools', value: params?.q ?? '' });
   const chips = h('div', { class: 'chips', role: 'group', 'aria-label': 'Categories' });
@@ -22,7 +22,7 @@ export async function renderCatalogue(root, { params }) {
 
   const installed = reg.tools.filter((t) => statuses[t.id]?.installed).length;
   root.append(
-    ...pageHeader('Catalogue', `${reg.tools.length} curated projects in ${reg.categories.length} categories (registry updated ${reg.updated}). RumiStack links to upstream projects; it does not bundle them.`, { iconName: 'grid', actions: [checkBtn] }),
+    ...pageHeader('Tool library', `${reg.tools.length} curated tools across ${reg.categories.length} practical groups. Pick a coding platform first; everything else is optional.`, { iconName: 'grid', actions: [checkBtn] }),
     h('div', { class: 'search-field', style: 'margin-bottom:14px' }, icon('search', 16), search),
     chips, summary, h('div', { style: 'height:14px' }), list
   );
@@ -90,7 +90,7 @@ export async function renderCatalogue(root, { params }) {
         h('a', { class: 'btn small ghost', href: tool.docs, target: '_blank', rel: 'noopener noreferrer' }, 'Docs'),
         cmd && status.installed ? h('button', { class: 'btn small ghost', type: 'button', onclick: (e) => copyText(upd ?? cmd, e.currentTarget) }, icon('copy', 13), upd ? 'Update cmd' : 'Copy cmd') : null,
         tool.launchable && status.installed ? h('button', { class: 'btn small primary', type: 'button', onclick: () => attempt(() => api('POST', '/api/launch', { id: tool.id }), `Opened ${tool.name} in projects/`) }, icon('play', 12), 'Launch') : null,
-        source && !source.cloned ? h('button', { class: 'btn small', type: 'button', onclick: (e) => cloneIt(tool, e.currentTarget) }, icon('download', 13), 'Clone source') : null,
+        source && !source.cloned ? h('button', { class: 'btn small', type: 'button', onclick: (e) => cloneIt(tool, e.currentTarget) }, icon('download', 13), 'Clone repository') : null,
         source && source.cloned ? h('button', { class: 'btn small', type: 'button', onclick: (e) => updateIt(tool, e.currentTarget) }, icon('refresh', 13), source.dirty ? 'Update (dirty, skips)' : 'Update source') : null));
   }
 
