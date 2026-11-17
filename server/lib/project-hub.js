@@ -168,7 +168,7 @@ export async function startHubProject(stateDir, id, requestedScript) {
   const logDir = path.resolve(stateDir, '..', 'logs');
   await fs.mkdir(logDir, { recursive: true });
   const logFile = path.join(logDir, `project-${entry.id.replace(/[^a-z0-9-]/g, '-')}.log`);
-  const fd = await fs.open(logFile, 'a');
+  const fd = await fs.open(logFile, 'w');
   const current = await readRegistry(stateDir);
   const saved = current.projects.find((p) => p.id === entry.id);
   if (saved) { saved.logFile = logFile; await saveRegistry(stateDir, current); }
