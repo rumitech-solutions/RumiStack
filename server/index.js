@@ -201,8 +201,8 @@ export async function createApp(options = {}) {
       return result;
     },
     'GET /api/progress': async () => {
-      const [gitState, sources] = await Promise.all([gitStatus(root), sourceStatus(root, registry)]);
-      return setupProgress({ store, gitState, sources });
+      const gitState = await gitStatus(root);
+      return setupProgress({ store, gitState });
     },
 
     // ---- API-key environment variables (set / not set only), projects, prompt library
