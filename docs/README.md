@@ -12,7 +12,6 @@
 
 ## 🚀 Start here
 
-| [🧭 Guides & help](../dashboard/js/views/guides.js) | Follow beginner-friendly workflows inside the dashboard |
 
 | Guide | What you'll learn |
 | --- | --- |
