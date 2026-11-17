@@ -12,6 +12,8 @@
 
 ## 🚀 Start here
 
+| [🧭 Guides & help](../dashboard/js/views/guides.js) | Follow beginner-friendly workflows inside the dashboard |
+
 | Guide | What you'll learn |
 | --- | --- |
 | [🚀 Installation](INSTALLATION.md) | Requirements, setup, first launch and troubleshooting |
@@ -25,7 +27,7 @@
 | [🔄 Device Sync](DEVICE-SYNC.md) | Keep selected tools and configuration aligned across laptops |
 | [⚡ Provider Manager](PROVIDER-MANAGER.md) | Configure FreeLLMAPI, OmniRoute and compatible model endpoints |
 | [🔌 MCP Server Manager](MCP-MANAGER.md) | Store MCP definitions and generate client configuration previews |
-| [🐳 Docker Gateways](GATEWAYS.md) | Optionally manage supported gateway containers |
+| [⚡ Model Gateway Setup](GATEWAYS.md) | Install FreeLLMAPI / OmniRoute without Docker and connect them to assistants |
 
 ## 🛡️ Operations & safety
 
@@ -37,8 +39,8 @@
 
 ## 🧭 Recommended reading paths
 
-- **First installation:** Installation → Project Hub → Security Model
-- **AI gateway setup:** Provider Manager → Docker Gateways → Security Model
+- **First installation:** Installation → Guides & help → Project Hub → Security Model
+- **AI gateway setup:** Model Gateway Setup → AI Providers → Security Model
 - **New laptop:** Device Sync → Installation → Maintenance
 - **Contributing or extending:** Architecture → Maintenance → Security Model
 
