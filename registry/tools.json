@@ -128,7 +128,7 @@
       "command": null,
       "install": {
         "type": "manual",
-        "note": "Clone the repository, then follow its current upstream Windows setup guide. Install and run it directly on your machine; Docker is not required by RumiStack."
+        "note": "Use Projects → Import GitHub repository, or register an existing local folder. Review the upstream Windows guide, then use Project Hub Install/Start when the runtime is supported. Docker is not required."
       },
       "clone": true
     },
@@ -142,7 +142,7 @@
       "command": null,
       "install": {
         "type": "manual",
-        "note": "Clone the repository, then follow its current upstream installation guide. Install and run it directly on your machine; Docker is not required by RumiStack."
+        "note": "Use Projects → Import GitHub repository, or register an existing local folder. Review the upstream Windows guide, then use Project Hub Install/Start when the runtime is supported. Docker is not required."
       },
       "clone": true
     },
