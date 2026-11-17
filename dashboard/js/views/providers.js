@@ -109,7 +109,7 @@ export async function renderProviders(root) {
   }
 
   root.append(
-    ...pageHeader('Provider manager', 'Gateway profiles hold URLs, model IDs and the NAME of the environment variable that carries your key. Never the key itself.', {
+    ...pageHeader('AI providers', 'Gateway profiles hold URLs, model IDs and the NAME of the environment variable that carries your key. Never the key itself.', {
       iconName: 'server',
       actions: [h('button', { class: 'btn', type: 'button', onclick: async (e) => {
         const btn = e.currentTarget;
