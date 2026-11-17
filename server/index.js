@@ -23,6 +23,7 @@ import { setupProgress } from './lib/progress.js';
 import { ensureWorkspace, workspaceInfo } from './lib/workspace.js';
 import { repoStatus, addRepo, cloneRepo, updateRepo, removeRepo } from './lib/repos.js';
 import { gatewayStatus, prepareGateway, gatewayUp, gatewayDown, gatewayLogs } from './lib/docker.js';
+import { listHubProjects, importHubRepo, registerHubProject, installHubDependencies, startHubProject, stopHubProject, hubProjectLogs, unregisterHubProject } from './lib/project-hub.js';
 
 export const DEFAULT_PORT = 47821;
 const MIME = { '.webmanifest': 'application/manifest+json', '.png': 'image/png', '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml' };
@@ -227,6 +228,56 @@ export async function createApp(options = {}) {
       rejectUnknown(input, ['name', 'with'], 'request');
       const result = await openProject(root, registry, input);
       await activity.log('launch', `${result.with} in projects/${result.name}`);
+      return result;
+    },
+
+    // ---- imported project hub (explicit import, install and launch actions)
+    'GET /api/project-hub': async () => listHubProjects(root, path.join(root, 'state')),
+    'POST /api/project-hub/import': async (req) => {
+      const input = await body(req);
+      rejectUnknown(input, ['url', 'destination', 'name'], 'request');
+      const result = await importHubRepo(root, path.join(root, 'state'), input);
+      await activity.log('project:import', `${result.name} -> ${result.path}`);
+      return result;
+    },
+    'POST /api/project-hub/register': async (req) => {
+      const input = await body(req);
+      rejectUnknown(input, ['path'], 'request');
+      const result = await registerHubProject(path.join(root, 'state'), input);
+      await activity.log('project:register', result.path);
+      return result;
+    },
+    'POST /api/project-hub/install': async (req) => {
+      const input = await body(req);
+      rejectUnknown(input, ['id'], 'request');
+      const result = await installHubDependencies(path.join(root, 'state'), input.id);
+      await activity.log('project:install', result.id);
+      return result;
+    },
+    'POST /api/project-hub/start': async (req) => {
+      const input = await body(req);
+      rejectUnknown(input, ['id', 'script'], 'request');
+      const result = await startHubProject(path.join(root, 'state'), input.id, input.script);
+      await activity.log('project:start', `${result.id}: ${result.script}`);
+      return result;
+    },
+    'POST /api/project-hub/stop': async (req) => {
+      const input = await body(req);
+      rejectUnknown(input, ['id'], 'request');
+      const result = await stopHubProject(path.join(root, 'state'), input.id);
+      await activity.log('project:stop', result.id);
+      return result;
+    },
+    'POST /api/project-hub/logs': async (req) => {
+      const input = await body(req);
+      rejectUnknown(input, ['id'], 'request');
+      return hubProjectLogs(path.join(root, 'state'), input.id);
+    },
+    'POST /api/project-hub/unregister': async (req) => {
+      const input = await body(req);
+      rejectUnknown(input, ['id'], 'request');
+      const result = await unregisterHubProject(path.join(root, 'state'), input.id);
+      await activity.log('project:unregister', result.id);
       return result;
     },
     'GET /api/prompts': async () => store.load('prompts'),
