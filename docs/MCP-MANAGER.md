@@ -1,10 +1,10 @@
-# MCP Server Manager
+# 🔌 MCP Server Manager
 
 Portable MCP definitions with per-client config previews.
 
 **Saving a profile is not installation, connection or a health check.** RumiStack does not launch MCP processes, run package installs, perform OAuth or edit any client configuration.
 
-## Profile shape
+## 🧩 Profile shape
 
 ```json
 { "id": "context7", "name": "Context7", "transport": "stdio",
@@ -21,11 +21,11 @@ Portable MCP definitions with per-client config previews.
 
 Rules: `stdio` needs a bare executable name (no path, no spaces) and may not have a URL; `http` needs an HTTPS URL (HTTP only for loopback) and may not have a command. Credentials are environment-variable names only, either in `envVars` or mapped to a header in `headerEnv`.
 
-## Templates
+## 🧰 Templates
 
 OpenAI Developer Docs, Context7, Playwright MCP and the GitHub MCP Server.
 
-## Client previews
+## 🪄 Client previews
 
 | Client | Output |
 | --- | --- |
@@ -36,6 +36,6 @@ OpenAI Developer Docs, Context7, Playwright MCP and the GitHub MCP Server.
 
 Field names for Codex CLI and VS Code follow upstream documentation at the time of writing; check your installed release.
 
-## Windows notes
+## 🪟 Windows notes
 
 Some clients cannot spawn `npx` directly on native Windows. If a server fails to start, wrap it as `cmd /c npx ...`. After pulling `config/mcp-servers.json` onto a new laptop, regenerate snippets, merge them by hand and verify each connection inside the client. OAuth sessions and token values are never copied between laptops.
