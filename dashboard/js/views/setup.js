@@ -129,7 +129,7 @@ export async function renderSetup(root, { navigate }) {
     const btn = footer.querySelector('.btn.primary');
     if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
     const selectedTools = [...new Set([...profileData.profile.tools, selectedAssistant, ...(selectedGateway ? [selectedGateway] : [])])];
-    const selectedSources = [...new Set([...profileData.profile.sources, ...(selectedGateway ? [selectedGateway] : [])])];
+    const selectedSources = profileData.profile.sources;
     const saved = await attempt(() => api('PUT', '/api/profile', {
       schemaVersion: 1, tools: selectedTools, sources: selectedSources,
       vscodeExtensions: profileData.profile.vscodeExtensions, favorites: profileData.profile.favorites
