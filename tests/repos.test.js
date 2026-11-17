@@ -22,6 +22,7 @@ test('repos API: add (clone), list, update, remove, validation and CSRF', async 
   // A local repository stands in for GitHub through git's url rewriting, so no network is needed.
   const upstream = await fs.mkdtemp(path.join(os.tmpdir(), 'rumistack-upstream-'));
   const git = (...args) => execFileSync('git', args, { cwd: upstream, stdio: 'pipe' });
+  const readText = async (file) => (await fs.readFile(file, 'utf8')).replace(/\\r\\n/g, '\\n');
   git('init', '-q', '-b', 'main');
   await fs.writeFile(path.join(upstream, 'README.md'), 'hello\n');
   git('add', '.');
