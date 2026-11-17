@@ -29,12 +29,12 @@ const VIEWS = [
   { id: 'skills', label: 'Skills', icon: 'sparkles', group: 'AI setup', render: renderSkills },
   { id: 'agents', label: 'Agents', icon: 'bot', group: 'AI setup', render: renderAgents },
   { id: 'mcp', label: 'MCP integrations', icon: 'plug', group: 'AI setup', render: renderMcp },
-  { id: 'device', label: 'Setup profile', icon: 'laptop', group: 'Manage', render: renderDevice },
+  { id: 'device', label: 'Setup profile', icon: 'laptop', group: 'More & advanced', render: renderDevice },
   { id: 'links', label: 'Saved resources', icon: 'file', group: 'Manage', render: renderLinks },
   { id: 'sync', label: 'Backup & sync', icon: 'git', group: 'Manage', render: renderSync },
   { id: 'prompts', label: 'Prompt library', icon: 'sparkles', group: 'Manage', render: renderPrompts },
   { id: 'keys', label: 'API keys', icon: 'shield', group: 'Manage', render: renderKeys },
-  { id: 'activity', label: 'Activity', icon: 'activity', group: 'System', render: renderActivity },
+  { id: 'activity', label: 'Activity', icon: 'activity', group: 'More & advanced', render: renderActivity },
   { id: 'settings', label: 'Settings', icon: 'cpu', group: 'System', render: renderSettings }
 ];
 
@@ -64,11 +64,17 @@ const syncPip = h('span', { class: 'pip', hidden: true });
 
 const nav = h('nav', { class: 'nav', 'aria-label': 'Sections' });
 let lastGroup = null;
+let groupNode = null;
 for (const v of VIEWS) {
-  if (v.group !== lastGroup) { lastGroup = v.group; nav.append(h('div', { class: 'nav-label' }, v.group)); }
+  if (v.group !== lastGroup) {
+    lastGroup = v.group;
+    groupNode = h('details', { class: 'nav-section', open: v.group !== 'More & advanced' },
+      h('summary', { class: 'nav-label' }, v.group));
+    nav.append(groupNode);
+  }
   const btn = h('button', { class: 'nav-item', type: 'button', onclick: () => navigate(v.id) }, icon(v.icon, 18), h('span', {}, v.label), v.id === 'sync' ? syncPip : null);
   navButtons.set(v.id, btn);
-  nav.append(btn);
+  groupNode.append(btn);
 }
 
 const app = document.getElementById('app');
