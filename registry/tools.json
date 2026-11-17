@@ -1,15 +1,36 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-11-03",
+  "updated": "2026-11-18",
   "notes": "Curated catalogue. URLs point at upstream projects; RumiStack never vendors their code. Run `npm run verify-registry` on a networked machine to re-check every URL. Installers are typed (winget/npm) and allow-listed; everything else is manual.",
   "categories": [
-    { "id": "assistants", "name": "AI coding assistants" },
-    { "id": "gateways", "name": "Model & API gateways" },
-    { "id": "skills-agents", "name": "Skills & agents" },
-    { "id": "mcp", "name": "MCP servers" },
-    { "id": "testing", "name": "Testing tools" },
-    { "id": "security", "name": "Security utilities" },
-    { "id": "infrastructure", "name": "Developer infrastructure" }
+    {
+      "id": "assistants",
+      "name": "AI coding platforms"
+    },
+    {
+      "id": "gateways",
+      "name": "Model gateways & local runtimes"
+    },
+    {
+      "id": "skills-agents",
+      "name": "Skills & agent frameworks"
+    },
+    {
+      "id": "mcp",
+      "name": "MCP integrations"
+    },
+    {
+      "id": "testing",
+      "name": "Testing & quality"
+    },
+    {
+      "id": "security",
+      "name": "Security & code quality"
+    },
+    {
+      "id": "infrastructure",
+      "name": "Developer essentials"
+    }
   ],
   "tools": [
     {
@@ -20,7 +41,11 @@
       "repo": "https://github.com/anthropics/claude-code",
       "docs": "https://docs.claude.com/en/docs/claude-code/overview",
       "command": "claude",
-      "install": { "type": "npm", "package": "@anthropic-ai/claude-code", "minNode": 18 },
+      "install": {
+        "type": "npm",
+        "package": "@anthropic-ai/claude-code",
+        "minNode": 18
+      },
       "launchable": true
     },
     {
@@ -31,7 +56,11 @@
       "repo": "https://github.com/sst/opencode",
       "docs": "https://opencode.ai/docs",
       "command": "opencode",
-      "install": { "type": "npm", "package": "opencode-ai", "minNode": 18 },
+      "install": {
+        "type": "npm",
+        "package": "opencode-ai",
+        "minNode": 18
+      },
       "launchable": true
     },
     {
@@ -42,7 +71,10 @@
       "repo": "https://github.com/openai/codex",
       "docs": "https://developers.openai.com/codex/cli",
       "command": "codex",
-      "install": { "type": "manual", "note": "Follow the official Codex CLI install guide; Windows support has its own notes upstream." },
+      "install": {
+        "type": "manual",
+        "note": "Follow the official Codex CLI install guide; Windows support has its own notes upstream."
+      },
       "launchable": true
     },
     {
@@ -53,7 +85,11 @@
       "repo": "https://github.com/google-gemini/gemini-cli",
       "docs": "https://github.com/google-gemini/gemini-cli#readme",
       "command": "gemini",
-      "install": { "type": "npm", "package": "@google/gemini-cli", "minNode": 20 },
+      "install": {
+        "type": "npm",
+        "package": "@google/gemini-cli",
+        "minNode": 20
+      },
       "launchable": true
     },
     {
@@ -64,7 +100,10 @@
       "repo": "https://github.com/Aider-AI/aider",
       "docs": "https://aider.chat/docs/install.html",
       "command": "aider",
-      "install": { "type": "manual", "note": "Install with pipx or uv as described in the Aider docs (Python tool)." }
+      "install": {
+        "type": "manual",
+        "note": "Install with pipx or uv as described in the Aider docs (Python tool)."
+      }
     },
     {
       "id": "cline",
@@ -74,7 +113,10 @@
       "repo": "https://github.com/cline/cline",
       "docs": "https://docs.cline.bot",
       "command": null,
-      "install": { "type": "manual", "note": "Install the VS Code extension saoudrizwan.claude-dev (add it under VS Code extensions in Device sync)." }
+      "install": {
+        "type": "manual",
+        "note": "Install the VS Code extension saoudrizwan.claude-dev (add it under VS Code extensions in Device sync)."
+      }
     },
     {
       "id": "freellmapi",
@@ -84,13 +126,11 @@
       "repo": "https://github.com/tashfeenahmed/freellmapi",
       "docs": "https://github.com/tashfeenahmed/freellmapi#readme",
       "command": null,
-      "install": { "type": "manual", "note": "Self-hosted service. Follow the upstream README; review its install scripts before running them." },
-      "clone": true,
-      "docker": {
-        "compose": "docker-compose.yml", "env": ".env", "envExample": ".env.example", "profile": null,
-        "url": "http://127.0.0.1:3001", "generate": ["ENCRYPTION_KEY"], "bindKeys": ["HOST_BIND"],
-        "note": "Uses the upstream docker-compose.yml. Its optional Watchtower self-update profile is never started from here because it needs the Docker socket."
-      }
+      "install": {
+        "type": "manual",
+        "note": "Clone the repository, then follow its current upstream Windows setup guide. Install and run it directly on your machine; Docker is not required by RumiStack."
+      },
+      "clone": true
     },
     {
       "id": "omniroute",
@@ -100,13 +140,11 @@
       "repo": "https://github.com/diegosouzapw/OmniRoute",
       "docs": "https://github.com/diegosouzapw/OmniRoute#readme",
       "command": null,
-      "install": { "type": "manual", "note": "Self-hosted service. Follow the upstream README; several forks exist, so confirm you are using the project you intend." },
-      "clone": true,
-      "docker": {
-        "compose": "docker-compose.yml", "env": ".env", "envExample": ".env.example", "profile": "base",
-        "url": "http://127.0.0.1:20128", "generate": [], "bindKeys": ["APP_BIND_HOST"],
-        "note": "Runs the upstream \"base\" profile and builds the image locally on first start, which takes a while. Review .env before starting: the upstream example ships with REQUIRE_API_KEY=false. The \"cli\" profile is not offered because it mounts the Docker socket."
-      }
+      "install": {
+        "type": "manual",
+        "note": "Clone the repository, then follow its current upstream installation guide. Install and run it directly on your machine; Docker is not required by RumiStack."
+      },
+      "clone": true
     },
     {
       "id": "litellm",
@@ -116,7 +154,10 @@
       "repo": "https://github.com/BerriAI/litellm",
       "docs": "https://docs.litellm.ai",
       "command": null,
-      "install": { "type": "manual", "note": "pip/uv or Docker deployment; see the LiteLLM proxy docs." }
+      "install": {
+        "type": "manual",
+        "note": "pip/uv or Docker deployment; see the LiteLLM proxy docs."
+      }
     },
     {
       "id": "ollama",
@@ -126,7 +167,10 @@
       "repo": "https://github.com/ollama/ollama",
       "docs": "https://github.com/ollama/ollama#readme",
       "command": "ollama",
-      "install": { "type": "winget", "package": "Ollama.Ollama" }
+      "install": {
+        "type": "winget",
+        "package": "Ollama.Ollama"
+      }
     },
     {
       "id": "anthropic-skills",
@@ -136,7 +180,10 @@
       "repo": "https://github.com/anthropics/skills",
       "docs": "https://github.com/anthropics/skills#readme",
       "command": null,
-      "install": { "type": "manual", "note": "Install skills through the Skills Marketplace view or your assistant's plugin system." },
+      "install": {
+        "type": "manual",
+        "note": "Install skills through the Skills Marketplace view or your assistant's plugin system."
+      },
       "clone": true
     },
     {
@@ -147,7 +194,10 @@
       "repo": "https://github.com/obra/superpowers",
       "docs": "https://github.com/obra/superpowers#readme",
       "command": null,
-      "install": { "type": "manual", "note": "Installed as an assistant plugin; follow the upstream README for your assistant." },
+      "install": {
+        "type": "manual",
+        "note": "Installed as an assistant plugin; follow the upstream README for your assistant."
+      },
       "clone": true
     },
     {
@@ -158,7 +208,10 @@
       "repo": "https://github.com/vercel-labs/skills",
       "docs": "https://github.com/vercel-labs/skills#readme",
       "command": null,
-      "install": { "type": "manual", "note": "Run on demand with npx (needs Node.js 22.20+); nothing to install globally." }
+      "install": {
+        "type": "manual",
+        "note": "Run on demand with npx (needs Node.js 22.20+); nothing to install globally."
+      }
     },
     {
       "id": "context7",
@@ -168,7 +221,10 @@
       "repo": "https://github.com/upstash/context7",
       "docs": "https://github.com/upstash/context7#readme",
       "command": null,
-      "install": { "type": "manual", "note": "Configure through the MCP Servers view; the client launches it with npx." }
+      "install": {
+        "type": "manual",
+        "note": "Configure through the MCP Servers view; the client launches it with npx."
+      }
     },
     {
       "id": "playwright-mcp",
@@ -178,7 +234,10 @@
       "repo": "https://github.com/microsoft/playwright-mcp",
       "docs": "https://github.com/microsoft/playwright-mcp#readme",
       "command": null,
-      "install": { "type": "manual", "note": "Configure through the MCP Servers view; the client launches it with npx." },
+      "install": {
+        "type": "manual",
+        "note": "Configure through the MCP Servers view; the client launches it with npx."
+      },
       "clone": true
     },
     {
@@ -189,7 +248,10 @@
       "repo": "https://github.com/github/github-mcp-server",
       "docs": "https://github.com/github/github-mcp-server#readme",
       "command": null,
-      "install": { "type": "manual", "note": "Use the hosted remote endpoint or run it locally; authenticate with a token held in an environment variable." }
+      "install": {
+        "type": "manual",
+        "note": "Use the hosted remote endpoint or run it locally; authenticate with a token held in an environment variable."
+      }
     },
     {
       "id": "playwright",
@@ -199,7 +261,10 @@
       "repo": "https://github.com/microsoft/playwright",
       "docs": "https://playwright.dev/docs/intro",
       "command": null,
-      "install": { "type": "manual", "note": "Project-local: run `npm init playwright@latest` inside the project that needs it." }
+      "install": {
+        "type": "manual",
+        "note": "Project-local: run `npm init playwright@latest` inside the project that needs it."
+      }
     },
     {
       "id": "promptfoo",
@@ -209,7 +274,11 @@
       "repo": "https://github.com/promptfoo/promptfoo",
       "docs": "https://www.promptfoo.dev/docs/intro",
       "command": "promptfoo",
-      "install": { "type": "npm", "package": "promptfoo", "minNode": 20 }
+      "install": {
+        "type": "npm",
+        "package": "promptfoo",
+        "minNode": 20
+      }
     },
     {
       "id": "vitest",
@@ -219,7 +288,10 @@
       "repo": "https://github.com/vitest-dev/vitest",
       "docs": "https://vitest.dev/guide",
       "command": null,
-      "install": { "type": "manual", "note": "Project-local dev dependency: `npm i -D vitest`." }
+      "install": {
+        "type": "manual",
+        "note": "Project-local dev dependency: `npm i -D vitest`."
+      }
     },
     {
       "id": "gitleaks",
@@ -229,7 +301,10 @@
       "repo": "https://github.com/gitleaks/gitleaks",
       "docs": "https://github.com/gitleaks/gitleaks#readme",
       "command": "gitleaks",
-      "install": { "type": "manual", "note": "Download a release binary or use your preferred package manager; see upstream." }
+      "install": {
+        "type": "manual",
+        "note": "Download a release binary or use your preferred package manager; see upstream."
+      }
     },
     {
       "id": "trivy",
@@ -239,7 +314,10 @@
       "repo": "https://github.com/aquasecurity/trivy",
       "docs": "https://trivy.dev/latest/getting-started/installation",
       "command": "trivy",
-      "install": { "type": "manual", "note": "See the upstream installation page for Windows options." }
+      "install": {
+        "type": "manual",
+        "note": "See the upstream installation page for Windows options."
+      }
     },
     {
       "id": "osv-scanner",
@@ -249,7 +327,10 @@
       "repo": "https://github.com/google/osv-scanner",
       "docs": "https://google.github.io/osv-scanner",
       "command": "osv-scanner",
-      "install": { "type": "manual", "note": "Download a release binary; see upstream." }
+      "install": {
+        "type": "manual",
+        "note": "Download a release binary; see upstream."
+      }
     },
     {
       "id": "git",
@@ -259,7 +340,10 @@
       "repo": "https://github.com/git-for-windows/git",
       "docs": "https://gitforwindows.org",
       "command": "git",
-      "install": { "type": "winget", "package": "Git.Git" }
+      "install": {
+        "type": "winget",
+        "package": "Git.Git"
+      }
     },
     {
       "id": "nodejs",
@@ -269,7 +353,10 @@
       "repo": "https://github.com/nodejs/node",
       "docs": "https://nodejs.org/en/download",
       "command": "node",
-      "install": { "type": "winget", "package": "OpenJS.NodeJS.LTS" }
+      "install": {
+        "type": "winget",
+        "package": "OpenJS.NodeJS.LTS"
+      }
     },
     {
       "id": "github-cli",
@@ -279,17 +366,10 @@
       "repo": "https://github.com/cli/cli",
       "docs": "https://cli.github.com",
       "command": "gh",
-      "install": { "type": "winget", "package": "GitHub.cli" }
-    },
-    {
-      "id": "docker-desktop",
-      "name": "Docker Desktop",
-      "category": "infrastructure",
-      "description": "Containers for self-hosted gateways and services.",
-      "repo": "https://github.com/docker/docs",
-      "docs": "https://docs.docker.com/desktop/setup/install/windows-install",
-      "command": "docker",
-      "install": { "type": "winget", "package": "Docker.DockerDesktop" }
+      "install": {
+        "type": "winget",
+        "package": "GitHub.cli"
+      }
     },
     {
       "id": "vscode",
@@ -299,7 +379,10 @@
       "repo": "https://github.com/microsoft/vscode",
       "docs": "https://code.visualstudio.com/docs",
       "command": "code",
-      "install": { "type": "winget", "package": "Microsoft.VisualStudioCode" }
+      "install": {
+        "type": "winget",
+        "package": "Microsoft.VisualStudioCode"
+      }
     }
   ]
 }
