@@ -37,8 +37,8 @@ function projectId(value) {
   return value;
 }
 
-async function readRegistry(configDir) {
-  const file = path.join(configDir, 'project-hub.json');
+async function readRegistry(stateDir) {
+  const file = path.join(stateDir, 'project-hub.json');
   try {
     const data = JSON.parse(await fs.readFile(file, 'utf8'));
     if (!data || data.schemaVersion !== 1 || !Array.isArray(data.projects)) throw new Error('invalid registry');
@@ -49,9 +49,9 @@ async function readRegistry(configDir) {
   }
 }
 
-async function saveRegistry(configDir, data) {
-  await fs.mkdir(configDir, { recursive: true });
-  const file = path.join(configDir, 'project-hub.json');
+async function saveRegistry(stateDir, data) {
+  await fs.mkdir(stateDir, { recursive: true });
+  const file = path.join(stateDir, 'project-hub.json');
   const temp = `${file}.tmp`;
   await fs.writeFile(temp, JSON.stringify(data, null, 2) + '\n', { flag: 'w' });
   await fs.rename(temp, file);
@@ -89,19 +89,19 @@ async function inspectProject(entry) {
   return { ...entry, ...detected, running: active, pid: active ? child.pid : null, logFile: entry.logFile ?? null };
 }
 
-export async function listHubProjects(root, configDir) {
-  const registry = await readRegistry(configDir);
+export async function listHubProjects(root, stateDir) {
+  const registry = await readRegistry(stateDir);
   return { projects: await Promise.all(registry.projects.map(inspectProject)), defaultDestination: path.join(root, 'projects') };
 }
 
-export async function importHubRepo(root, configDir, input) {
+export async function importHubRepo(root, stateDir, input) {
   const parsed = parseGitHubUrl(input.url);
   const destination = safeDestination(input.destination);
   const name = safeName(input.name || parsed.repo.replace(/[^A-Za-z0-9._-]/g, '-'));
   const dir = path.resolve(destination, name);
   if (path.dirname(dir) !== destination) throw new ValidationError('Project destination is invalid.');
   if (await exists(dir)) throw new ValidationError(`The destination already exists: ${dir}. Nothing was changed.`, 409);
-  const registry = await readRegistry(configDir);
+  const registry = await readRegistry(stateDir);
   if (registry.projects.some((p) => p.path.toLowerCase() === dir.toLowerCase())) throw new ValidationError('This project is already registered.', 409);
   await fs.mkdir(destination, { recursive: true });
   const cloned = await run('git', ['clone', '--depth', '1', '--no-recurse-submodules', '--', parsed.url, dir], { timeout: 15 * 60_000 });
@@ -109,35 +109,35 @@ export async function importHubRepo(root, configDir, input) {
     await fs.rm(dir, { recursive: true, force: true });
     throw new ValidationError(`Git clone failed: ${cloned.stderr.split('\n').filter(Boolean).pop() || 'unknown error'}`, 502);
   }
-  const entry = { id: `${Date.now().toString(36)}-${parsed.id}`.toLowerCase(), name, path: dir, source: parsed.url, importedAt: new Date().toISOString() };
+  const entry = { id: `${Date.now().toString(36)}-${parsed.id.slice(0, 48)}`.toLowerCase(), name, path: dir, source: parsed.url, importedAt: new Date().toISOString() };
   registry.projects.push(entry);
-  await saveRegistry(configDir, registry);
+  await saveRegistry(stateDir, registry);
   return inspectProject(entry);
 }
 
-export async function registerHubProject(configDir, input) {
+export async function registerHubProject(stateDir, input) {
   const dir = path.resolve(String(input.path ?? ''));
   if (!path.isAbsolute(String(input.path ?? '')) || !(await fs.stat(dir).then((s) => s.isDirectory(), () => false))) {
     throw new ValidationError('Select an existing project folder using its full path.');
   }
-  const registry = await readRegistry(configDir);
+  const registry = await readRegistry(stateDir);
   if (registry.projects.some((p) => p.path.toLowerCase() === dir.toLowerCase())) throw new ValidationError('This folder is already registered.', 409);
   const name = path.basename(dir);
   const entry = { id: `${Date.now().toString(36)}-local-${name.toLowerCase().replace(/[^a-z0-9-]/g, '-').slice(0, 32)}`, name, path: dir, source: null, importedAt: new Date().toISOString() };
   registry.projects.push(entry);
-  await saveRegistry(configDir, registry);
+  await saveRegistry(stateDir, registry);
   return inspectProject(entry);
 }
 
-async function findProject(configDir, id) {
-  const registry = await readRegistry(configDir);
+async function findProject(stateDir, id) {
+  const registry = await readRegistry(stateDir);
   const entry = registry.projects.find((p) => p.id === projectId(id));
   if (!entry) throw new ValidationError('Project not found in the Project Hub.', 404);
   return { registry, entry };
 }
 
-export async function installHubDependencies(configDir, id) {
-  const { entry } = await findProject(configDir, id);
+export async function installHubDependencies(stateDir, id) {
+  const { entry } = await findProject(stateDir, id);
   const pkg = JSON.parse(await fs.readFile(path.join(entry.path, 'package.json'), 'utf8').catch(() => 'null'));
   if (!pkg || typeof pkg !== 'object') throw new ValidationError('This project has no valid package.json. Automatic dependency installation is available for Node.js projects only.', 409);
   const detected = await detectProject(entry.path, pkg);
@@ -148,8 +148,8 @@ export async function installHubDependencies(configDir, id) {
   return { id, manager: command, output: result.stdout.slice(-4000) };
 }
 
-export async function startHubProject(configDir, id, requestedScript) {
-  const { entry } = await findProject(configDir, id);
+export async function startHubProject(stateDir, id, requestedScript) {
+  const { entry } = await findProject(stateDir, id);
   const pkg = JSON.parse(await fs.readFile(path.join(entry.path, 'package.json'), 'utf8').catch(() => 'null'));
   if (!pkg || typeof pkg !== 'object' || !pkg.scripts || typeof pkg.scripts !== 'object') throw new ValidationError('This project has no runnable package.json scripts.', 409);
   const detected = await detectProject(entry.path, pkg);
@@ -158,16 +158,19 @@ export async function startHubProject(configDir, id, requestedScript) {
   if (!(await exists(path.join(entry.path, 'node_modules')))) throw new ValidationError('Dependencies are not installed yet. Run Install dependencies first.', 409);
   const existing = running.get(entry.id);
   if (existing && existing.exitCode === null && !existing.killed) throw new ValidationError('This project is already running.', 409);
-  const logDir = path.resolve(configDir, '..', 'logs');
+  const logDir = path.resolve(stateDir, '..', 'logs');
   await fs.mkdir(logDir, { recursive: true });
   const logFile = path.join(logDir, `project-${entry.id.replace(/[^a-z0-9-]/g, '-')}.log`);
   const fd = await fs.open(logFile, 'a');
   const stream = fd.createWriteStream();
+  const current = await readRegistry(stateDir);
+  const saved = current.projects.find((p) => p.id === entry.id);
+  if (saved) { saved.logFile = logFile; await saveRegistry(stateDir, current); }
   const manager = detected.manager;
   const command = manager === 'pnpm' ? 'pnpm' : manager === 'yarn' ? 'yarn' : manager === 'bun' ? 'bun' : 'npm';
   // Running a package script executes project-owned code. This endpoint is only called by the
   // explicit Start button; import and detection never execute package scripts.
-  const child = spawn(command, ['run', script, ...(detected.isWeb ? ['--', '--host', '127.0.0.1'] : [])], {
+  const child = spawn(command, ['run', script, ...(detected.isWeb ? [] : [])], {
     cwd: entry.path, shell: IS_WINDOWS, detached: !IS_WINDOWS, stdio: ['ignore', stream, stream], windowsHide: true,
     env: { ...process.env, BROWSER: 'none', HOST: '127.0.0.1' }
   });
@@ -179,8 +182,8 @@ export async function startHubProject(configDir, id, requestedScript) {
   return { id, script, pid: child.pid, logFile, message: 'Start requested. Check project logs for the local URL and startup errors.' };
 }
 
-export async function stopHubProject(configDir, id) {
-  const { entry } = await findProject(configDir, id);
+export async function stopHubProject(stateDir, id) {
+  const { entry } = await findProject(stateDir, id);
   const child = running.get(entry.id);
   if (!child || child.exitCode !== null || child.killed) return { id, stopped: false, message: 'No running process is tracked for this project.' };
   if (IS_WINDOWS) {
@@ -193,8 +196,8 @@ export async function stopHubProject(configDir, id) {
   return { id, stopped: true };
 }
 
-export async function hubProjectLogs(configDir, id) {
-  const { entry } = await findProject(configDir, id);
+export async function hubProjectLogs(stateDir, id) {
+  const { entry } = await findProject(stateDir, id);
   if (!entry.logFile) return { id, lines: '' };
   const file = path.resolve(entry.logFile);
   const data = await fs.readFile(file, 'utf8').catch(() => '');
