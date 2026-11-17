@@ -12,7 +12,7 @@ A local-first command center for AI coding assistants, model gateways, web proje
 
 <br>
 
-![Version](https://img.shields.io/badge/version-0.15.0-10b981?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-0.16.0-10b981?style=for-the-badge)
 ![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-64748b?style=for-the-badge)
 ![Runtime](https://img.shields.io/badge/Node.js-20%2B-16a34a?style=for-the-badge)
 ![Architecture](https://img.shields.io/badge/architecture-Local--first-d6b56d?style=for-the-badge)
@@ -24,6 +24,13 @@ A local-first command center for AI coding assistants, model gateways, web proje
 ---
 
 ## 🌟 Meet your new development workspace
+
+### 🧭 New here? Start with the Setup Wizard
+
+Open **Setup wizard** from the dashboard. Choose one coding assistant, optionally connect FreeLLMAPI or OmniRoute, review the suggested commands and save your setup. RumiStack never silently installs packages, starts services or stores API-key values. You can skip gateways, skills, agents and MCP entirely until you need them.
+
+[📘 Follow the first-run quickstart](docs/QUICKSTART.md)
+
 
 RumiStack brings your everyday developer setup into one calm, organized dashboard. Keep track of the tools you use, manage your AI providers, import repositories, launch web projects, organize reusable prompts and move your portable configuration between devices.
 
