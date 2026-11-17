@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import os from 'node:os';
 import path from 'node:path';
 import { promises as fs } from 'node:fs';
-import { detectProject, registerHubProject, listHubProjects, unregisterHubProject } from '../server/lib/project-hub.js';
+import { detectProject, registerHubProject, listHubProjects, unregisterHubProject, startHubProject } from '../server/lib/project-hub.js';
 
 test('detects common frontend frameworks and package managers without executing scripts', async () => {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'rumistack-detect-'));
@@ -50,6 +50,20 @@ test('rejects non-existent local folders', async () => {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'rumistack-hub-'));
   try {
     await assert.rejects(() => registerHubProject(path.join(root, 'state'), { path: path.join(root, 'missing') }), /existing project folder/);
+  } finally {
+    await fs.rm(root, { recursive: true, force: true });
+  }
+});
+
+test('runner rejects arbitrary shell text instead of treating it as a package script', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'rumistack-runner-'));
+  const state = path.join(root, 'state');
+  const project = path.join(root, 'safe-project');
+  try {
+    await fs.mkdir(path.join(project, 'node_modules'), { recursive: true });
+    await fs.writeFile(path.join(project, 'package.json'), JSON.stringify({ scripts: { dev: 'vite' } }));
+    const entry = await registerHubProject(state, { path: project });
+    await assert.rejects(() => startHubProject(state, entry.id, 'dev && calc'), /valid script/);
   } finally {
     await fs.rm(root, { recursive: true, force: true });
   }
