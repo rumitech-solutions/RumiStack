@@ -268,7 +268,7 @@ npm test
 npm run verify-registry
 ```
 
-The automated checks do not replace testing on your actual Windows machine. PowerShell scripts, real Docker engines, third-party provider connectivity and project-specific package scripts should be validated on the target device before relying on them.
+The automated checks do not replace testing on your actual Windows machine. PowerShell scripts, third-party provider connectivity and project-specific package scripts should be validated on the target device before relying on them.
 
 ## 🛣️ Product direction
 
