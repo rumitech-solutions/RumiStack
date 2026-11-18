@@ -1,6 +1,6 @@
 {
   "name": "rumistack",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "description": "A portable AI developer workspace for Windows and private Linux servers.",
   "private": true,
   "type": "module",
