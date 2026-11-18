@@ -11,6 +11,10 @@ param(
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'lib\Common.ps1')
 $root = Get-RumiRoot
+$serverEntry = Join-Path $root 'server\index.js'
+if (-not (Test-Path -LiteralPath $serverEntry -PathType Leaf)) {
+    throw "RumiStack server entry point was not found: $serverEntry"
+}
 
 if (-not (Test-NodeAtLeast ([version]'20.0.0'))) { throw 'Node.js 20+ is required. Install it, then open a new PowerShell window.' }
 
@@ -55,7 +59,7 @@ Write-Host "RumiStack dashboard: $url  (Ctrl+C to stop)" -ForegroundColor Green
 $env:RUMISTACK_PORT = "$Port"
 Push-Location $root
 try {
-    & node server/index.js
+    & node $serverEntry
     if ($LASTEXITCODE -ne 0) { throw "RumiStack server exited with code $LASTEXITCODE." }
 }
 finally { Pop-Location }
