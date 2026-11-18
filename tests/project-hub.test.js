@@ -113,3 +113,39 @@ test('project intelligence reports moved folders instead of crashing the whole p
     await fs.rm(root, { recursive: true, force: true });
   }
 });
+
+
+test('detects Python and .NET projects and exposes only supported setup actions', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'rumistack-multiruntime-'));
+  try {
+    const python = path.join(root, 'python-app');
+    const dotnet = path.join(root, 'dotnet-app');
+    await fs.mkdir(python);
+    await fs.mkdir(dotnet);
+    await fs.writeFile(path.join(python, 'requirements.txt'), 'requests==2.32.0');
+    await fs.writeFile(path.join(dotnet, 'Sample.csproj'), '<Project />');
+    const py = await detectProject(python, null);
+    const net = await detectProject(dotnet, null);
+    assert.equal(py.ecosystem, 'python');
+    assert.equal(py.setupAction, 'python-requirements');
+    assert.equal(net.ecosystem, 'dotnet');
+    assert.equal(net.setupAction, 'dotnet-restore');
+    assert.deepEqual(net.projectFiles, ['Sample.csproj']);
+    assert.equal(py.hasPackageJson, false);
+    assert.equal(net.hasPackageJson, false);
+  } finally {
+    await fs.rm(root, { recursive: true, force: true });
+  }
+});
+
+test('Python projects without a supported dependency manifest remain manual setup', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'rumistack-python-manual-'));
+  try {
+    await fs.writeFile(path.join(root, 'pyproject.toml'), '[project]\\nname = "sample"\\n');
+    const result = await detectProject(root, null);
+    assert.equal(result.ecosystem, 'python');
+    assert.equal(result.setupAction, null);
+  } finally {
+    await fs.rm(root, { recursive: true, force: true });
+  }
+});
