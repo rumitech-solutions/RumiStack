@@ -22,7 +22,7 @@ import { exportBundle, importBundle } from './lib/bundle.js';
 import { setupProgress } from './lib/progress.js';
 import { ensureWorkspace, workspaceInfo } from './lib/workspace.js';
 import { repoStatus, addRepo, cloneRepo, updateRepo, removeRepo } from './lib/repos.js';
-import { listHubProjects, importHubRepo, registerHubProject, installHubDependencies, startHubProject, stopHubProject, hubProjectLogs, unregisterHubProject, projectSetupPreview, runProjectSetup } from './lib/project-hub.js';
+import { listHubProjects, importHubRepo, registerHubProject, installHubDependencies, startHubProject, stopHubProject, hubProjectLogs, unregisterHubProject, projectSetupPreview, runProjectSetup, projectRunPreview, startGuidedProject } from './lib/project-hub.js';
 
 export const DEFAULT_PORT = 47821;
 const MIME = { '.webmanifest': 'application/manifest+json', '.png': 'image/png', '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml' };
@@ -256,6 +256,18 @@ export async function createApp(options = {}) {
       rejectUnknown(input, ['id'], 'request');
       const result = await runProjectSetup(path.join(root, 'state'), input.id);
       await activity.log('project:setup', `${result.id}: ${result.title}`);
+      return result;
+    },
+    'POST /api/project-hub/run-preview': async (req) => {
+      const input = await body(req);
+      rejectUnknown(input, ['id'], 'request');
+      return projectRunPreview(path.join(root, 'state'), input.id);
+    },
+    'POST /api/project-hub/run': async (req) => {
+      const input = await body(req);
+      rejectUnknown(input, ['id'], 'request');
+      const result = await startGuidedProject(path.join(root, 'state'), input.id);
+      await activity.log('project:start', `${result.id}: ${result.ecosystem} ${result.target}`);
       return result;
     },
     'POST /api/project-hub/install': async (req) => {
