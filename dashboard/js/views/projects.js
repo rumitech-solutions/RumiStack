@@ -69,6 +69,13 @@ export async function renderProjects(root, { navigate }) {
           if (!(await confirmDialog({ title: 'Reinstall dependencies?', message: 'This runs the project package manager and may execute dependency lifecycle scripts. Only continue if you trust this repository.', confirmLabel: 'Install' }))) return;
           if (await attempt(() => api('POST', '/api/project-hub/install', { id: p.id }), 'Dependencies installed')) refreshHub();
         } }, icon('download', 13), 'Reinstall dependencies'));
+        if (['python', 'dotnet'].includes(p.ecosystem) && p.runTarget) actions.push(h('button', { class: 'btn small primary', type: 'button', disabled: p.running || p.missing, onclick: async () => {
+          const preview = await attempt(() => api('POST', '/api/project-hub/run-preview', { id: p.id }));
+          if (!preview) return;
+          const message = `Working folder: ${preview.cwd}\n\nCommand:\n${preview.command}\n\n${preview.warning}\n\nRun only code from repositories you trust.`;
+          if (!(await confirmDialog({ title: preview.title, message, confirmLabel: 'Run project' }))) return;
+          if (await attempt(() => api('POST', '/api/project-hub/run', { id: p.id }), 'Project start requested. Check logs for output.')) refreshHub();
+        } }, icon('play', 13), 'Run app'));
         if (p.scripts?.length) actions.push(h('button', { class: 'btn small primary', type: 'button', disabled: p.running || p.missing, onclick: async () => {
           if (!(await confirmDialog({ title: `Run ${script.value}?`, message: 'This executes the selected script from package.json. Run code only from repositories you trust.', confirmLabel: 'Run project' }))) return;
           if (await attempt(() => api('POST', '/api/project-hub/start', { id: p.id, script: script.value }), 'Start requested. Check logs for the local URL.')) refreshHub();
