@@ -12,14 +12,14 @@
 
 ## 🚀 Start here
 
-
 | Guide | What you'll learn |
 | --- | --- |
 | [🚀 Installation](INSTALLATION.md) | Requirements, setup, first launch and troubleshooting |
 | [🧭 First-run Quickstart](QUICKSTART.md) | Guided assistant setup, optional gateways and safe next steps |
 | [🧭 Architecture](ARCHITECTURE.md) | How the dashboard, local API, profiles and registries fit together |
-| [📁 Project Hub](PROJECT-HUB.md) | Import GitHub repositories, choose storage locations and run web projects |
-| [☁️ Private Remote Access](REMOTE-ACCESS.md) | Host projects on a private Linux VM and connect from laptops through SSH |\n| [☁️ Cloud Deployment](CLOUD-DEPLOYMENT.md) | Provision an Oracle Always Free Ubuntu VM, install the service and create backups |
+| [📁 Project Hub](PROJECT-HUB.md) | Import repositories, inspect project health and run supported apps |
+| [☁️ Private Remote Access](REMOTE-ACCESS.md) | Use a private Linux VM from your laptops through SSH |
+| [☁️ Cloud Deployment](CLOUD-DEPLOYMENT.md) | Provision an Oracle Always Free Ubuntu VM, install the service and create backups |
 
 ## 🧰 Workspace guides
 
@@ -34,7 +34,7 @@
 
 | Guide | What you'll learn |
 | --- | --- |
-| [🛡️ Security Model](SECURITY.md) | Local-only boundaries, secrets, process execution and limitations |
+| [🛡️ Security Model](SECURITY.md) | Loopback-only boundaries, secrets, project execution and limitations |
 | [🧰 Maintenance](MAINTENANCE.md) | Updates, registry maintenance, checks and release preparation |
 | [📝 Changelog](../CHANGELOG.md) | Version history and implementation notes |
 
