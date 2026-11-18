@@ -2,7 +2,7 @@
 
 ## 🚀 One-click Windows launch
 
-Double-click `Update-and-Start.bat`. It checks prerequisites, verifies the official GitHub remote and `main` branch, refuses to update a dirty or divergent checkout, fetches and fast-forwards safely, runs `node scripts/check.js`, then starts the dashboard. If the dashboard is already listening on the selected port, it opens the existing instance instead of starting a duplicate. No `npm install` is needed for RumiStack itself.
+Double-click `Update-and-Start.bat`. It checks prerequisites, verifies the official GitHub remote and `main` branch, refuses to update a dirty or divergent checkout, fetches and fast-forwards safely, runs `node scripts/check.js` and `node scripts/test.js`, then starts the dashboard. If the dashboard is already listening on the selected port, it opens the existing instance instead of starting a duplicate. No `npm install` is needed for RumiStack itself.
 
 ## 🔁 Routine
 
