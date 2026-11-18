@@ -4,7 +4,7 @@
 
 # RumiStack
 
-### ✨ Your entire AI development stack. One premium, portable workspace.
+### ✨ Your AI development stack. One stable, simple, portable workspace.
 
 **Discover · Organize · Configure · Launch · Sync**
 
@@ -12,18 +12,18 @@ A local-first command center for AI coding assistants, model gateways, web proje
 
 <br>
 
-![Version](https://img.shields.io/badge/version-0.17.0-10b981?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.0.0-10b981?style=for-the-badge)
 ![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-64748b?style=for-the-badge)
 ![Runtime](https://img.shields.io/badge/Node.js-20%2B-16a34a?style=for-the-badge)
 ![Architecture](https://img.shields.io/badge/architecture-Local--first-d6b56d?style=for-the-badge)
 
-[🚀 Quick Start](#-quick-start) · [🧰 Features](#-everything-in-one-workspace) · [📚 Documentation](docs/README.md) · [🛡️ Security](docs/SECURITY.md)
+[🚀 Quick Start](#-quick-start) · [🧰 Features](#-everything-in-one-workspace) · [📚 Documentation](docs/README.md) · [🛡️ Security](docs/SECURITY.md) · [🏁 v1.0.0 release](docs/RELEASE-1.0.0.md)
 
 </div>
 
 ---
 
-## 🌟 Meet your new development workspace
+## 🌟 Meet your stable development workspace
 
 ### 🧭 New here? Start with the Setup Wizard
 
