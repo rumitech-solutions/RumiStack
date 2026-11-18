@@ -14,7 +14,7 @@ test('stable release metadata stays in sync', async () => {
   assert.equal(pkg.version, '1.7.0');
   assert.match(readme, /version-1.7.0-/);
   assert.match(changelog, /^## \[1.7.0\]/m);
-  assert.match(release, /RumiStack v1\.6\.0/);
+  assert.match(release, /RumiStack v1\.7\.0/);
 });
 
 
