@@ -24,9 +24,9 @@ If you choose FreeLLMAPI or OmniRoute:
 
 1. Select the gateway in the wizard and confirm the default Base URL, model and environment-variable name.
 2. Save the provider profile.
-3. Open **Projects → Import GitHub repository**, or register an existing local folder.
-4. Review the upstream Windows instructions. Use Project Hub Install/Start only when the detected runtime is supported.
-5. Confirm the service's actual port and model, then test the connection in **AI providers**.
+3. Open **Projects** and paste the gateway repository URL, or expand the existing-folder option to register a checkout already on disk.
+4. Review the upstream Windows instructions and project health summary. Use **Guided setup** or **Setup & start** only when RumiStack identifies a supported workflow; review the command preview and confirmation before continuing.
+5. Use **More → Logs** to inspect startup output and find a local URL when one is printed. Confirm the gateway's actual port and model, then test the connection in **AI providers**.
 
 Docker is not required for RumiStack's normal workflow. RumiStack does not store API-key values; set them in your own environment.
 
