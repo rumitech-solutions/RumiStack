@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import os from 'node:os';
 import path from 'node:path';
 import { promises as fs } from 'node:fs';
-import { detectProject, registerHubProject, listHubProjects, unregisterHubProject, startHubProject, projectRunPreview } from '../server/lib/project-hub.js';
+import { detectProject, registerHubProject, listHubProjects, unregisterHubProject, startHubProject, projectRunPreview, recordProjectSetupComplete } from '../server/lib/project-hub.js';
 
 test('detects common frontend frameworks and package managers without executing scripts', async () => {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'rumistack-detect-'));
@@ -180,6 +180,27 @@ test('does not guess which Python entrypoint to run when multiple candidates exi
     await fs.writeFile(path.join(project, 'app.py'), 'print("app")');
     const entry = await registerHubProject(state, { path: project });
     await assert.rejects(() => projectRunPreview(state, entry.id), /Multiple Python entrypoints/);
+  } finally {
+    await fs.rm(root, { recursive: true, force: true });
+  }
+});
+
+test('records guided setup completion so Project Hub can recommend the next action', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'rumistack-setup-complete-'));
+  const state = path.join(root, 'state');
+  const project = path.join(root, 'python-app');
+  try {
+    await fs.mkdir(project);
+    await fs.writeFile(path.join(project, 'requirements.txt'), 'requests==2.32.0');
+    await fs.writeFile(path.join(project, 'main.py'), 'print("ready")');
+    const entry = await registerHubProject(state, { path: project });
+    let listed = await listHubProjects(root, state);
+    assert.equal(listed.projects[0].health.status, 'needs-setup');
+    await recordProjectSetupComplete(state, entry.id);
+    listed = await listHubProjects(root, state);
+    assert.equal(listed.projects[0].setupCompleted, true);
+    assert.equal(listed.projects[0].health.status, 'ready');
+    assert.equal(typeof listed.projects[0].setupCompletedAt, 'string');
   } finally {
     await fs.rm(root, { recursive: true, force: true });
   }
