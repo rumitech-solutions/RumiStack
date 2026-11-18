@@ -1,3 +1,13 @@
+## [1.5.0] - 2026-11-18
+
+### ▶️ Guided Python and .NET launch
+- Python projects with exactly one recognized root entrypoint (main.py, app.py, run.py or manage.py) can be launched after an exact command preview and confirmation.
+- Python launch prefers the project-local .venv interpreter when present, then checks the system Python/Windows py launcher.
+- .NET projects with exactly one .csproj can be launched using a confirmed `dotnet run --project ... --no-launch-profile` action.
+- Multiple or ambiguous entrypoints/projects are not guessed; they remain manual.
+- Both runtimes use the existing Project Hub process tracking, logs and Stop action.
+- Added regression tests for safe target detection and ambiguous Python entrypoints.
+
 ## [1.4.0] - 2026-11-18
 
 ### 🧭 Guided multi-runtime project setup
