@@ -139,6 +139,14 @@ For a manual launch, use:
 .\scripts\Start-Workspace.ps1
 ```
 
+For a private Linux server, run:
+
+```bash
+bash scripts/start-linux.sh
+```
+
+Then connect from your laptop using the [SSH tunnel guide](docs/REMOTE-ACCESS.md). Keep port `47821` closed to the public internet.
+
 <div align="center">
 
 ### ✨ Your dashboard is ready
