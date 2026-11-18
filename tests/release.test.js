@@ -9,12 +9,24 @@ const read = (file) => readFile(path.join(REPO_ROOT, file), 'utf8');
 test('stable release metadata stays in sync', async () => {
   const pkg = JSON.parse(await read('package.json'));
   const [readme, changelog, release] = await Promise.all([
-    read('README.md'), read('CHANGELOG.md'), read('docs/RELEASE-1.6.0.md')
+    read('README.md'), read('CHANGELOG.md'), read('docs/RELEASE-1.7.0.md')
   ]);
-  assert.equal(pkg.version, '1.6.0');
-  assert.match(readme, /version-1.6.0-/);
-  assert.match(changelog, /^## \[1.6.0\]/m);
+  assert.equal(pkg.version, '1.7.0');
+  assert.match(readme, /version-1.7.0-/);
+  assert.match(changelog, /^## \[1.7.0\]/m);
   assert.match(release, /RumiStack v1\.6\.0/);
+});
+
+
+test('Project Hub keeps common actions simple and advanced options discoverable', async () => {
+  const [projects, styles, release] = await Promise.all([
+    read('dashboard/js/views/projects.js'), read('dashboard/premium.css'), read('docs/RELEASE-1.7.0.md')
+  ]);
+  assert.match(projects, /Advanced import options/);
+  assert.match(projects, /Already have a project on this laptop\?/);
+  assert.match(projects, /Importing only downloads the files/);
+  assert.match(styles, /\.project-options/);
+  assert.match(release, /does not execute repository code/);
 });
 
 test('one-click launcher validates and tests before starting', async () => {
