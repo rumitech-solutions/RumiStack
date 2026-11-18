@@ -45,17 +45,19 @@ export async function renderOverview(root, { navigate }) {
     h('section', { class: 'quick-actions panel' },
       h('div', {}, h('h2', {}, 'Quick actions'), h('p', { class: 'muted' }, 'The things you are most likely to do next.')),
       h('div', { class: 'quick-action-grid' },
-        h('button', { class: 'quick-action primary', type: 'button', onclick: () => navigate('setup') }, icon('wand-sparkles', 19), h('span', {}, h('strong', {}, 'Setup wizard'), h('small', {}, 'Configure your coding platform'))),
-        h('button', { class: 'quick-action', type: 'button', onclick: () => navigate('projects') }, icon('folder-plus', 19), h('span', {}, h('strong', {}, 'Open Projects'), h('small', {}, 'Import or register an app'))),
-        h('button', { class: 'quick-action', type: 'button', onclick: () => navigate('catalogue') }, icon('grid', 19), h('span', {}, h('strong', {}, 'Tool library'), h('small', {}, 'Discover coding tools'))),
-        h('button', { class: 'quick-action', type: 'button', onclick: () => navigate('guides') }, icon('book-open', 19), h('span', {}, h('strong', {}, 'Guides & help'), h('small', {}, 'Learn each workflow'))))),
+        h('button', { class: 'quick-action primary', type: 'button', onclick: () => navigate('projects') }, icon('folder-plus', 19), h('span', {}, h('strong', {}, 'Open Projects'), h('small', {}, 'Import, open or run an app'))),
+        h('button', { class: 'quick-action', type: 'button', onclick: () => navigate('setup') }, icon('wand-sparkles', 19), h('span', {}, h('strong', {}, 'Setup assistant'), h('small', {}, 'Choose or change your coding tools'))),
+        h('button', { class: 'quick-action', type: 'button', onclick: () => navigate('catalogue') }, icon('grid', 19), h('span', {}, h('strong', {}, 'Tool library'), h('small', {}, 'Explore more tools'))))),
     favs, hero, stats,
-    h('div', { class: 'two-col' },
-      h('div', {}, h('h2', {}, icon('heart', 16), 'Health checks'), h('div', { class: 'panel' }, checks)),
-      h('div', {}, h('h2', {}, icon('activity', 16), 'Recent activity'), h('div', { class: 'panel' }, recent),
-        h('div', { class: 'row' }, h('button', { class: 'btn small ghost', type: 'button', onclick: () => navigate('activity') }, 'View all activity', icon('chevron', 14))))),
-    h('h2', {}, icon('laptop', 16), 'This laptop vs your profile'),
-    h('div', { class: 'panel' }, laptop)
+    h('section', { class: 'home-activity' },
+      h('div', { class: 'row space' }, h('h2', {}, icon('activity', 16), 'Recent activity'),
+        h('button', { class: 'btn small ghost', type: 'button', onclick: () => navigate('activity') }, 'View all', icon('chevron', 14))),
+      h('div', { class: 'panel' }, recent)),
+    h('details', { class: 'home-advanced' },
+      h('summary', {}, icon('sliders', 15), 'Advanced diagnostics & device details'),
+      h('div', { class: 'home-advanced-content' },
+        h('div', {}, h('h2', {}, icon('heart', 16), 'Health checks'), h('div', { class: 'panel' }, checks)),
+        h('div', {}, h('h2', {}, icon('laptop', 16), 'This laptop vs your profile'), h('div', { class: 'panel' }, laptop))))
   );
 
   // Independent requests: each section fills in as soon as its data arrives. The doctor report feeds two
