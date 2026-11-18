@@ -68,3 +68,48 @@ test('runner rejects arbitrary shell text instead of treating it as a package sc
     await fs.rm(root, { recursive: true, force: true });
   }
 });
+
+test('project intelligence reports missing dependencies and runtime health without executing project code', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'rumistack-health-'));
+  const state = path.join(root, 'state');
+  const project = path.join(root, 'vite-app');
+  try {
+    await fs.mkdir(project);
+    await fs.writeFile(path.join(project, 'package.json'), JSON.stringify({
+      packageManager: 'npm@10.0.0',
+      engines: { node: '>=20' },
+      dependencies: { vite: '^6.0.0', react: '^19.0.0' },
+      scripts: { dev: 'vite --host', build: 'vite build' }
+    }));
+    await fs.writeFile(path.join(project, 'package-lock.json'), '{}');
+    const entry = await registerHubProject(state, { path: project });
+    const listed = await listHubProjects(root, state);
+    const detected = listed.projects.find((p) => p.id === entry.id);
+    assert.equal(detected.framework, 'Vite');
+    assert.equal(detected.health.status, 'needs-install');
+    assert.equal(detected.dependenciesInstalled, false);
+    assert.equal(detected.dependencyCount, 2);
+    assert.equal(detected.runtime.manager, 'npm');
+    assert.ok(detected.health.issues.some((issue) => issue.includes('Dependencies are not installed')));
+    assert.deepEqual(detected.lockfiles, ['package-lock.json']);
+  } finally {
+    await fs.rm(root, { recursive: true, force: true });
+  }
+});
+
+test('project intelligence reports moved folders instead of crashing the whole project list', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'rumistack-missing-'));
+  const state = path.join(root, 'state');
+  const project = path.join(root, 'will-move');
+  try {
+    await fs.mkdir(project);
+    const entry = await registerHubProject(state, { path: project });
+    await fs.rm(project, { recursive: true, force: true });
+    const listed = await listHubProjects(root, state);
+    const detected = listed.projects.find((p) => p.id === entry.id);
+    assert.equal(detected.missing, true);
+    assert.equal(detected.health.status, 'missing-folder');
+  } finally {
+    await fs.rm(root, { recursive: true, force: true });
+  }
+});
