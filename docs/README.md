@@ -19,7 +19,7 @@
 | [🧭 First-run Quickstart](QUICKSTART.md) | Guided assistant setup, optional gateways and safe next steps |
 | [🧭 Architecture](ARCHITECTURE.md) | How the dashboard, local API, profiles and registries fit together |
 | [📁 Project Hub](PROJECT-HUB.md) | Import GitHub repositories, choose storage locations and run web projects |
-| [☁️ Private Remote Access](REMOTE-ACCESS.md) | Host projects on a private Linux VM and connect from laptops through SSH |
+| [☁️ Private Remote Access](REMOTE-ACCESS.md) | Host projects on a private Linux VM and connect from laptops through SSH |\n| [☁️ Cloud Deployment](CLOUD-DEPLOYMENT.md) | Provision an Oracle Always Free Ubuntu VM, install the service and create backups |
 
 ## 🧰 Workspace guides
 
