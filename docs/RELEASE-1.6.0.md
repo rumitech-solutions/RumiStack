@@ -5,6 +5,9 @@
 - Added a Linux launcher for Node.js 20+ servers.
 - Kept the application bound to loopback; no public network bind option was added.
 - Documented private browser access from Windows, macOS and Linux laptops using SSH local port forwarding.
+- Added a per-user systemd service installer with restart-on-failure and basic service hardening.
+- Added permission-restricted workspace backup archives with configurable retention.
+- Documented Oracle Always Free VM creation, ARM64 Ubuntu setup, SSH-only firewall rules, persistent storage, service management and backup procedures.
 - Documented persistent VM workspace storage, SSH hardening and the boundary between a private single-user server and future multi-user hosting.
 - Preserved the Windows local launcher and existing project workflow.
 
@@ -22,4 +25,4 @@ Run `npm run check` and `npm test` on the target VM after cloning. The GitHub Ac
 - Public internet exposure or public reverse-proxy deployment
 - Cloud-provider provisioning or automatic VM creation
 - Automatic project synchronization between local and remote machines
-- Backup automation or a managed database
+- Off-VM backup replication or a managed database
