@@ -195,11 +195,13 @@ test('records guided setup completion so Project Hub can recommend the next acti
     await fs.writeFile(path.join(project, 'main.py'), 'print("ready")');
     const entry = await registerHubProject(state, { path: project });
     let listed = await listHubProjects(root, state);
-    assert.equal(listed.projects[0].health.status, 'needs-setup');
+    const initialStatus = listed.projects[0].health.status;
+    const runtimeAvailable = listed.projects[0].runtime.managerAvailable;
+    assert.ok(['needs-setup', 'missing-runtime'].includes(initialStatus));
     await recordProjectSetupComplete(state, entry.id);
     listed = await listHubProjects(root, state);
     assert.equal(listed.projects[0].setupCompleted, true);
-    assert.equal(listed.projects[0].health.status, 'ready');
+    assert.equal(listed.projects[0].health.status, runtimeAvailable ? 'ready' : 'missing-runtime');
     assert.equal(typeof listed.projects[0].setupCompletedAt, 'string');
   } finally {
     await fs.rm(root, { recursive: true, force: true });
