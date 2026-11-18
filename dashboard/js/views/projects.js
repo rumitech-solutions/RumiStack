@@ -68,7 +68,6 @@ export async function renderProjects(root, { navigate }) {
           if (await attempt(() => api('POST', '/api/project-hub/setup', { id: p.id }), 'Project setup completed')) refreshHub();
         }
         async function installDependencies() {
-          const label = p.scripts?.length ? 'Setup & start' : 'Install dependencies';
           if (!(await confirmDialog({ title: 'Set up this project?', message: `RumiStack will run ${p.manager} install in this folder. Package lifecycle scripts may execute. Continue only if you trust this repository.`, confirmLabel: 'Install & prepare' }))) return;
           const installed = await attempt(() => api('POST', '/api/project-hub/install', { id: p.id }), 'Dependencies installed');
           if (installed && p.preferredScript) {
@@ -95,13 +94,6 @@ export async function renderProjects(root, { navigate }) {
         }
         async function stopProject() {
           if (await attempt(() => api('POST', '/api/project-hub/stop', { id: p.id }), 'Stop requested')) refreshHub();
-        }
-        async function showLogs() {
-          const result = await attempt(() => api('POST', '/api/project-hub/logs', { id: p.id }));
-          if (!result) return;
-          const match = [...result.lines.matchAll(/https?:\\/\\/(?:localhost|127\\.0\\.0\\.1):\\d+(?:\\/[^\\s]*)?/g)].pop();
-          if (match) { openUrl.href = match[0].replace(/[),.;]+$/, ''); openUrl.hidden = false; }
-          await modal({ title: `Logs · ${p.name}`, wide: true, body: h('pre', { class: 'code', style: 'white-space:pre-wrap;max-height:60vh;overflow:auto' }, result.lines || 'No log output yet.'), actions: [{ label: 'Close', value: true, kind: 'primary' }] });
         }
         async function unregister() {
           if (!(await confirmDialog({ title: 'Remove project from RumiStack?', message: 'Only removes the Project Hub entry. The actual project folder and its files will remain untouched.', confirmLabel: 'Unregister', danger: true }))) return;
