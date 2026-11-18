@@ -79,13 +79,14 @@ export async function detectProject(dir, packageJson) {
   const dotnetFiles = [...files].filter((name) => /\.(csproj|sln)$/i.test(name));
   const python = ['pyproject.toml', 'requirements.txt', 'Pipfile', 'poetry.lock', 'uv.lock', 'setup.py', 'setup.cfg'].some((name) => files.has(name));
   if (python) {
+    const candidates = ['main.py', 'app.py', 'run.py', 'manage.py'].filter((name) => files.has(name));
     const manager = files.has('uv.lock') ? 'uv' : files.has('poetry.lock') ? 'poetry' : 'pip';
     const setupAction = files.has('requirements.txt') ? 'python-requirements' : files.has('uv.lock') ? 'python-uv' : files.has('poetry.lock') ? 'python-poetry' : null;
-    return { ecosystem: 'python', framework: 'Python', manager, scripts: [], preferredScript: null, isWeb: false, hasPackageJson: false, setupAction, projectFiles: [], projectCount: 0 };
+    return { ecosystem: 'python', framework: 'Python', manager, scripts: [], preferredScript: null, isWeb: false, hasPackageJson: false, setupAction, projectFiles: [], projectCount: 0, runTarget: candidates.length === 1 ? candidates[0] : null, runCandidates: candidates };
   }
   if (dotnetFiles.length) {
     const projectFiles = dotnetFiles.filter((name) => /\.csproj$/i.test(name)).sort();
-    return { ecosystem: 'dotnet', framework: '.NET', manager: 'dotnet', scripts: [], preferredScript: null, isWeb: false, hasPackageJson: false, setupAction: projectFiles.length || dotnetFiles.some((name) => /\.sln$/i.test(name)) ? 'dotnet-restore' : null, projectFiles, projectCount: projectFiles.length };
+    return { ecosystem: 'dotnet', framework: '.NET', manager: 'dotnet', scripts: [], preferredScript: null, isWeb: false, hasPackageJson: false, setupAction: projectFiles.length || dotnetFiles.some((name) => /\.sln$/i.test(name)) ? 'dotnet-restore' : null, projectFiles, projectCount: projectFiles.length, runTarget: projectFiles.length === 1 ? projectFiles[0] : null };
   }
   if (files.has('go.mod')) return { ecosystem: 'go', framework: 'Go', manager: 'go', scripts: [], preferredScript: null, isWeb: false, hasPackageJson: false, setupAction: null };
   if (files.has('Cargo.toml')) return { ecosystem: 'rust', framework: 'Rust', manager: 'cargo', scripts: [], preferredScript: null, isWeb: false, hasPackageJson: false, setupAction: null };
@@ -231,6 +232,50 @@ export async function runProjectSetup(stateDir, id) {
   const result = await run(preview.executable, preview.args, { cwd: preview.cwd, timeout: 20 * 60_000, shell: IS_WINDOWS });
   if (!result.ok) throw new ValidationError(`${preview.title} failed: ${result.stderr.split('\\n').filter(Boolean).pop() || 'see command output'}`, 502);
   return { id, title: preview.title, command: preview.command, output: result.stdout.slice(-4000), completed: true };
+}
+
+
+export async function projectRunPreview(stateDir, id) {
+  const { entry } = await findProject(stateDir, id);
+  const detected = await detectProject(entry.path, null);
+  if (detected.ecosystem === 'python') {
+    if (!detected.runTarget) throw new ValidationError(detected.runCandidates?.length > 1 ? 'Multiple Python entrypoints were found. Choose one manually in a future guided workflow.' : 'No supported Python entrypoint found. Add main.py, app.py, run.py or manage.py to the project root.', 409);
+    const venvPython = path.join(entry.path, '.venv', IS_WINDOWS ? 'Scripts' : 'bin', IS_WINDOWS ? 'python.exe' : 'python');
+    const interpreter = await exists(venvPython) ? venvPython : await findCommand('python') ? 'python' : await findCommand('py') ? 'py' : null;
+    if (!interpreter) throw new ValidationError('Python was not found. Install Python 3 or create a project .venv.', 409);
+    const args = interpreter === 'py' ? ['-3', detected.runTarget] : [detected.runTarget];
+    return { id, ecosystem: 'python', title: `Run ${detected.runTarget}`, command: [interpreter, ...args].join(' '), executable: interpreter, args, cwd: entry.path, target: detected.runTarget, warning: 'This executes project code with the selected Python interpreter. Only run repositories you trust.' };
+  }
+  if (detected.ecosystem === 'dotnet') {
+    if (detected.projectFiles.length !== 1) throw new ValidationError('Automatic .NET run requires exactly one .csproj file. Select the startup project manually when multiple projects exist.', 409);
+    if (!(await findCommand('dotnet'))) throw new ValidationError('.NET SDK was not found on PATH.', 409);
+    const target = detected.projectFiles[0];
+    const args = ['run', '--project', target, '--no-launch-profile'];
+    return { id, ecosystem: 'dotnet', title: `Run ${target}`, command: ['dotnet', ...args].join(' '), executable: 'dotnet', args, cwd: entry.path, target, warning: 'This builds and executes the selected .NET project. Only run repositories you trust.' };
+  }
+  throw new ValidationError('Guided run is currently available for Python and .NET projects only.', 409);
+}
+
+export async function startGuidedProject(stateDir, id) {
+  const preview = await projectRunPreview(stateDir, id);
+  const existing = running.get(id);
+  if (existing && existing.exitCode === null && !existing.killed) throw new ValidationError('This project is already running.', 409);
+  const logDir = path.resolve(stateDir, '..', 'logs');
+  await fs.mkdir(logDir, { recursive: true });
+  const logFile = path.join(logDir, `project-${id.replace(/[^a-z0-9-]/g, '-')}.log`);
+  const fd = await fs.open(logFile, 'w');
+  const registry = await readRegistry(stateDir);
+  const saved = registry.projects.find((p) => p.id === id);
+  if (saved) { saved.logFile = logFile; await saveRegistry(stateDir, registry); }
+  const child = spawn(preview.executable, preview.args, {
+    cwd: preview.cwd, shell: IS_WINDOWS, detached: !IS_WINDOWS,
+    stdio: ['ignore', fd.fd, fd.fd], windowsHide: true,
+    env: { ...process.env, BROWSER: 'none', HOST: '127.0.0.1', ASPNETCORE_URLS: process.env.ASPNETCORE_URLS || 'http://127.0.0.1:5080' }
+  });
+  running.set(id, child);
+  child.on('error', () => { running.delete(id); fd.close().catch(() => {}); });
+  child.on('exit', () => { running.delete(id); fd.close().catch(() => {}); });
+  return { id, target: preview.target, ecosystem: preview.ecosystem, pid: child.pid, logFile, message: 'Run requested. Check project logs for output and startup errors.' };
 }
 
 export async function installHubDependencies(stateDir, id) {
