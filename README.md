@@ -8,12 +8,12 @@
 
 **Discover · Organize · Configure · Launch · Sync**
 
-A local-first command center for AI coding assistants, model gateways, web projects, skills, agents, MCP servers and developer tools — built to keep your development setup organized across Windows laptops.
+A local-first command center for AI coding assistants, model gateways, web projects, skills, agents, MCP servers and developer tools — built for Windows laptops and private Linux servers.
 
 <br>
 
-![Version](https://img.shields.io/badge/version-1.5.0-10b981?style=for-the-badge)
-![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-64748b?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.6.0-10b981?style=for-the-badge)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-64748b?style=for-the-badge)
 ![Runtime](https://img.shields.io/badge/Node.js-20%2B-16a34a?style=for-the-badge)
 ![Architecture](https://img.shields.io/badge/architecture-Local--first-d6b56d?style=for-the-badge)
 
@@ -34,7 +34,7 @@ Open **Setup wizard** from the dashboard. Choose one coding assistant, optionall
 
 RumiStack brings your everyday developer setup into one calm, organized dashboard. Keep track of the tools you use, manage your AI providers, import repositories, launch web projects, organize reusable prompts and move your portable configuration between devices.
 
-No cloud account is required to run the dashboard. Your tools continue running locally, under your control.
+Run locally on Windows, or keep repositories and projects on a private Linux VM and reach the dashboard from your laptops through an SSH tunnel. No public RumiStack port is required.
 
 > **The idea:** one workspace for managing your development environment — without forcing every tool into one application.
 
@@ -107,9 +107,9 @@ Keep provider metadata, tool selections, skills, agents and MCP definitions in v
 ## 🚀 Quick start
 
 ### Requirements
-- 🪟 Windows 10 or Windows 11
+- 🪟 Windows 10/11 for the desktop launcher, or Linux for a private server
 - 🟢 Node.js 20 or later
-- 🧬 Git for Windows
+- 🧬 Git
 - 🐙 GitHub CLI is optional
 - 🐳 Docker is not required for the standard RumiStack workflow
 
@@ -170,7 +170,7 @@ Keep the PowerShell window open while using RumiStack. Press `Ctrl + C` to stop 
                               │
                  Install · Start · Inspect · Sync
                               │
-                     YOUR LOCAL MACHINE
+                  YOUR PRIVATE WORKSPACE
 ```
 
 ## 🗃️ Workspace structure
@@ -217,7 +217,8 @@ D:\RumiStack\
 
 ## 🔐 Privacy & safety by design
 
-- 🔒 The dashboard binds to `127.0.0.1` only.
+- 🔒 The dashboard binds to `127.0.0.1` only on both Windows and Linux.
+- 🔐 Remote browser access is documented through SSH local port forwarding; the RumiStack port stays closed to the public internet.
 - 🧱 Mutating requests use same-origin protections and strict input validation.
 - 🔑 Portable profiles store environment-variable names, not API key values.
 - 🚫 RumiStack does not expose an arbitrary shell-command endpoint.
@@ -228,7 +229,7 @@ D:\RumiStack\
 
 **Important:** Only import and run repositories you trust. Dependency installation can execute package lifecycle scripts, and starting a project runs its selected script.
 
-Read the full [Security Model](docs/SECURITY.md).
+Read the full [Security Model](docs/SECURITY.md) and [Private Remote Access guide](docs/REMOTE-ACCESS.md).
 
 ## ⚡ Model gateways without Docker
 
@@ -261,6 +262,7 @@ New to RumiStack? Start with the [Documentation Hub](docs/README.md).
 - 🧭 [First-run Quickstart](docs/QUICKSTART.md)
 - 🚀 [Installation & Quick Start](docs/INSTALLATION.md)
 - 🧭 [Architecture Overview](docs/ARCHITECTURE.md)
+- ☁️ [Private Remote Access (Linux VM + SSH)](docs/REMOTE-ACCESS.md)
 - 📁 [Project Hub](docs/PROJECT-HUB.md)
 - ⚡ [Provider Manager](docs/PROVIDER-MANAGER.md)
 - 🔌 [MCP Server Manager](docs/MCP-MANAGER.md)
@@ -284,7 +286,7 @@ The automated checks do not replace testing on your actual Windows machine. Powe
 
 ## 🛣️ Product direction
 
-RumiStack is designed to grow as a modular local developer workspace. The current focus is reliable project organization, AI tooling management, safe integrations, portable configuration and a polished everyday workflow.
+RumiStack supports a local Windows workflow and a private Linux-server workflow. The first remote mode uses SSH tunnelling; built-in accounts, multi-user isolation and public hosting are not yet supported.
 
 Feature support depends on the upstream tool and runtime. RumiStack does not claim that every language, framework, package manager or container workflow can be launched automatically.
 
