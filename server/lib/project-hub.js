@@ -127,9 +127,10 @@ async function inspectProject(entry) {
   if (detected.ecosystem === 'python' && !detected.setupAction) issues.push('Python project detected. No supported lockfile or requirements.txt install workflow was found; review its pyproject.toml and set it up manually.');
   if (detected.ecosystem === 'dotnet' && detected.projectCount > 1) issues.push('Multiple .NET project files found. Choose the intended startup project in your IDE; automatic run is not enabled.');
   if (detected.ecosystem === 'dotnet' && !detected.projectCount) issues.push('Solution detected. Restore is supported; select a project file to run from your IDE.');
-  const status = packageError ? 'invalid' : detected.ecosystem === 'unknown' ? 'not-node' : !managerAvailable ? 'missing-runtime' : detected.ecosystem === 'node' && !dependenciesInstalled ? 'needs-install' : detected.setupAction ? 'needs-setup' : detected.ecosystem === 'node' ? 'ready' : 'manual-setup';
+  const setupCompleted = Boolean(entry.setupCompletedAt);
+  const status = packageError ? 'invalid' : detected.ecosystem === 'unknown' ? 'not-node' : !managerAvailable ? 'missing-runtime' : detected.ecosystem === 'node' && !dependenciesInstalled ? 'needs-install' : detected.setupAction && !setupCompleted ? 'needs-setup' : detected.ecosystem === 'node' || setupCompleted ? 'ready' : 'manual-setup';
   const labels = { invalid: 'Needs attention', 'not-node': 'Manual setup', 'missing-runtime': 'Runtime missing', 'needs-install': 'Setup required', 'needs-setup': 'Setup available', 'manual-setup': 'Manual setup', ready: 'Ready' };
-  return { ...entry, ...detected, missing: false, running: active, pid: active ? child.pid : null,
+  return { ...entry, ...detected, missing: false, running: active, pid: active ? child.pid : null, setupCompleted,
     health: { status, label: labels[status], issues },
     runtime: { node: process.version, requiredNode: pkg?.engines?.node ?? null, managerAvailable, manager: detected.manager },
     dependenciesInstalled, dependencyCount: Object.keys({ ...(pkg?.dependencies ?? {}), ...(pkg?.devDependencies ?? {}) }).length,
@@ -227,10 +228,18 @@ export async function projectSetupPreview(stateDir, id) {
   throw new ValidationError('No guided setup workflow is available for this project yet.', 409);
 }
 
+export async function recordProjectSetupComplete(stateDir, id) {
+  const { registry, entry } = await findProject(stateDir, id);
+  entry.setupCompletedAt = new Date().toISOString();
+  await saveRegistry(stateDir, registry);
+  return { id: entry.id, setupCompletedAt: entry.setupCompletedAt };
+}
+
 export async function runProjectSetup(stateDir, id) {
   const preview = await projectSetupPreview(stateDir, id);
   const result = await run(preview.executable, preview.args, { cwd: preview.cwd, timeout: 20 * 60_000, shell: IS_WINDOWS });
   if (!result.ok) throw new ValidationError(`${preview.title} failed: ${result.stderr.split('\\n').filter(Boolean).pop() || 'see command output'}`, 502);
+  await recordProjectSetupComplete(stateDir, id);
   return { id, title: preview.title, command: preview.command, output: result.stdout.slice(-4000), completed: true };
 }
 
