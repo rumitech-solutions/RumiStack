@@ -58,28 +58,40 @@ async function saveRegistry(stateDir, data) {
   await fs.rename(temp, file);
 }
 
-export function detectProject(dir, packageJson) {
+export async function detectProject(dir, packageJson) {
   const scripts = packageJson?.scripts && typeof packageJson.scripts === 'object' ? packageJson.scripts : {};
-  const files = new Set();
-  return fs.readdir(dir).then((names) => {
-    for (const name of names) files.add(name);
-    let framework = 'Node.js';
-    const deps = { ...(packageJson?.dependencies ?? {}), ...(packageJson?.devDependencies ?? {}) };
-    if (deps.next) framework = 'Next.js';
-    else if (deps.vite) framework = 'Vite';
-    else if (deps.nuxt) framework = 'Nuxt';
-    else if (deps['@angular/core']) framework = 'Angular';
-    else if (deps.vue) framework = 'Vue';
-    else if (deps.react) framework = 'React';
-    else if (deps.svelte || deps['@sveltejs/kit']) framework = 'Svelte';
-    else if (deps.express || deps.fastify || deps.nestjs) framework = 'Node.js server';
-    const manager = String(packageJson?.packageManager ?? '').startsWith('pnpm@') ? 'pnpm' : String(packageJson?.packageManager ?? '').startsWith('yarn@') ? 'yarn' : String(packageJson?.packageManager ?? '').startsWith('bun@') ? 'bun' : files.has('pnpm-lock.yaml') ? 'pnpm' : files.has('yarn.lock') ? 'yarn' : files.has('bun.lockb') || files.has('bun.lock') ? 'bun' : 'npm';
-    const preferred = ['dev', 'start', 'serve', 'preview'].find((s) => typeof scripts[s] === 'string' && SCRIPT_RE.test(s)) ?? null;
-    const isWeb = Boolean(packageJson && (framework !== 'Node.js' || ['dev', 'serve', 'preview'].some((s) => typeof scripts[s] === 'string') || files.has('index.html') || files.has('next.config.js') || files.has('vite.config.js') || files.has('vite.config.ts')));
-    return { framework, manager, scripts: Object.keys(scripts).filter((s) => SCRIPT_RE.test(s)).slice(0, 40), preferredScript: preferred, isWeb, hasPackageJson: Boolean(packageJson) };
-  });
-}
+  const files = new Set(await fs.readdir(dir));
+  let framework = 'Node.js';
+  const deps = { ...(packageJson?.dependencies ?? {}), ...(packageJson?.devDependencies ?? {}) };
+  if (deps.next) framework = 'Next.js';
+  else if (deps.vite) framework = 'Vite';
+  else if (deps.nuxt) framework = 'Nuxt';
+  else if (deps['@angular/core']) framework = 'Angular';
+  else if (deps.vue) framework = 'Vue';
+  else if (deps.react) framework = 'React';
+  else if (deps.svelte || deps['@sveltejs/kit']) framework = 'Svelte';
+  else if (deps.express || deps.fastify || deps.nestjs) framework = 'Node.js server';
+  const manager = String(packageJson?.packageManager ?? '').startsWith('pnpm@') ? 'pnpm' : String(packageJson?.packageManager ?? '').startsWith('yarn@') ? 'yarn' : String(packageJson?.packageManager ?? '').startsWith('bun@') ? 'bun' : files.has('pnpm-lock.yaml') ? 'pnpm' : files.has('yarn.lock') ? 'yarn' : files.has('bun.lockb') || files.has('bun.lock') ? 'bun' : 'npm';
+  const preferred = ['dev', 'start', 'serve', 'preview'].find((s) => typeof scripts[s] === 'string' && SCRIPT_RE.test(s)) ?? null;
+  const isWeb = Boolean(packageJson && (framework !== 'Node.js' || ['dev', 'serve', 'preview'].some((s) => typeof scripts[s] === 'string') || files.has('index.html') || files.has('next.config.js') || files.has('vite.config.js') || files.has('vite.config.ts')));
+  if (packageJson) return { ecosystem: 'node', framework, manager, scripts: Object.keys(scripts).filter((s) => SCRIPT_RE.test(s)).slice(0, 40), preferredScript: preferred, isWeb, hasPackageJson: true };
 
+  const dotnetFiles = [...files].filter((name) => /\.(csproj|sln)$/i.test(name));
+  const python = ['pyproject.toml', 'requirements.txt', 'Pipfile', 'poetry.lock', 'uv.lock', 'setup.py', 'setup.cfg'].some((name) => files.has(name));
+  if (python) {
+    const manager = files.has('uv.lock') ? 'uv' : files.has('poetry.lock') ? 'poetry' : 'pip';
+    const setupAction = files.has('requirements.txt') ? 'python-requirements' : files.has('uv.lock') ? 'python-uv' : files.has('poetry.lock') ? 'python-poetry' : null;
+    return { ecosystem: 'python', framework: 'Python', manager, scripts: [], preferredScript: null, isWeb: false, hasPackageJson: false, setupAction, projectFiles: [], projectCount: 0 };
+  }
+  if (dotnetFiles.length) {
+    const projectFiles = dotnetFiles.filter((name) => /\.csproj$/i.test(name)).sort();
+    return { ecosystem: 'dotnet', framework: '.NET', manager: 'dotnet', scripts: [], preferredScript: null, isWeb: false, hasPackageJson: false, setupAction: projectFiles.length || dotnetFiles.some((name) => /\.sln$/i.test(name)) ? 'dotnet-restore' : null, projectFiles, projectCount: projectFiles.length };
+  }
+  if (files.has('go.mod')) return { ecosystem: 'go', framework: 'Go', manager: 'go', scripts: [], preferredScript: null, isWeb: false, hasPackageJson: false, setupAction: null };
+  if (files.has('Cargo.toml')) return { ecosystem: 'rust', framework: 'Rust', manager: 'cargo', scripts: [], preferredScript: null, isWeb: false, hasPackageJson: false, setupAction: null };
+  if (['pom.xml', 'build.gradle', 'build.gradle.kts'].some((name) => files.has(name))) return { ecosystem: 'java', framework: 'Java', manager: 'java', scripts: [], preferredScript: null, isWeb: false, hasPackageJson: false, setupAction: null };
+  return { ecosystem: 'unknown', framework: 'Project', manager: null, scripts: [], preferredScript: null, isWeb: false, hasPackageJson: false, setupAction: null };
+}
 async function inspectProject(entry) {
   const dir = entry.path;
   const folderExists = await fs.stat(dir).then((s) => s.isDirectory(), () => false);
@@ -101,19 +113,23 @@ async function inspectProject(entry) {
   const detected = await detectProject(dir, pkg);
   const child = running.get(entry.id);
   const active = Boolean(child && child.exitCode === null && !child.killed);
-  const managerAvailable = detected.hasPackageJson ? Boolean(await findCommand(detected.manager)) : false;
-  const dependenciesInstalled = await exists(path.join(dir, 'node_modules'));
-  const lockfiles = ['package-lock.json', 'npm-shrinkwrap.json', 'pnpm-lock.yaml', 'yarn.lock', 'bun.lock', 'bun.lockb'];
+  const managerAvailable = detected.ecosystem === 'node' ? Boolean(await findCommand(detected.manager)) : detected.ecosystem === 'python' ? Boolean(await findCommand('python') || await findCommand('py')) : detected.ecosystem === 'dotnet' ? Boolean(await findCommand('dotnet')) : false;
+  const dependenciesInstalled = detected.ecosystem === 'node' ? await exists(path.join(dir, 'node_modules')) : detected.ecosystem === 'python' ? await exists(path.join(dir, '.venv')) : false;
+  const lockfiles = ['package-lock.json', 'npm-shrinkwrap.json', 'pnpm-lock.yaml', 'yarn.lock', 'bun.lock', 'bun.lockb', 'requirements.txt', 'pyproject.toml', 'uv.lock', 'poetry.lock', 'Pipfile.lock'];
   const presentLockfiles = (await Promise.all(lockfiles.map(async (name) => await exists(path.join(dir, name)) ? name : null))).filter(Boolean);
   const issues = [];
   if (packageError) issues.push(packageError);
-  if (detected.hasPackageJson && !managerAvailable) issues.push(`${detected.manager} is not installed or not available on PATH.`);
-  if (detected.hasPackageJson && !dependenciesInstalled) issues.push('Dependencies are not installed yet.');
-  if (detected.hasPackageJson && !detected.scripts.length) issues.push('No runnable scripts are defined in package.json.');
-  if (detected.hasPackageJson && !presentLockfiles.length) issues.push('No package lockfile found; installs may resolve newer dependency versions.');
-  let status = packageError ? 'invalid' : !detected.hasPackageJson ? 'not-node' : !managerAvailable ? 'missing-runtime' : !dependenciesInstalled ? 'needs-install' : 'ready';
+  if (detected.ecosystem !== 'unknown' && !managerAvailable) issues.push(detected.ecosystem === 'python' ? 'Python is not installed or not available on PATH.' : detected.ecosystem === 'dotnet' ? '.NET SDK is not installed or not available on PATH.' : `${detected.manager} is not installed or not available on PATH.`);
+  if (detected.ecosystem === 'node' && !dependenciesInstalled) issues.push('Dependencies are not installed yet.');
+  if (detected.ecosystem === 'node' && !detected.scripts.length) issues.push('No runnable scripts are defined in package.json.');
+  if (detected.ecosystem === 'node' && !presentLockfiles.length) issues.push('No package lockfile found; installs may resolve newer dependency versions.');
+  if (detected.ecosystem === 'python' && !detected.setupAction) issues.push('Python project detected. No supported lockfile or requirements.txt install workflow was found; review its pyproject.toml and set it up manually.');
+  if (detected.ecosystem === 'dotnet' && detected.projectCount > 1) issues.push('Multiple .NET project files found. Choose the intended startup project in your IDE; automatic run is not enabled.');
+  if (detected.ecosystem === 'dotnet' && !detected.projectCount) issues.push('Solution detected. Restore is supported; select a project file to run from your IDE.');
+  const status = packageError ? 'invalid' : detected.ecosystem === 'unknown' ? 'not-node' : !managerAvailable ? 'missing-runtime' : detected.ecosystem === 'node' && !dependenciesInstalled ? 'needs-install' : detected.setupAction ? 'needs-setup' : detected.ecosystem === 'node' ? 'ready' : 'manual-setup';
+  const labels = { invalid: 'Needs attention', 'not-node': 'Manual setup', 'missing-runtime': 'Runtime missing', 'needs-install': 'Setup required', 'needs-setup': 'Setup available', 'manual-setup': 'Manual setup', ready: 'Ready' };
   return { ...entry, ...detected, missing: false, running: active, pid: active ? child.pid : null,
-    health: { status, label: ({ invalid: 'Needs attention', 'not-node': 'Manual setup', 'missing-runtime': 'Runtime missing', 'needs-install': 'Setup required', ready: 'Ready' })[status], issues },
+    health: { status, label: labels[status], issues },
     runtime: { node: process.version, requiredNode: pkg?.engines?.node ?? null, managerAvailable, manager: detected.manager },
     dependenciesInstalled, dependencyCount: Object.keys({ ...(pkg?.dependencies ?? {}), ...(pkg?.devDependencies ?? {}) }).length,
     lockfiles: presentLockfiles, logFile: entry.logFile ?? null };
@@ -181,6 +197,40 @@ async function findProject(stateDir, id) {
   const entry = registry.projects.find((p) => p.id === projectId(id));
   if (!entry) throw new ValidationError('Project not found in the Project Hub.', 404);
   return { registry, entry };
+}
+
+export async function projectSetupPreview(stateDir, id) {
+  const { entry } = await findProject(stateDir, id);
+  const detected = await detectProject(entry.path, null);
+  if (detected.ecosystem === 'python') {
+    if (detected.setupAction === 'python-requirements') {
+      const command = await findCommand('python') ? 'python' : await findCommand('py') ? 'py' : null;
+      if (!command) throw new ValidationError('Python was not found on PATH. Install Python 3 and reopen RumiStack.', 409);
+      const args = command === 'py' ? ['-3', '-m', 'pip', 'install', '-r', 'requirements.txt'] : ['-m', 'pip', 'install', '-r', 'requirements.txt'];
+      return { id, ecosystem: 'python', title: 'Install Python requirements', command: [command, ...args].join(' '), args, executable: command, cwd: entry.path, warning: 'This may download packages and execute package build/install hooks. A virtual environment is recommended; this workflow does not create one automatically.' };
+    }
+    if (detected.setupAction === 'python-uv' || detected.setupAction === 'python-poetry') {
+      const command = detected.setupAction === 'python-uv' ? 'uv' : 'poetry';
+      if (!(await findCommand(command))) throw new ValidationError(`${command} was not found on PATH. Install it using its official instructions first.`, 409);
+      const args = detected.setupAction === 'python-uv' ? ['sync'] : ['install'];
+      return { id, ecosystem: 'python', title: `Install with ${command}`, command: [command, ...args].join(' '), args, executable: command, cwd: entry.path, warning: 'This may download packages and execute package build/install hooks.' };
+    }
+  }
+  if (detected.ecosystem === 'dotnet') {
+    if (!(await findCommand('dotnet'))) throw new ValidationError('.NET SDK was not found on PATH. Install the SDK and reopen RumiStack.', 409);
+    const target = detected.projectFiles.length === 1 ? detected.projectFiles[0] : [...(await fs.readdir(entry.path)).filter((name) => /\.sln$/i.test(name)).sort()][0];
+    if (!target) throw new ValidationError('No .sln or .csproj file was found for restore.', 409);
+    const args = ['restore', target];
+    return { id, ecosystem: 'dotnet', title: 'Restore .NET dependencies', command: ['dotnet', ...args].join(' '), args, executable: 'dotnet', cwd: entry.path, warning: 'This downloads NuGet dependencies. No project code is launched.' };
+  }
+  throw new ValidationError('No guided setup workflow is available for this project yet.', 409);
+}
+
+export async function runProjectSetup(stateDir, id) {
+  const preview = await projectSetupPreview(stateDir, id);
+  const result = await run(preview.executable, preview.args, { cwd: preview.cwd, timeout: 20 * 60_000, shell: IS_WINDOWS });
+  if (!result.ok) throw new ValidationError(`${preview.title} failed: ${result.stderr.split('\\n').filter(Boolean).pop() || 'see command output'}`, 502);
+  return { id, title: preview.title, command: preview.command, output: result.stdout.slice(-4000), completed: true };
 }
 
 export async function installHubDependencies(stateDir, id) {
