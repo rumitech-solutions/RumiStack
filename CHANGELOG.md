@@ -1,3 +1,13 @@
+## [1.4.0] - 2026-11-18
+
+### 🧭 Guided multi-runtime project setup
+- Added actionable Python project detection for requirements.txt, uv.lock and poetry.lock projects, with runtime availability checks and explicit command previews before dependency installation.
+- Added .NET SDK detection and guided `dotnet restore` for a single .csproj or a solution file.
+- The dashboard shows the project ecosystem, supported setup state and exact command/working folder before asking for confirmation.
+- Unsupported Python manifests, multi-project .NET run selection, Go, Rust and Java remain clearly marked for manual setup; no guessed commands or automatic project execution.
+- Import and detection remain read-only. Dependency operations run only after an explicit user confirmation and may execute package build/install hooks.
+- Added regression tests for Python and .NET recognition and supported setup boundaries.
+
 # Changelog
 
 ## [1.3.0] - 2026-11-18
