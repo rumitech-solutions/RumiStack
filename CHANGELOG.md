@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.17.0] - 2026-11-18
+
+### ✨ Simpler Home experience
+- Reduced Home to three everyday actions: Projects, Setup assistant and Tool library.
+- Moved detailed health checks and laptop/profile comparison into one collapsed Advanced section.
+- Kept recent activity visible and retained all advanced functionality and routes.
+- Updated the product version and quickstart guidance.
+
+
 ## [0.16.1] - 2026-11-18
 
 ### 🚀 One-click Windows launcher
