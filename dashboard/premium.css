@@ -283,3 +283,16 @@ dialog.modal, dialog.palette {
 .quick-action.primary { border-color:color-mix(in srgb,var(--signature-emerald) 40%,var(--border)); background:color-mix(in srgb,var(--signature-emerald) 8%,var(--panel)); }
 @media (max-width:900px) { .quick-actions { grid-template-columns:1fr; } }
 @media (max-width:520px) { .quick-action-grid { grid-template-columns:1fr; } }
+
+
+/* Home: simple by default, detailed when requested. */
+.home-activity { margin: 4px 0 18px; }
+.home-activity > .row { margin-bottom: 10px; }
+.home-activity h2 { margin: 0; }
+.home-advanced { margin: 12px 0 28px; border: 1px solid var(--border); border-radius: 14px; background: var(--panel); overflow: hidden; }
+.home-advanced > summary { display: flex; align-items: center; gap: 9px; padding: 14px 16px; color: var(--text-2); font-size: 12px; font-weight: 750; cursor: pointer; list-style: none; user-select: none; }
+.home-advanced > summary::-webkit-details-marker { display: none; }
+.home-advanced > summary::after { content: '+'; margin-left: auto; color: var(--muted); font-size: 18px; }
+.home-advanced[open] > summary::after { content: '−'; }
+.home-advanced-content { display: grid; gap: 18px; padding: 0 16px 18px; }
+.home-advanced-content h2 { margin: 4px 0 10px; font-size: 15px; }
