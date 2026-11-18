@@ -46,6 +46,8 @@ test('cloud deployment automation is private and keeps backups permission-restri
   assert.match(service, /NoNewPrivileges=true/);
   assert.match(backup, /chmod 600/);
   assert.match(backup, /sources projects state config/);
-  assert.match(timer, /OnCalendar=daily/);\n  assert.match(timer, /rumistack-backup.timer/);\n  assert.match(guide, /Do not add port 47821/);
+  assert.match(timer, /OnCalendar=daily/);
+  assert.match(timer, /rumistack-backup.timer/);
+  assert.match(guide, /Do not add port 47821/);
   assert.match(guide, /sudo loginctl enable-linger/);
 });
