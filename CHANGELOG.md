@@ -1,3 +1,10 @@
+## [1.8.2] - 2026-11-18
+
+### 🛠️ Windows startup path fix
+- Corrected shared PowerShell project-root detection so scripts resolve the RumiStack repository root instead of the `scripts` directory.
+- The Windows launcher now validates and starts the server using its absolute `server\index.js` path.
+- Added a Windows CI regression check that executes the shared root helper before launch.
+
 ## [1.8.1] - 2026-11-18
 
 ### ▶️ Start-only Windows launcher
