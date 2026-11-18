@@ -1,3 +1,13 @@
+## [1.8.1] - 2026-11-18
+
+### ▶️ Start-only Windows launcher
+- Replaced the updater-style launcher with one `Start-RumiStack.bat` entry point.
+- Starting RumiStack no longer fetches, pulls, merges or changes Git files.
+- Removed the duplicate legacy `start.cmd` and the automatic `Update-and-Start` launcher/script.
+- The launcher starts the local server and opens the dashboard in the default browser.
+- The start script detects an existing RumiStack instance and opens it instead of starting a duplicate; it reports a port conflict when another application owns the port.
+- Updated installation, quickstart, maintenance and README instructions to match the single start-only workflow.
+
 ## [1.8.0] - 2026-11-18
 
 ### 🎯 Clear project actions
