@@ -17,7 +17,7 @@ A local-first command center for AI coding assistants, model gateways, web proje
 ![Runtime](https://img.shields.io/badge/Node.js-20%2B-16a34a?style=for-the-badge)
 ![Architecture](https://img.shields.io/badge/architecture-Local--first-d6b56d?style=for-the-badge)
 
-[🚀 Quick Start](#-quick-start) · [🧰 Features](#-everything-in-one-workspace) · [📚 Documentation](docs/README.md) · [🛡️ Security](docs/SECURITY.md) · [🏁 v1.0.0 release](docs/RELEASE-1.0.0.md)
+[🚀 Quick Start](#-quick-start) · [🧰 Features](#-everything-in-one-workspace) · [📚 Documentation](docs/README.md) · [🛡️ Security](docs/SECURITY.md) · [🏁 v1.8.0 release](docs/RELEASE-1.8.0.md)
 
 </div>
 
