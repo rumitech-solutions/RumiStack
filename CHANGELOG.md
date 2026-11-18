@@ -1,3 +1,13 @@
+## [1.8.0] - 2026-11-18
+
+### 🎯 Clear project actions
+- Reworked Project Hub cards around one health-aware primary action: guided setup, dependency setup, run app, stop app or setup guidance.
+- Moved logs, local URL, reinstall, copy path and unregister into a compact More menu.
+- Kept project health, runtime status and script selection visible without flooding every card with buttons.
+- Added local setup-completion tracking for guided Python and .NET setup so the next recommended action changes to Run app.
+- Added regression coverage for setup completion and the streamlined Project Hub experience.
+- Existing install/run confirmation prompts and non-destructive unregister behavior remain in place.
+
 ## [1.7.0] - 2026-11-18
 
 ### ✨ Simpler Project Hub
