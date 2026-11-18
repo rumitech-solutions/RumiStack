@@ -34,6 +34,22 @@ test('Project Hub keeps common import simple and project actions health-aware', 
   assert.match(release, /Project imports remain download-only/);
 });
 
+
+test('final documentation matches the v1.8.0 dashboard and has clean links', async () => {
+  const [readme, index, quickstart, projectGuide, security] = await Promise.all([
+    read('README.md'), read('docs/README.md'), read('docs/QUICKSTART.md'),
+    read('docs/PROJECT-HUB.md'), read('docs/SECURITY.md')
+  ]);
+  const escapedNewline = String.fromCharCode(92) + 'n';
+  assert.match(readme, /v1\.8\.0 release/);
+  assert.equal(readme.includes(escapedNewline + '- ☁️'), false);
+  assert.equal(index.includes(escapedNewline + '|'), false);
+  assert.match(quickstart, /Guided setup/);
+  assert.match(projectGuide, /Advanced import options/);
+  assert.match(projectGuide, /More menu/);
+  assert.match(security, /Project dependency installation/);
+});
+
 test('one-click launcher validates and tests before starting', async () => {
   const launcher = await read('scripts/Update-and-Start.ps1');
   const check = launcher.indexOf('& node scripts/check.js');
