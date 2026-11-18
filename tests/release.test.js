@@ -31,7 +31,7 @@ test('Project Hub keeps common import simple and project actions health-aware', 
   assert.match(projects, /setupCompleted/);
   assert.match(styles, /\.project-options/);
   assert.match(styles, /\.project-more-menu/);
-  assert.match(release, /does not execute repository code/);
+  assert.match(release, /Project imports remain download-only/);
 });
 
 test('one-click launcher validates and tests before starting', async () => {
