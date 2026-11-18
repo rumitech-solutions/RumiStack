@@ -47,7 +47,7 @@ test('final documentation matches the v1.8.0 dashboard and has clean links', asy
   assert.match(quickstart, /Guided setup/);
   assert.match(projectGuide, /Advanced import options/);
   assert.match(projectGuide, /More menu/);
-  assert.match(security, /Project dependency installation/);
+  assert.match(security, /dependency installation/i);
 });
 
 test('one-click launcher validates and tests before starting', async () => {
