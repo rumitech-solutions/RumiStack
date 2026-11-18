@@ -77,7 +77,7 @@ export async function detectProject(dir, packageJson) {
   if (packageJson) return { ecosystem: 'node', framework, manager, scripts: Object.keys(scripts).filter((s) => SCRIPT_RE.test(s)).slice(0, 40), preferredScript: preferred, isWeb, hasPackageJson: true };
 
   const dotnetFiles = [...files].filter((name) => /\.(csproj|sln)$/i.test(name));
-  const python = ['pyproject.toml', 'requirements.txt', 'Pipfile', 'poetry.lock', 'uv.lock', 'setup.py', 'setup.cfg'].some((name) => files.has(name));
+  const python = ['pyproject.toml', 'requirements.txt', 'Pipfile', 'poetry.lock', 'uv.lock', 'setup.py', 'setup.cfg', 'main.py', 'app.py', 'run.py', 'manage.py'].some((name) => files.has(name));
   if (python) {
     const candidates = ['main.py', 'app.py', 'run.py', 'manage.py'].filter((name) => files.has(name));
     const manager = files.has('uv.lock') ? 'uv' : files.has('poetry.lock') ? 'poetry' : 'pip';
