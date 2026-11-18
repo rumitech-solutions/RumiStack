@@ -12,12 +12,12 @@ A local-first command center for AI coding assistants, model gateways, web proje
 
 <br>
 
-![Version](https://img.shields.io/badge/version-1.8.1-10b981?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.8.2-10b981?style=for-the-badge)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-64748b?style=for-the-badge)
 ![Runtime](https://img.shields.io/badge/Node.js-20%2B-16a34a?style=for-the-badge)
 ![Architecture](https://img.shields.io/badge/architecture-Local--first-d6b56d?style=for-the-badge)
 
-[🚀 Quick Start](#-quick-start) · [🧰 Features](#-everything-in-one-workspace) · [📚 Documentation](docs/README.md) · [🛡️ Security](docs/SECURITY.md) · [🏁 v1.8.1 release](docs/RELEASE-1.8.1.md)
+[🚀 Quick Start](#-quick-start) · [🧰 Features](#-everything-in-one-workspace) · [📚 Documentation](docs/README.md) · [🛡️ Security](docs/SECURITY.md) · [🏁 v1.8.2 release](docs/RELEASE-1.8.2.md)
 
 </div>
 
