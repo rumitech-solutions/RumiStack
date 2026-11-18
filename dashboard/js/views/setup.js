@@ -16,7 +16,9 @@ export async function renderSetup(root, { navigate }) {
   ]);
   const tools = new Map(registry.tools.map((t) => [t.id, t]));
   const assistants = ASSISTANT_IDS.map((id) => tools.get(id)).filter(Boolean);
-  let selectedAssistant = assistants.find((t) => profileData.profile.tools.includes(t.id))?.id ?? 'claude-code';
+  const profileAssistant = assistants.find((t) => profileData.profile.tools.includes(t.id));
+  const detectedAssistant = assistants.find((t) => status.statuses[t.id]?.installed === true);
+  let selectedAssistant = profileAssistant?.id ?? detectedAssistant?.id ?? 'claude-code';
   let selectedGateway = '';
   let step = 1;
   const stepDots = h('div', { class: 'wizard-steps' });
@@ -58,7 +60,8 @@ export async function renderSetup(root, { navigate }) {
       content.replaceChildren(
         h('div', { class: 'wizard-intro' }, h('span', { class: 'eyebrow' }, 'STEP 01 · REQUIRED'),
           h('h2', {}, 'Pick your main coding assistant'),
-          h('p', {}, 'Choose one platform to start. You can install more later — RumiStack does not lock you into a single assistant.')),
+          h('p', {}, 'Choose one platform to start. Installed assistants are detected automatically and suggested first; you can still choose any other platform.')),
+        detectedAssistant && !profileAssistant ? h('div', { class: 'notice ok' }, icon('check-circle', 16), h('span', {}, `${detectedAssistant.name} is already installed on this laptop, so it is preselected. Nothing will be installed or changed until you choose an action.`)) : null,
         h('div', { class: 'assistant-choices' }, assistants.map((tool) => {
           const installed = status.statuses[tool.id]?.installed === true;
           const selected = selectedAssistant === tool.id;
@@ -84,7 +87,7 @@ export async function renderSetup(root, { navigate }) {
           ...['freellmapi', 'omniroute'].map((id) => {
             const tool = tools.get(id);
             return h('button', { class: `gateway-choice${selectedGateway === id ? ' selected' : ''}`, type: 'button', onclick: () => { selectedGateway = id; paintGatewayFields(); renderStep(); } },
-              h('strong', {}, tool?.name ?? id), h('p', {}, tool?.description ?? 'Local model gateway.'));
+              h('strong', {}, tool?.name ?? id), h('p', {}, providerData.profiles.some((p) => p.id === DEFAULTS[id].id) ? 'Existing local connection profile detected — review its settings before saving.' : (tool?.description ?? 'Local model gateway.')));
           })),
         selectedGateway ? h('div', { class: 'gateway-config' },
           h('h3', {}, 'Connection defaults'),
