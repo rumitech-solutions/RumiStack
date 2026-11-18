@@ -4,14 +4,7 @@ Get from a fresh install to a usable AI coding environment without configuring e
 
 ## 1. Start RumiStack
 
-From PowerShell:
-
-```powershell
-cd D:\RumiStack
-npm start
-```
-
-Open the local dashboard URL printed in the terminal.
+Double-click `Update-and-Start.bat` in the RumiStack folder. It safely pulls the latest version, checks the workspace and starts the dashboard. No terminal commands or `npm install` are needed for everyday use.
 
 ## 2. Choose one coding platform
 
