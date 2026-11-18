@@ -71,7 +71,7 @@ No cloud account is required to run the dashboard. Your tools continue running l
 - 🌐 Import GitHub repositories by URL
 - 💻 Register existing local project folders
 - 🗂️ Choose your destination drive and folder
-- 🚀 Install dependencies and run Node.js scripts
+- 🚀 Guided setup for Node.js, Python and .NET projects
 - 📟 Per-project logs and local URL detection
 - 🔄 Update and organize source repositories
 
@@ -99,7 +99,7 @@ A refined interface with dark, light and automatic themes, configurable accent c
 Import a GitHub repository into a destination you choose — for example, `D:\\WebProjects`, `E:\\ClientWork` or another drive. Existing folders can be registered in place without copying or moving their files.
 
 ### 🌐 Built for web development
-Project Hub detects common Node.js frameworks and package managers, presents available scripts, and gives you explicit Install, Start, Stop and Logs controls. Importing a repository never runs its code.
+Project Hub detects Node.js, Python and .NET projects. It previews supported setup commands before you confirm; Node.js scripts remain separately confirmed. Python requirements/uv/Poetry installs and .NET restore are guided; other ecosystems remain clearly marked for manual setup. Importing a repository never runs its code.
 
 ### 🧩 Your AI setup, kept portable
 Keep provider metadata, tool selections, skills, agents and MCP definitions in version-controlled profiles. Move your setup to another laptop without putting API keys or login sessions in Git.
