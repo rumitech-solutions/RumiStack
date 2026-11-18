@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import os from 'node:os';
 import path from 'node:path';
 import { promises as fs } from 'node:fs';
-import { detectProject, registerHubProject, listHubProjects, unregisterHubProject, startHubProject } from '../server/lib/project-hub.js';
+import { detectProject, registerHubProject, listHubProjects, unregisterHubProject, startHubProject, projectRunPreview } from '../server/lib/project-hub.js';
 
 test('detects common frontend frameworks and package managers without executing scripts', async () => {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'rumistack-detect-'));
@@ -145,6 +145,41 @@ test('Python projects without a supported dependency manifest remain manual setu
     const result = await detectProject(root, null);
     assert.equal(result.ecosystem, 'python');
     assert.equal(result.setupAction, null);
+  } finally {
+    await fs.rm(root, { recursive: true, force: true });
+  }
+});
+
+
+test('detects one safe Python entrypoint and one .NET startup project', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'rumistack-run-targets-'));
+  try {
+    const python = path.join(root, 'python-app');
+    const dotnet = path.join(root, 'dotnet-app');
+    await fs.mkdir(python);
+    await fs.mkdir(dotnet);
+    await fs.writeFile(path.join(python, 'main.py'), 'print("hello")');
+    await fs.writeFile(path.join(dotnet, 'App.csproj'), '<Project />');
+    const py = await detectProject(python, null);
+    const net = await detectProject(dotnet, null);
+    assert.equal(py.runTarget, 'main.py');
+    assert.deepEqual(py.runCandidates, ['main.py']);
+    assert.equal(net.runTarget, 'App.csproj');
+  } finally {
+    await fs.rm(root, { recursive: true, force: true });
+  }
+});
+
+test('does not guess which Python entrypoint to run when multiple candidates exist', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'rumistack-ambiguous-run-'));
+  const state = path.join(root, 'state');
+  const project = path.join(root, 'python-app');
+  try {
+    await fs.mkdir(project);
+    await fs.writeFile(path.join(project, 'main.py'), 'print("main")');
+    await fs.writeFile(path.join(project, 'app.py'), 'print("app")');
+    const entry = await registerHubProject(state, { path: project });
+    await assert.rejects(() => projectRunPreview(state, entry.id), /Multiple Python entrypoints/);
   } finally {
     await fs.rm(root, { recursive: true, force: true });
   }
