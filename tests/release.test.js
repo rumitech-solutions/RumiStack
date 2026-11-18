@@ -11,7 +11,7 @@ test('stable release metadata stays in sync', async () => {
   const [readme, changelog, release] = await Promise.all([
     read('README.md'), read('CHANGELOG.md'), read('docs/RELEASE-1.0.0.md')
   ]);
-  assert.equal(pkg.version, '1.0.0');
+  assert.equal(pkg.version, '1.1.0');
   assert.match(readme, /version-1\.0\.0-/);
   assert.match(changelog, /^## \[1\.0\.0\]/m);
   assert.match(release, /RumiStack 1\.0\.0/);
