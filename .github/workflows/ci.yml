@@ -23,6 +23,10 @@ jobs:
           node-version: ${{ matrix.node }}
       - run: npm run check
       - run: npm test
+      - name: Verify PowerShell project-root detection
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: pwsh -NoLogo -NoProfile -File tests/Verify-RootPath.ps1
       - name: Validate PowerShell scripts
         if: runner.os == 'Windows'
         shell: pwsh
