@@ -3,7 +3,26 @@
 Set-StrictMode -Version Latest
 
 function Get-RumiRoot {
-    return (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+    # Walk upward from the active script location until the actual project root is found.
+    # PSScriptRoot may refer to scripts/lib or to the calling script folder.
+    $start = $PSScriptRoot
+    if ([string]::IsNullOrWhiteSpace($start)) { $start = (Get-Location).Path }
+
+    $candidate = [System.IO.Path]::GetFullPath($start)
+    while (-not [string]::IsNullOrWhiteSpace($candidate)) {
+        $packageFile = Join-Path $candidate 'package.json'
+        $serverFile = Join-Path $candidate 'server\index.js'
+        if ((Test-Path -LiteralPath $packageFile -PathType Leaf) -and
+            (Test-Path -LiteralPath $serverFile -PathType Leaf)) {
+            return $candidate
+        }
+
+        $parent = Split-Path -Path $candidate -Parent
+        if ([string]::IsNullOrWhiteSpace($parent) -or $parent -eq $candidate) { break }
+        $candidate = $parent
+    }
+
+    throw "Could not locate the RumiStack root from '$start'. Expected package.json and server\index.js in the same folder."
 }
 
 function Read-JsonFile {
