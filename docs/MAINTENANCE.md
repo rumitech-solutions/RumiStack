@@ -1,25 +1,45 @@
 # 🧰 Maintenance
 
-## 🚀 One-click Windows launch
+## ▶️ Start RumiStack on Windows
 
-Double-click `Update-and-Start.bat`. It checks prerequisites, verifies the official GitHub remote and `main` branch, refuses to update a dirty or divergent checkout, fetches and fast-forwards safely, runs `node scripts/check.js` and `node scripts/test.js`, then starts the dashboard. If the dashboard is already listening on the selected port, it opens the existing instance instead of starting a duplicate. No `npm install` is needed for RumiStack itself.
+There is one normal Windows launcher: double-click `Start-RumiStack.bat`.
 
-## 🔁 Routine
+- Starts the local RumiStack server on `127.0.0.1:47821`.
+- Opens the dashboard in your default browser.
+- Reuses an existing RumiStack instance on that port instead of starting a duplicate.
+- Reports a clear error if another application is using the port.
+- Does **not** run Git, pull, update source repositories or change tracked files.
+
+Keep the launcher window open while using RumiStack. Press `Ctrl+C` in that window to stop the server.
+
+## 🔄 Update only when you choose
+
+Starting the dashboard and updating code are separate tasks. To deliberately update RumiStack, open PowerShell in the repository and run:
 
 ```powershell
-.\scripts\Update-Workspace.ps1   # fast-forward-only pull of RumiStack and clean sources\ checkouts
-.\scripts\Doctor.ps1             # read-only health report
-npm run check                    # syntax, JSON, registry, profile and hygiene checks
-npm test                         # API, validation and snippet tests
-npm run verify-registry          # network: confirm every registry URL still resolves
+git status --short
+git pull --ff-only origin main
+npm run check
+npm test
 ```
 
-Updates never merge, rebase or discard. A repository with local changes is skipped and reported.
+Do not pull over uncommitted local changes. Review `git status` first and commit or back up your work.
+
+To separately update clean source checkouts as well, run `.` + `\\scripts\\Update-Workspace.ps1`. This is an optional maintenance action; the start launcher never calls it.
+
+## 🩺 Routine checks
+
+```powershell
+.\\scripts\\Doctor.ps1             # read-only health report
+npm run check                       # syntax, JSON, registry, profile and hygiene checks
+npm test                            # API, validation and frontend regression tests
+npm run verify-registry              # network: confirm registry URLs still resolve
+```
 
 ## 🗂️ Keeping the registry current
 
 1. Run `npm run verify-registry` and fix any `FAIL` or `MOVED` lines in `registry/tools.json`.
-2. When adding a tool: typed installer or `manual` with a note; `"clone": true` only for GitHub HTTPS repos you want on the clone allowlist; prefer official upstream links; check the licence.
+2. When adding a tool: use a typed installer or `manual` with a note; set `"clone": true` only for GitHub HTTPS repos you want on the clone allowlist; prefer official upstream links and check the licence.
 3. Update the `updated` date in `registry/tools.json` (and `registry/skills.json` for skills changes).
 4. Run `npm run check` and `npm test`.
 
