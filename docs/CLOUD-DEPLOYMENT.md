@@ -83,7 +83,7 @@ Stop the foreground process with Ctrl+C before installing the service.
 bash scripts/install-linux-service.sh
 ```
 
-For a headless server that must keep the user service running after SSH logout and reboot, enable systemd lingering:
+For a headless server, enable systemd lingering before installing the user services so they can start after SSH logout and reboot:
 
 ```bash
 sudo loginctl enable-linger "$USER"
@@ -118,6 +118,15 @@ bash scripts/backup-linux.sh
 ```
 
 Archives include `sources/`, `projects/`, `state/` and `config/`; large dependency caches such as `node_modules` and Python virtual environments are excluded. Archives are permission-restricted and the default retention is seven backups. Override with `RUMISTACK_BACKUP_RETENTION=14`.
+
+To schedule a daily backup automatically:
+
+```bash
+bash scripts/install-linux-backup-timer.sh
+systemctl --user list-timers rumistack-backup.timer
+```
+
+The timer runs once per day with a small randomized delay and catches up after downtime. The archive remains on the VM until copied elsewhere.
 
 A backup on the same VM is not disaster recovery. Copy archives to a separate trusted location and test restoration before relying on them. Treat backups as private data: repositories and project configuration may contain sensitive material. Do not put backups in a public Git repository.
 
