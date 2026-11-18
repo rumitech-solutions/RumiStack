@@ -1,3 +1,12 @@
+## [1.7.0] - 2026-11-18
+
+### ✨ Simpler Project Hub
+- Put the common GitHub import path first and kept the repository URL as the only required visible field.
+- Moved destination drive, destination folder and custom folder name into collapsed Advanced import options.
+- Moved existing-folder registration into a separate collapsed section with a clear explanation that files are not moved or changed.
+- Clarified the difference between imported projects and projects created inside RumiStack.
+- Added responsive, accessible disclosure styling for optional project settings.
+
 ## [1.6.0] - 2026-11-18
 
 ### ☁️ Private cloud foundations
