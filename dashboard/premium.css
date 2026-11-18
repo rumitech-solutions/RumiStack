@@ -296,3 +296,40 @@ dialog.modal, dialog.palette {
 .home-advanced[open] > summary::after { content: '−'; }
 .home-advanced-content { display: grid; gap: 18px; padding: 0 16px 18px; }
 .home-advanced-content h2 { margin: 4px 0 10px; font-size: 15px; }
+
+
+/* Project Hub: keep the common path visible and tuck infrequent settings away. */
+.project-options {
+  margin-top: 14px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--panel) 68%, transparent);
+  overflow: hidden;
+}
+.project-options > summary {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 10px 14px;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 650;
+  list-style: none;
+  user-select: none;
+}
+.project-options > summary::-webkit-details-marker { display: none; }
+.project-options > summary::after {
+  content: '+';
+  margin-left: auto;
+  color: var(--accent);
+  font-size: 18px;
+  font-weight: 500;
+}
+.project-options[open] > summary::after { content: '−'; }
+.project-options[open] > summary { color: var(--text); border-bottom: 1px solid var(--border); }
+.project-options > .field,
+.project-options > .panel { margin: 14px; }
+.project-options > .field:last-child { margin-bottom: 16px; }
+.project-register { margin-bottom: 22px; }
