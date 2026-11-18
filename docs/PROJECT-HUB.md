@@ -1,48 +1,77 @@
 # 📁 Project Hub
 
-Project Hub extends Dashboard → Projects. It is intended for day-to-day web development while remaining useful as a library for non-web repositories.
+Project Hub is the central place to bring repositories and existing folders together, inspect project health, prepare dependencies and run supported apps.
 
-## 📥 Import and storage
+## 📥 Import a repository
 
-1. Paste a GitHub HTTPS repository URL.
-2. Choose a destination drive and folder. On Windows, the drive selector lists detected drives; the full destination path remains editable. Example: `E:\\WebProjects`.
-3. Optionally choose a folder name. The clone is placed in a new child folder.
-4. Import only clones repository files. It does not install packages, run setup scripts, start containers or execute project code.
+1. Open **Projects** and paste a GitHub HTTPS repository URL.
+2. Choose **Import repository**. Importing downloads the repository into RumiStack's default projects folder.
+3. To choose another drive or destination, expand **Advanced import options** before importing. The optional folder name defaults to the repository name.
+4. The imported project appears under **Your projects**.
 
-The default destination is `<RumiStack>\\projects`. You can choose another drive or folder for each import. The imported project remains at that path; RumiStack records its location in ignored `state/project-hub.json`.
+Import is download-only. It does not install dependencies, run setup scripts or execute project code.
 
-Use **Register existing project** to add a folder already on disk. This does not copy, move or rewrite its source files. Unregister removes only the Project Hub record; it never deletes the folder.
+The default destination is `<RumiStack>/projects`. On Windows, the advanced options include detected drives and an editable absolute destination path. Drive roots themselves are not accepted.
 
-## 🌐 Web projects
+## 📂 Register a folder already on your laptop
 
-Project Hub reads `package.json`, lockfiles and common framework dependencies to identify likely web projects and package managers:
+Expand **Already have a project on this laptop? Register its folder**, enter its full path and confirm registration. The existing folder stays where it is; RumiStack does not copy, move or rewrite its source files.
 
-- Frameworks: Vite, Next.js, Nuxt, Angular, Vue, React, Svelte and generic Node.js.
-- Package managers: npm, pnpm, Yarn and Bun.
-- Candidate scripts: dev, start, serve and preview (the UI also lets you select any detected package script).
+To remove a project from the list, use **More → Unregister**. This removes only the Project Hub record and keeps the actual files.
 
-Project cards now show a **health summary**: detected Node runtime, any declared Node engine requirement, package-manager availability, dependency count, installed/missing dependencies, lockfiles and actionable warnings. A missing or moved project folder is reported without breaking the rest of the project list.
+## 🧠 Project health and supported workflows
 
-**Setup & start** is the guided path for a fresh Node project. It runs the detected package manager's install command, then asks separately whether to launch the detected default script. Dependency lifecycle scripts may execute, so only do this for repositories you trust. **Reinstall dependencies** remains available for projects that are already set up.
+Project Hub inspects project manifests without running project code. The project card shows its detected framework/ecosystem, runtime and package-manager availability, dependency state and relevant warnings. Framework detection is heuristic, so review the result rather than treating it as a guarantee.
 
-**Start** runs the selected package.json script. This is an explicit code-execution action and is never performed by import or detection. Logs are written to RumiStack's local `logs/` folder. The Logs view can reveal a localhost URL printed by the development server; use Open local site when one is detected.
+| Project type | What RumiStack can guide |
+| --- | --- |
+| Node.js | Detect npm, pnpm, Yarn or Bun; install dependencies after confirmation; run a selected `package.json` script after a separate confirmation |
+| Python | For supported `requirements.txt`, `uv.lock` or `poetry.lock` projects, preview and confirm the setup command; a single recognized root entrypoint (`main.py`, `app.py`, `run.py` or `manage.py`) can be launched after a separate command preview |
+| .NET | Preview and confirm dependency restore; a project with exactly one `.csproj` can be launched after a separate command preview |
+| Go, Rust and Java | Detect common project manifests and provide manual-setup guidance; commands are not guessed or run automatically |
 
-**Stop** terminates the tracked process tree (Windows uses taskkill /T /F; POSIX uses the process group). The process registry is in memory, so after restarting RumiStack, a process started before the restart may need to be stopped manually from Task Manager or the operating system.
+### Main project action
 
-## 🧱 Non-web projects and Docker
+Each card presents one primary action based on the project's current state:
 
-Non-web repositories can still be imported and organized at the chosen destination. If a Node.js package exposes scripts, Project Hub can run them; otherwise the folder remains registered and available to open in an editor or terminal.
+- **Guided setup** for supported Python/.NET setup that has not yet completed.
+- **Setup & start** or **Install dependencies** for Node.js projects that need dependencies.
+- **Run app** for a supported Python or .NET app after setup.
+- **Start app** for a Node.js project with installed dependencies and scripts.
+- **Stop app** while a tracked app is running.
+- **View guidance** when no supported automatic workflow is available.
 
-Docker is optional and is not required for importing, organizing or running ordinary Node.js web projects. Existing Docker gateway controls remain separate.
+When a guided Python/.NET setup succeeds, the completion timestamp is saved in RumiStack's local Project Hub registry. It is not written into the imported project.
+
+Use the script selector to choose a detected Node.js script. RumiStack never accepts an arbitrary command-line string as a project script.
+
+### More menu
+
+Less-frequent actions are grouped under **More**:
+
+- **Logs** opens the project's recent output. If a localhost URL is detected, **Open local site** becomes available.
+- **Reinstall dependencies** repeats the detected Node.js package-manager install.
+- **Run setup again** repeats a supported guided Python/.NET setup.
+- **Copy path** copies the project's full folder path.
+- **Unregister** removes the list entry but keeps the folder.
+
+## ▶️ Execution and process behavior
+
+Dependency installation may download third-party packages and execute their lifecycle/build scripts. Starting a project runs code owned by that repository. Only continue with projects and dependencies you trust.
+
+Before guided Python/.NET setup or launch, RumiStack shows the working directory, exact command and a warning. Review these details before confirming.
+
+Logs are stored under RumiStack's local `logs/` folder. Project process tracking is in memory; after RumiStack exits or restarts, a previously launched process may need to be stopped manually from Task Manager or the operating system.
 
 ## 🛡️ Safety and limitations
 
-- The dashboard is loopback-only and its mutation APIs retain the existing host/origin protections.
-- GitHub imports accept normalized GitHub HTTPS repository URLs only.
-- Destination paths must be absolute; drive roots themselves are not accepted.
-- Import never executes code. Installing dependencies and starting scripts are separate actions with confirmation prompts.
-- The runner exposes package.json script names, not arbitrary shell commands.
-- Existing local folders are registered in place. Unregister keeps the files.
-- Project paths and process logs are local-only; do not commit `state/` or `logs/`.
-- Framework detection is heuristic. Projects with custom runtimes, monorepos or non-Node stacks may need manual setup. Project Hub does not claim universal runtime support.
-- Project Hub manages the dev process and logs; it does not yet provide a reverse proxy, HTTPS certificates, automatic port reservation, or persistent process supervision after RumiStack exits.
+- The dashboard binds to loopback only; do not expose port `47821` publicly.
+- GitHub imports accept validated GitHub HTTPS repository URLs.
+- Destination paths must be absolute; drive roots are not valid destinations.
+- Import and project inspection do not execute repository code.
+- Dependency installation and project launch are separate, explicit actions.
+- Package scripts are selected by name from the project's `package.json`; arbitrary shell command text is not accepted.
+- Existing local folders are registered in place; unregister never deletes project files.
+- Project paths, process logs and the Project Hub registry are local data. Do not commit `state/` or `logs/`.
+- Custom runtimes, monorepos, multi-project .NET solutions and projects without a recognized entrypoint may need manual setup.
+- Project Hub does not provide a reverse proxy, HTTPS certificates, automatic port reservation or persistent process supervision after RumiStack exits.
