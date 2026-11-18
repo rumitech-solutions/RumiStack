@@ -4,7 +4,7 @@ Get from a fresh install to a usable AI coding environment without configuring e
 
 ## 1. Start RumiStack
 
-Double-click `Update-and-Start.bat` in the RumiStack folder. It safely pulls the latest version, checks the workspace and starts the dashboard. No terminal commands or `npm install` are needed for everyday use.
+Double-click `Start-RumiStack.bat` in the RumiStack folder. It starts the local server and opens the dashboard in your default browser. It does not pull from GitHub, update repositories or change your files. No terminal commands or `npm install` are needed for everyday use.
 
 ## 2. Choose one coding platform
 
