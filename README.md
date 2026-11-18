@@ -133,8 +133,6 @@ npm test
 
 Double-click `Start-RumiStack.bat` to start RumiStack and open the dashboard in your default browser. The launcher does not pull, update or change any Git files. No `npm install` is needed for RumiStack itself.
 
-After setup, double-click `Start-RumiStack.bat` whenever you want to open RumiStack. It never pulls or updates the repository.
-
 For a private Linux server, run:
 
 ```bash
