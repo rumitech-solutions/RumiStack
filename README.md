@@ -12,7 +12,7 @@ A local-first command center for AI coding assistants, model gateways, web proje
 
 <br>
 
-![Version](https://img.shields.io/badge/version-1.8.0-10b981?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.8.1-10b981?style=for-the-badge)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-64748b?style=for-the-badge)
 ![Runtime](https://img.shields.io/badge/Node.js-20%2B-16a34a?style=for-the-badge)
 ![Architecture](https://img.shields.io/badge/architecture-Local--first-d6b56d?style=for-the-badge)
@@ -131,7 +131,7 @@ npm test
 
 ### 3. Launch your workspace
 
-Double-click `Update-and-Start.bat` to safely update from GitHub, validate and start RumiStack. No `npm install` is needed for RumiStack itself.
+Double-click `Start-RumiStack.bat` to start RumiStack and open the dashboard in your default browser. The launcher does not pull, update or change any Git files. No `npm install` is needed for RumiStack itself.
 
 For a manual launch, use:
 
@@ -153,7 +153,7 @@ Then connect from your laptop using the [SSH tunnel guide](docs/REMOTE-ACCESS.md
 
 **http://127.0.0.1:47821**
 
-Keep the PowerShell window open while using RumiStack. Press `Ctrl + C` to stop the local server.
+Keep the launcher window open while using RumiStack. Press `Ctrl + C` to stop the local server.
 
 </div>
 
@@ -232,7 +232,7 @@ D:\RumiStack\
 - 🚫 RumiStack does not expose an arbitrary shell-command endpoint.
 - 🧪 Importing a repository only downloads its files; it does not execute project code.
 - ⚠️ Dependency installation and project scripts require separate user actions.
-- 🛟 Git updates are fast-forward-only; dirty repositories are skipped.
+- 🛟 Starting RumiStack never runs Git updates. Repository updates are separate, deliberate maintenance actions.
 - 📁 Projects, downloaded sources, logs, backups and runtime state remain local and are git-ignored.
 
 **Important:** Only import and run repositories you trust. Dependency installation can execute package lifecycle scripts, and starting a project runs its selected script.
