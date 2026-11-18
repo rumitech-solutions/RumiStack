@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.0] - 2026-11-18
+
+### 🧠 Project intelligence & guided launch
+- Project Hub now reports framework, Node runtime, required Node version, package manager availability, dependency count, lockfiles and actionable project health.
+- Moved or disconnected project folders are identified without breaking the entire Project Hub list.
+- Added an explicit Setup & start workflow: install dependencies, then optionally launch the detected default script after a separate confirmation.
+- Existing import safety remains unchanged: project code is never executed during import or detection.
+
+
 ## [1.0.0] - 2026-11-18
 
 ### 🏁 First stable release
