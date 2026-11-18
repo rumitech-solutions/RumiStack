@@ -25,7 +25,7 @@ npm test
 
 Do not pull over uncommitted local changes. Review `git status` first and commit or back up your work.
 
-To separately update clean source checkouts as well, run `.` + `\\scripts\\Update-Workspace.ps1`. This is an optional maintenance action; the start launcher never calls it.
+To separately update clean source checkouts as well, run `\\scripts\\Update-Workspace.ps1`. This is an optional maintenance action; the start launcher never calls it.
 
 ## 🩺 Routine checks
 
