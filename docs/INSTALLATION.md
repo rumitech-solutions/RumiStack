@@ -20,7 +20,7 @@ npm test
 Start-RumiStack.bat
 ```
 
-The dashboard opens at `http://127.0.0.1:47821` in your default browser. Keep the launcher window open; press `Ctrl+C` to stop. The launcher never pulls or updates Git repositories. Advanced users can run `scripts\\Start-Workspace.ps1 -Port 48000` to choose another port, or add `-NoBrowser` to skip opening the browser.
+The dashboard opens at `http://127.0.0.1:47821` in your default browser. Keep the launcher window open; press `Ctrl+C` to stop. The launcher never pulls or updates Git repositories. Advanced users can run `.\scripts\Start-Workspace.ps1 -Port 48000` to choose another port, or add `-NoBrowser` to skip opening the browser.
 
 There is nothing to `npm install`: the server uses Node built-ins only.
 
