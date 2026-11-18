@@ -117,9 +117,9 @@ export async function renderProjects(root, { navigate }) {
         } else if (p.hasPackageJson && !p.dependenciesInstalled) {
           primaryAction = h('button', { class: 'btn small primary', type: 'button', disabled: !p.runtime?.managerAvailable, title: p.runtime?.managerAvailable ? 'Install dependencies after reviewing the confirmation.' : 'Install the required package manager first.', onclick: installDependencies }, icon('wand-sparkles', 13), p.runtime?.managerAvailable ? (p.scripts?.length ? 'Setup & start' : 'Install dependencies') : 'Runtime required');
         } else if (['python', 'dotnet'].includes(p.ecosystem) && p.runTarget) {
-          primaryAction = h('button', { class: 'btn small primary', type: 'button', onclick: runApp }, icon('play', 13), 'Run app');
+          primaryAction = h('button', { class: 'btn small primary', type: 'button', disabled: !p.runtime?.managerAvailable, title: p.runtime?.managerAvailable ? 'Review the command preview before running this app.' : 'Install the required runtime first, then reopen RumiStack.', onclick: runApp }, icon('play', 13), p.runtime?.managerAvailable ? 'Run app' : 'Runtime required');
         } else if (p.scripts?.length) {
-          primaryAction = h('button', { class: 'btn small primary', type: 'button', onclick: startNodeProject }, icon('play', 13), 'Start app');
+          primaryAction = h('button', { class: 'btn small primary', type: 'button', disabled: !p.runtime?.managerAvailable, title: p.runtime?.managerAvailable ? 'Run the selected package.json script.' : 'Install the required package manager first.', onclick: startNodeProject }, icon('play', 13), p.runtime?.managerAvailable ? 'Start app' : 'Runtime required');
         } else {
           primaryAction = h('button', { class: 'btn small', type: 'button', onclick: showGuidance }, icon('book-open', 13), 'View guidance');
         }
