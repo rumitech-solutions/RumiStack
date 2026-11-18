@@ -1,5 +1,14 @@
-## [1.5.0] - 2026-11-18
+## [1.6.0] - 2026-11-18
 
+### ☁️ Private cloud foundations
+- Added a Linux server launcher with Node.js 20+ checks and local workspace folder initialization.
+- Documented a private Linux VM deployment with repositories and project files stored on persistent server disk.
+- Added SSH local port-forwarding instructions for browser access from Windows, macOS and Linux laptops.
+- Preserved loopback-only binding and explicitly documented that port 47821 must never be opened publicly.
+- Clarified the current boundary: private single-user remote access, not public or multi-user hosting.
+- Windows setup and the existing Update-and-Start workflow remain supported.
+
+## [1.5.0] - 2026-11-18
 ### ▶️ Guided Python and .NET launch
 - Python projects with exactly one recognized root entrypoint (main.py, app.py, run.py or manage.py) can be launched after an exact command preview and confirmation.
 - Python launch prefers the project-local .venv interpreter when present, then checks the system Python/Windows py launcher.
