@@ -47,15 +47,28 @@ export async function renderProjects(root, { navigate }) {
           if (match) { openUrl.href = match[0].replace(/[),.;]+$/, ''); openUrl.hidden = false; }
           await modal({ title: `Logs · ${p.name}`, wide: true, body: h('pre', { class: 'code', style: 'white-space:pre-wrap;max-height:60vh;overflow:auto' }, result.lines || 'No log output yet.'), actions: [{ label: 'Close', value: true, kind: 'primary' }] });
         }
-        const actions = [];
-        if (p.setupAction && ['python', 'dotnet'].includes(p.ecosystem)) actions.push(h('button', { class: 'btn small primary', type: 'button', disabled: !p.runtime?.managerAvailable || p.missing, onclick: async () => {
+        const moreActions = [];
+        async function showGuidance() {
+          const issues = p.health?.issues ?? [];
+          await modal({
+            title: `Next steps · ${p.name}`,
+            body: h('div', {},
+              h('p', {}, 'RumiStack has identified this project, but it does not have a safe one-click run workflow yet.'),
+              issues.length ? h('ul', { class: 'project-guidance-list' }, issues.map((issue) => h('li', {}, issue))) : h('p', { class: 'muted' }, 'No additional health issues were reported.'),
+              h('p', { class: 'muted' }, 'You can open the folder in your editor and follow the project’s own documentation. RumiStack will not guess commands for an unsupported project type.')
+            ),
+            actions: [{ label: 'Close', value: true, kind: 'primary' }]
+          });
+        }
+        async function guidedSetup() {
           const preview = await attempt(() => api('POST', '/api/project-hub/setup-preview', { id: p.id }));
           if (!preview) return;
           const message = `Working folder: ${preview.cwd}\n\nCommand:\n${preview.command}\n\n${preview.warning}\n\nContinue only if you trust this project and its dependencies.`;
           if (!(await confirmDialog({ title: preview.title, message, confirmLabel: 'Run setup' }))) return;
           if (await attempt(() => api('POST', '/api/project-hub/setup', { id: p.id }), 'Project setup completed')) refreshHub();
-        } }, icon('wand-sparkles', 13), 'Guided setup'));
-        if (p.hasPackageJson && !p.dependenciesInstalled) actions.push(h('button', { class: 'btn small primary', type: 'button', disabled: !p.runtime?.managerAvailable, onclick: async () => {
+        }
+        async function installDependencies() {
+          const label = p.scripts?.length ? 'Setup & start' : 'Install dependencies';
           if (!(await confirmDialog({ title: 'Set up this project?', message: `RumiStack will run ${p.manager} install in this folder. Package lifecycle scripts may execute. Continue only if you trust this repository.`, confirmLabel: 'Install & prepare' }))) return;
           const installed = await attempt(() => api('POST', '/api/project-hub/install', { id: p.id }), 'Dependencies installed');
           if (installed && p.preferredScript) {
@@ -64,41 +77,75 @@ export async function renderProjects(root, { navigate }) {
             }
           }
           refreshHub();
-        } }, icon('wand-sparkles', 13), 'Setup & start'));
-        else if (p.hasPackageJson) actions.push(h('button', { class: 'btn small', type: 'button', onclick: async () => {
+        }
+        async function reinstallDependencies() {
           if (!(await confirmDialog({ title: 'Reinstall dependencies?', message: 'This runs the project package manager and may execute dependency lifecycle scripts. Only continue if you trust this repository.', confirmLabel: 'Install' }))) return;
           if (await attempt(() => api('POST', '/api/project-hub/install', { id: p.id }), 'Dependencies installed')) refreshHub();
-        } }, icon('download', 13), 'Reinstall dependencies'));
-        if (['python', 'dotnet'].includes(p.ecosystem) && p.runTarget) actions.push(h('button', { class: 'btn small primary', type: 'button', disabled: p.running || p.missing, onclick: async () => {
+        }
+        async function runApp() {
           const preview = await attempt(() => api('POST', '/api/project-hub/run-preview', { id: p.id }));
           if (!preview) return;
           const message = `Working folder: ${preview.cwd}\n\nCommand:\n${preview.command}\n\n${preview.warning}\n\nRun only code from repositories you trust.`;
           if (!(await confirmDialog({ title: preview.title, message, confirmLabel: 'Run project' }))) return;
           if (await attempt(() => api('POST', '/api/project-hub/run', { id: p.id }), 'Project start requested. Check logs for output.')) refreshHub();
-        } }, icon('play', 13), 'Run app'));
-        if (p.scripts?.length) actions.push(h('button', { class: 'btn small primary', type: 'button', disabled: p.running || p.missing, onclick: async () => {
+        }
+        async function startNodeProject() {
           if (!(await confirmDialog({ title: `Run ${script.value}?`, message: 'This executes the selected script from package.json. Run code only from repositories you trust.', confirmLabel: 'Run project' }))) return;
           if (await attempt(() => api('POST', '/api/project-hub/start', { id: p.id, script: script.value }), 'Start requested. Check logs for the local URL.')) refreshHub();
-        } }, icon('play', 13), 'Start'));
-        if (p.running) actions.push(h('button', { class: 'btn small danger', type: 'button', onclick: async () => {
+        }
+        async function stopProject() {
           if (await attempt(() => api('POST', '/api/project-hub/stop', { id: p.id }), 'Stop requested')) refreshHub();
-        } }, icon('square', 13), 'Stop'));
-        actions.push(h('button', { class: 'btn small', type: 'button', onclick: showLogs }, icon('file-text', 13), 'Logs'));
-        actions.push(openUrl);
-        actions.push(h('button', { class: 'btn small', type: 'button', onclick: (e) => copyText(p.path, e.currentTarget) }, icon('copy', 13), 'Copy path'));
-        actions.push(h('button', { class: 'btn small ghost', type: 'button', onclick: async () => {
+        }
+        async function showLogs() {
+          const result = await attempt(() => api('POST', '/api/project-hub/logs', { id: p.id }));
+          if (!result) return;
+          const match = [...result.lines.matchAll(/https?:\\/\\/(?:localhost|127\\.0\\.0\\.1):\\d+(?:\\/[^\\s]*)?/g)].pop();
+          if (match) { openUrl.href = match[0].replace(/[),.;]+$/, ''); openUrl.hidden = false; }
+          await modal({ title: `Logs · ${p.name}`, wide: true, body: h('pre', { class: 'code', style: 'white-space:pre-wrap;max-height:60vh;overflow:auto' }, result.lines || 'No log output yet.'), actions: [{ label: 'Close', value: true, kind: 'primary' }] });
+        }
+        async function unregister() {
           if (!(await confirmDialog({ title: 'Remove project from RumiStack?', message: 'Only removes the Project Hub entry. The actual project folder and its files will remain untouched.', confirmLabel: 'Unregister', danger: true }))) return;
           if (await attempt(() => api('POST', '/api/project-hub/unregister', { id: p.id }), 'Project unregistered; files kept.')) refreshHub();
-        } }, icon('unlink', 13), 'Unregister'));
-        return h('article', { class: 'card' },
-          h('div', { class: 'row space' }, h('div', { class: 'row' }, avatar(p.id, p.name), h('div', {}, h('strong', { style: 'word-break:break-all' }, p.name), h('div', { class: 'faint' }, p.framework ?? 'Project'))),
-            p.missing ? badge('folder missing', 'warn') : p.running ? badge('running', 'ok') : p.isWeb ? badge('web project', 'info') : badge('imported', '')),
-          h('p', { class: 'faint', style: 'font-size:12px;overflow-wrap:anywhere' }, p.path),
-          p.source ? h('p', { class: 'faint', style: 'font-size:12px' }, p.source) : h('p', { class: 'faint', style: 'font-size:12px' }, 'Local folder · registered without moving'),
-          p.hasPackageJson ? h('div', { class: 'row', style: 'flex-wrap:wrap' }, badge(p.manager), badge(p.scripts?.length ? `${p.scripts.length} scripts` : 'no scripts'), badge(`${p.dependencyCount} dependencies`), badge(p.dependenciesInstalled ? 'dependencies installed' : 'dependencies missing', p.dependenciesInstalled ? 'ok' : 'warn')) : h('div', { class: 'row', style: 'flex-wrap:wrap' }, badge(p.ecosystem === 'unknown' ? 'unclassified project' : p.ecosystem), p.manager ? badge(p.manager) : null, p.projectCount ? badge(`${p.projectCount} .csproj files`) : null),
-          p.health ? h('div', { class: `notice ${p.health.status === 'ready' ? 'success' : ['not-node', 'manual-setup', 'needs-setup'].includes(p.health.status) ? 'info' : 'warn'}`, style: 'margin:10px 0' }, icon(p.health.status === 'ready' ? 'check-circle' : 'alert-circle', 15), h('span', {}, h('strong', {}, p.health.label), p.health.issues?.length ? h('span', { class: 'faint', style: 'display:block;margin-top:3px' }, p.health.issues.join(' ')) : h('span', { class: 'faint', style: 'display:block;margin-top:3px' }, `Runtime: ${p.ecosystem === 'node' ? `Node ${p.runtime?.node ?? '—'}` : p.ecosystem === 'python' ? 'Python' : p.ecosystem === 'dotnet' ? '.NET SDK' : p.ecosystem ?? '—'} · ${p.lockfiles?.length ? p.lockfiles.join(', ') : 'no lockfile'}`))) : null,
-          p.scripts?.length ? h('div', { class: 'row', style: 'margin:8px 0' }, h('label', { class: 'faint' }, 'Run script'), script) : null,
-          h('div', { class: 'row', style: 'flex-wrap:wrap;margin-top:10px' }, actions));
+        }
+
+        moreActions.push(h('button', { class: 'btn small', type: 'button', onclick: showLogs }, icon('file-text', 13), 'Logs'));
+        moreActions.push(openUrl);
+        if (p.hasPackageJson && p.dependenciesInstalled) moreActions.push(h('button', { class: 'btn small', type: 'button', onclick: reinstallDependencies }, icon('download', 13), 'Reinstall dependencies'));
+        if (p.setupAction && ['python', 'dotnet'].includes(p.ecosystem) && p.setupCompleted) moreActions.push(h('button', { class: 'btn small', type: 'button', disabled: !p.runtime?.managerAvailable, onclick: guidedSetup }, icon('refresh', 13), 'Run setup again'));
+        moreActions.push(h('button', { class: 'btn small', type: 'button', onclick: (e) => copyText(p.path, e.currentTarget) }, icon('copy', 13), 'Copy path'));
+        moreActions.push(h('button', { class: 'btn small danger ghost', type: 'button', disabled: p.running, onclick: unregister }, icon('unlink', 13), 'Unregister'));
+
+        let primaryAction;
+        if (p.missing) {
+          primaryAction = h('button', { class: 'btn small', type: 'button', disabled: true }, icon('alert-circle', 13), 'Folder missing');
+        } else if (p.running) {
+          primaryAction = h('button', { class: 'btn small danger', type: 'button', onclick: stopProject }, icon('square', 13), 'Stop app');
+        } else if (p.setupAction && ['python', 'dotnet'].includes(p.ecosystem) && !p.setupCompleted) {
+          primaryAction = h('button', { class: 'btn small primary', type: 'button', disabled: !p.runtime?.managerAvailable, title: p.runtime?.managerAvailable ? 'Preview the exact command before running setup.' : 'Install the required runtime first, then reopen RumiStack.', onclick: guidedSetup }, icon('wand-sparkles', 13), p.runtime?.managerAvailable ? 'Guided setup' : 'Runtime required');
+        } else if (p.hasPackageJson && !p.dependenciesInstalled) {
+          primaryAction = h('button', { class: 'btn small primary', type: 'button', disabled: !p.runtime?.managerAvailable, title: p.runtime?.managerAvailable ? 'Install dependencies after reviewing the confirmation.' : 'Install the required package manager first.', onclick: installDependencies }, icon('wand-sparkles', 13), p.runtime?.managerAvailable ? (p.scripts?.length ? 'Setup & start' : 'Install dependencies') : 'Runtime required');
+        } else if (['python', 'dotnet'].includes(p.ecosystem) && p.runTarget) {
+          primaryAction = h('button', { class: 'btn small primary', type: 'button', onclick: runApp }, icon('play', 13), 'Run app');
+        } else if (p.scripts?.length) {
+          primaryAction = h('button', { class: 'btn small primary', type: 'button', onclick: startNodeProject }, icon('play', 13), 'Start app');
+        } else {
+          primaryAction = h('button', { class: 'btn small', type: 'button', onclick: showGuidance }, icon('book-open', 13), 'View guidance');
+        }
+
+        return h('article', { class: 'card project-card' },
+          h('div', { class: 'row space project-card-heading' },
+            h('div', { class: 'row project-card-identity' }, avatar(p.id, p.name), h('div', {}, h('strong', { style: 'word-break:break-all' }, p.name), h('div', { class: 'faint' }, p.framework ?? 'Project'))),
+            p.missing ? badge('folder missing', 'warn') : p.running ? badge('running', 'ok') : p.health?.status === 'ready' ? badge('ready', 'ok') : badge(p.health?.label ?? (p.isWeb ? 'web project' : 'imported'), p.health?.status === 'invalid' ? 'bad' : 'info')),
+          h('p', { class: 'faint project-path' }, p.path),
+          p.source ? h('p', { class: 'faint project-source' }, p.source) : h('p', { class: 'faint project-source' }, 'Local folder · registered in place'),
+          p.hasPackageJson ? h('div', { class: 'row project-meta' }, badge(p.manager), badge(p.scripts?.length ? `${p.scripts.length} scripts` : 'no scripts'), badge(`${p.dependencyCount} dependencies`), badge(p.dependenciesInstalled ? 'dependencies installed' : 'dependencies missing', p.dependenciesInstalled ? 'ok' : 'warn')) : h('div', { class: 'row project-meta' }, badge(p.ecosystem === 'unknown' ? 'unclassified project' : p.ecosystem), p.manager ? badge(p.manager) : null, p.projectCount ? badge(`${p.projectCount} .csproj files`) : null, p.setupCompleted ? badge('setup complete', 'ok') : null),
+          p.health ? h('div', { class: `notice ${p.health.status === 'ready' ? 'success' : ['not-node', 'manual-setup', 'needs-setup'].includes(p.health.status) ? 'info' : 'warn'} project-health` }, icon(p.health.status === 'ready' ? 'check-circle' : 'alert-circle', 15), h('span', {}, h('strong', {}, p.health.label), p.health.issues?.length ? h('span', { class: 'faint project-health-issues' }, p.health.issues.join(' ')) : null)) : null,
+          p.scripts?.length ? h('div', { class: 'project-script-picker' }, h('label', { class: 'faint' }, 'Run script'), script) : null,
+          h('div', { class: 'row project-card-actions' }, primaryAction,
+            h('details', { class: 'project-more' },
+              h('summary', {}, icon('more-horizontal', 14), 'More'),
+              h('div', { class: 'project-more-menu' }, moreActions))));
+
       }));
     });
   }
