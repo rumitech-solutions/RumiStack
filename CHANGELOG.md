@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.2.0] - 2026-11-18
+
+### 🧭 Smarter first-run setup
+- Setup Wizard now prioritizes an already-installed coding assistant when no assistant has previously been selected.
+- The wizard explains why an assistant was preselected and keeps installation and configuration changes behind explicit user actions.
+- Existing FreeLLMAPI and OmniRoute provider profiles are identified in gateway choices so users can review and reuse their saved connection settings.
+- No API-key values, sessions or local service files are read or modified by this detection.
+
+
 ## [1.1.0] - 2026-11-18
 
 ### 🧠 Project intelligence & guided launch
