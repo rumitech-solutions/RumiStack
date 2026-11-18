@@ -65,7 +65,10 @@ try {
     Step 'Validating the updated workspace'
     & node scripts/check.js
     if ($LASTEXITCODE -ne 0) { StopWith 'Validation failed. The dashboard was not started.' }
-    Ok 'Validation passed'
+    Ok 'Integrity checks passed'
+    & node scripts/test.js
+    if ($LASTEXITCODE -ne 0) { StopWith 'Automated tests failed. The dashboard was not started.' }
+    Ok 'Automated tests passed'
 
     Step 'Starting RumiStack'
     $client = [System.Net.Sockets.TcpClient]::new()
