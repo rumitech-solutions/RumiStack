@@ -122,7 +122,7 @@
 - Gateway configuration stores only Base URL, model ID and environment-variable name; secret values remain outside RumiStack.
 - Existing profiles are preserved and selected tools are merged rather than replacing the user's profile.
 - Gateway repositories remain separate Project Hub imports; saving a provider profile does not clone, install or start gateway code.
- 
+
 ## [0.15.0] - 2026-11-18
 
 ### ✨ User-friendly workspace
