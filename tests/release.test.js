@@ -39,13 +39,13 @@ test('Linux launcher preserves loopback-only remote access guidance', async () =
 });
 
 test('cloud deployment automation is private and keeps backups permission-restricted', async () => {
-  const [service, backup, guide] = await Promise.all([
-    read('scripts/install-linux-service.sh'), read('scripts/backup-linux.sh'), read('docs/CLOUD-DEPLOYMENT.md')
+  const [service, backup, timer, guide] = await Promise.all([
+    read('scripts/install-linux-service.sh'), read('scripts/backup-linux.sh'), read('scripts/install-linux-backup-timer.sh'), read('docs/CLOUD-DEPLOYMENT.md')
   ]);
   assert.match(service, /systemctl --user enable --now rumistack\.service/);
   assert.match(service, /NoNewPrivileges=true/);
   assert.match(backup, /chmod 600/);
   assert.match(backup, /sources projects state config/);
-  assert.match(guide, /Do not add port 47821/);
+  assert.match(timer, /OnCalendar=daily/);\n  assert.match(timer, /rumistack-backup.timer/);\n  assert.match(guide, /Do not add port 47821/);
   assert.match(guide, /sudo loginctl enable-linger/);
 });
