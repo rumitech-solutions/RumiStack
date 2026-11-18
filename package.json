@@ -1,6 +1,6 @@
 {
   "name": "rumistack",
-  "version": "0.16.0",
+  "version": "0.16.1",
   "description": "An ultra-friendly local-first AI developer control center with guided setup, model gateways and project workflows.",
   "private": true,
   "type": "module",
