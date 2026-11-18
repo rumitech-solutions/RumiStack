@@ -9,9 +9,9 @@ const read = (file) => readFile(path.join(REPO_ROOT, file), 'utf8');
 test('stable release metadata stays in sync', async () => {
   const pkg = JSON.parse(await read('package.json'));
   const [readme, changelog, release] = await Promise.all([
-    read('README.md'), read('CHANGELOG.md'), read('docs/RELEASE-1.0.0.md')
+    read('README.md'), read('CHANGELOG.md'), read('docs/RELEASE-1.4.0.md')
   ]);
-  assert.equal(pkg.version, '1.3.0');
+  assert.equal(pkg.version, '1.4.0');
   assert.match(readme, /version-1.4.0-/);
   assert.match(changelog, /^## \[1.4.0\]/m);
   assert.match(release, /RumiStack 1\.0\.0/);
