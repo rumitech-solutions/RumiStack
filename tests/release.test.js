@@ -20,7 +20,7 @@ test('stable release metadata stays in sync', async () => {
 
 test('Project Hub keeps common import simple and project actions health-aware', async () => {
   const [projects, styles, release] = await Promise.all([
-    read('dashboard/js/views/projects.js'), read('dashboard/premium.css'), read('docs/RELEASE-1.8.1.md')
+    read('dashboard/js/views/projects.js'), read('dashboard/premium.css'), read('docs/RELEASE-1.8.0.md')
   ]);
   assert.match(projects, /Advanced import options/);
   assert.match(projects, /Already have a project on this laptop\?/);
@@ -54,18 +54,17 @@ test('the single Windows launcher starts locally and never updates Git', async (
   const [launcher, startScript] = await Promise.all([
     read('Start-RumiStack.bat'), read('scripts/Start-Workspace.ps1')
   ]);
-  assert.match(launcher, /scripts\\\\Start-Workspace\\.ps1/);
+  assert.match(launcher, /scripts\\Start-Workspace\.ps1/);
   assert.match(launcher, /does not update or pull from GitHub/i);
-  assert.doesNotMatch(launcher, /git\\s+(fetch|pull|merge)/i);
-  assert.match(startScript, /node server\\/index\\.js/);
-  assert.match(startScript, /Start-Process \\$url/);
+  assert.doesNotMatch(launcher, /git\s+(fetch|pull|merge)/i);
+  assert.match(startScript, /node server\/index\.js/);
+  assert.match(startScript, /Start-Process \$url/);
   assert.match(startScript, /alreadyListening/);
-  assert.doesNotMatch(startScript, /git\\s+(fetch|pull|merge)/i);
+  assert.doesNotMatch(startScript, /git\s+(fetch|pull|merge)/i);
   for (const removed of ['Update-and-Start.bat', 'start.cmd', 'scripts/Update-and-Start.ps1']) {
     await assert.rejects(() => read(removed), { code: 'ENOENT' });
   }
 });
-
 test('Linux launcher preserves loopback-only remote access guidance', async () => {
   const [launcher, remoteGuide, server] = await Promise.all([
     read('scripts/start-linux.sh'), read('docs/REMOTE-ACCESS.md'), read('server/index.js')
