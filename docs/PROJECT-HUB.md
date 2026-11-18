@@ -21,7 +21,9 @@ Project Hub reads `package.json`, lockfiles and common framework dependencies to
 - Package managers: npm, pnpm, Yarn and Bun.
 - Candidate scripts: dev, start, serve and preview (the UI also lets you select any detected package script).
 
-**Install dependencies** runs the detected package manager's install command in the project folder. Dependency lifecycle scripts may execute, so only do this for repositories you trust.
+Project cards now show a **health summary**: detected Node runtime, any declared Node engine requirement, package-manager availability, dependency count, installed/missing dependencies, lockfiles and actionable warnings. A missing or moved project folder is reported without breaking the rest of the project list.
+
+**Setup & start** is the guided path for a fresh Node project. It runs the detected package manager's install command, then asks separately whether to launch the detected default script. Dependency lifecycle scripts may execute, so only do this for repositories you trust. **Reinstall dependencies** remains available for projects that are already set up.
 
 **Start** runs the selected package.json script. This is an explicit code-execution action and is never performed by import or detection. Logs are written to RumiStack's local `logs/` folder. The Logs view can reveal a localhost URL printed by the development server; use Open local site when one is detected.
 
