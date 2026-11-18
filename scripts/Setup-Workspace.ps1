@@ -34,4 +34,4 @@ try { & node scripts/check.js; if ($LASTEXITCODE -ne 0) { throw 'npm run check f
 finally { Pop-Location }
 
 Write-Host ''
-Write-Host 'Setup complete. Next: .\scripts\Start-Workspace.ps1' -ForegroundColor Green
+Write-Host 'Setup complete. Next: double-click Start-RumiStack.bat' -ForegroundColor Green
