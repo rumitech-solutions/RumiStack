@@ -82,12 +82,41 @@ export function detectProject(dir, packageJson) {
 
 async function inspectProject(entry) {
   const dir = entry.path;
+  const folderExists = await fs.stat(dir).then((s) => s.isDirectory(), () => false);
+  if (!folderExists) {
+    return { ...entry, missing: true, hasPackageJson: false, framework: 'Unavailable', manager: null,
+      scripts: [], preferredScript: null, isWeb: false, running: false, pid: null,
+      health: { status: 'missing-folder', label: 'Folder not found', issues: ['The project folder was moved, renamed or disconnected.'] },
+      runtime: { node: process.version, requiredNode: null, managerAvailable: false }, logFile: entry.logFile ?? null };
+  }
+
   let pkg = null;
-  try { pkg = JSON.parse(await fs.readFile(path.join(dir, 'package.json'), 'utf8')); } catch { /* non-Node project */ }
+  let packageError = null;
+  const packageFile = path.join(dir, 'package.json');
+  const packageExists = await exists(packageFile);
+  if (packageExists) {
+    try { pkg = JSON.parse(await fs.readFile(packageFile, 'utf8')); }
+    catch { packageError = 'package.json is invalid JSON.'; }
+  }
   const detected = await detectProject(dir, pkg);
   const child = running.get(entry.id);
   const active = Boolean(child && child.exitCode === null && !child.killed);
-  return { ...entry, ...detected, running: active, pid: active ? child.pid : null, logFile: entry.logFile ?? null };
+  const managerAvailable = detected.hasPackageJson ? Boolean(await findCommand(detected.manager)) : false;
+  const dependenciesInstalled = await exists(path.join(dir, 'node_modules'));
+  const lockfiles = ['package-lock.json', 'npm-shrinkwrap.json', 'pnpm-lock.yaml', 'yarn.lock', 'bun.lock', 'bun.lockb'];
+  const presentLockfiles = (await Promise.all(lockfiles.map(async (name) => await exists(path.join(dir, name)) ? name : null))).filter(Boolean);
+  const issues = [];
+  if (packageError) issues.push(packageError);
+  if (detected.hasPackageJson && !managerAvailable) issues.push(`${detected.manager} is not installed or not available on PATH.`);
+  if (detected.hasPackageJson && !dependenciesInstalled) issues.push('Dependencies are not installed yet.');
+  if (detected.hasPackageJson && !detected.scripts.length) issues.push('No runnable scripts are defined in package.json.');
+  if (detected.hasPackageJson && !presentLockfiles.length) issues.push('No package lockfile found; installs may resolve newer dependency versions.');
+  let status = packageError ? 'invalid' : !detected.hasPackageJson ? 'not-node' : !managerAvailable ? 'missing-runtime' : !dependenciesInstalled ? 'needs-install' : 'ready';
+  return { ...entry, ...detected, missing: false, running: active, pid: active ? child.pid : null,
+    health: { status, label: ({ invalid: 'Needs attention', 'not-node': 'Manual setup', 'missing-runtime': 'Runtime missing', 'needs-install': 'Setup required', ready: 'Ready' })[status], issues },
+    runtime: { node: process.version, requiredNode: pkg?.engines?.node ?? null, managerAvailable, manager: detected.manager },
+    dependenciesInstalled, dependencyCount: Object.keys({ ...(pkg?.dependencies ?? {}), ...(pkg?.devDependencies ?? {}) }).length,
+    lockfiles: presentLockfiles, logFile: entry.logFile ?? null };
 }
 
 export async function listHubProjects(root, stateDir) {
