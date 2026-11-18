@@ -113,7 +113,7 @@ async function inspectProject(entry) {
   const detected = await detectProject(dir, pkg);
   const child = running.get(entry.id);
   const active = Boolean(child && child.exitCode === null && !child.killed);
-  const managerAvailable = detected.ecosystem === 'node' ? Boolean(await findCommand(detected.manager)) : detected.ecosystem === 'python' ? Boolean(await findCommand('python') || await findCommand('py')) : detected.ecosystem === 'dotnet' ? Boolean(await findCommand('dotnet')) : false;
+  const managerAvailable = detected.ecosystem === 'node' ? Boolean(await findCommand(detected.manager)) : detected.ecosystem === 'python' ? (detected.manager === 'pip' ? Boolean(await findCommand('python') || await findCommand('py')) : Boolean(await findCommand(detected.manager))) : detected.ecosystem === 'dotnet' ? Boolean(await findCommand('dotnet')) : false;
   const dependenciesInstalled = detected.ecosystem === 'node' ? await exists(path.join(dir, 'node_modules')) : detected.ecosystem === 'python' ? await exists(path.join(dir, '.venv')) : false;
   const lockfiles = ['package-lock.json', 'npm-shrinkwrap.json', 'pnpm-lock.yaml', 'yarn.lock', 'bun.lock', 'bun.lockb', 'requirements.txt', 'pyproject.toml', 'uv.lock', 'poetry.lock', 'Pipfile.lock'];
   const presentLockfiles = (await Promise.all(lockfiles.map(async (name) => await exists(path.join(dir, name)) ? name : null))).filter(Boolean);
