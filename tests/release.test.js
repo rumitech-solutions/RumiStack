@@ -9,18 +9,18 @@ const read = (file) => readFile(path.join(REPO_ROOT, file), 'utf8');
 test('stable release metadata stays in sync', async () => {
   const pkg = JSON.parse(await read('package.json'));
   const [readme, changelog, release] = await Promise.all([
-    read('README.md'), read('CHANGELOG.md'), read('docs/RELEASE-1.8.0.md')
+    read('README.md'), read('CHANGELOG.md'), read('docs/RELEASE-1.8.1.md')
   ]);
-  assert.equal(pkg.version, '1.8.0');
-  assert.match(readme, /version-1.8.0-/);
-  assert.match(changelog, /^## \[1.8.0\]/m);
+  assert.equal(pkg.version, '1.8.1');
+  assert.match(readme, /version-1.8.1-/);
+  assert.match(changelog, /^## \[1.8.1\]/m);
   assert.match(release, /RumiStack v1\.8\.0/);
 });
 
 
 test('Project Hub keeps common import simple and project actions health-aware', async () => {
   const [projects, styles, release] = await Promise.all([
-    read('dashboard/js/views/projects.js'), read('dashboard/premium.css'), read('docs/RELEASE-1.8.0.md')
+    read('dashboard/js/views/projects.js'), read('dashboard/premium.css'), read('docs/RELEASE-1.8.1.md')
   ]);
   assert.match(projects, /Advanced import options/);
   assert.match(projects, /Already have a project on this laptop\?/);
@@ -35,7 +35,7 @@ test('Project Hub keeps common import simple and project actions health-aware', 
 });
 
 
-test('final documentation matches the v1.8.0 dashboard and has clean links', async () => {
+test('final documentation matches the v1.8.1 dashboard and has clean links', async () => {
   const [readme, index, quickstart, projectGuide, security] = await Promise.all([
     read('README.md'), read('docs/README.md'), read('docs/QUICKSTART.md'),
     read('docs/PROJECT-HUB.md'), read('docs/SECURITY.md')
@@ -50,14 +50,20 @@ test('final documentation matches the v1.8.0 dashboard and has clean links', asy
   assert.match(security, /dependency installation/i);
 });
 
-test('one-click launcher validates and tests before starting', async () => {
-  const launcher = await read('scripts/Update-and-Start.ps1');
-  const check = launcher.indexOf('& node scripts/check.js');
-  const tests = launcher.indexOf('& node scripts/test.js');
-  const start = launcher.indexOf("Step 'Starting RumiStack'");
-  assert.ok(check >= 0, 'integrity check is present');
-  assert.ok(tests > check, 'automated tests run after integrity checks');
-  assert.ok(start > tests, 'dashboard starts only after tests pass');
+test('the single Windows launcher starts locally and never updates Git', async () => {
+  const [launcher, startScript] = await Promise.all([
+    read('Start-RumiStack.bat'), read('scripts/Start-Workspace.ps1')
+  ]);
+  assert.match(launcher, /scripts\\\\Start-Workspace\\.ps1/);
+  assert.match(launcher, /does not update or pull from GitHub/i);
+  assert.doesNotMatch(launcher, /git\\s+(fetch|pull|merge)/i);
+  assert.match(startScript, /node server\\/index\\.js/);
+  assert.match(startScript, /Start-Process \\$url/);
+  assert.match(startScript, /alreadyListening/);
+  assert.doesNotMatch(startScript, /git\\s+(fetch|pull|merge)/i);
+  for (const removed of ['Update-and-Start.bat', 'start.cmd', 'scripts/Update-and-Start.ps1']) {
+    await assert.rejects(() => read(removed), { code: 'ENOENT' });
+  }
 });
 
 test('Linux launcher preserves loopback-only remote access guidance', async () => {
