@@ -14,7 +14,7 @@ test('stable release metadata stays in sync', async () => {
   assert.equal(pkg.version, '1.8.2');
   assert.match(readme, /version-1.8.2-/);
   assert.match(changelog, /^## \[1.8.2\]/m);
-  assert.match(release, /RumiStack v1\.8\.1/);
+  assert.match(release, /RumiStack v1\.8\.2/);
 });
 
 
@@ -41,7 +41,7 @@ test('final documentation matches the v1.8.2 dashboard and has clean links', asy
     read('docs/PROJECT-HUB.md'), read('docs/SECURITY.md')
   ]);
   const escapedNewline = String.fromCharCode(92) + 'n';
-  assert.match(readme, /v1\.8\.1 release/);
+  assert.match(readme, /v1\.8\.2 release/);
   assert.equal(readme.includes(escapedNewline + '- ☁️'), false);
   assert.equal(index.includes(escapedNewline + '|'), false);
   assert.match(quickstart, /Guided setup/);
