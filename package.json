@@ -1,7 +1,7 @@
 {
   "name": "rumistack",
-  "version": "0.17.0",
-  "description": "A simple local-first AI developer workspace with guided setup, projects and optional advanced tools.",
+  "version": "1.0.0",
+  "description": "A stable, local-first AI developer workspace for guided setup, projects and optional advanced tools.",
   "private": true,
   "type": "module",
   "license": "UNLICENSED",
