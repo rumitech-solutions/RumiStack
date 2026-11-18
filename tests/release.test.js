@@ -9,11 +9,11 @@ const read = (file) => readFile(path.join(REPO_ROOT, file), 'utf8');
 test('stable release metadata stays in sync', async () => {
   const pkg = JSON.parse(await read('package.json'));
   const [readme, changelog, release] = await Promise.all([
-    read('README.md'), read('CHANGELOG.md'), read('docs/RELEASE-1.8.1.md')
+    read('README.md'), read('CHANGELOG.md'), read('docs/RELEASE-1.8.2.md')
   ]);
-  assert.equal(pkg.version, '1.8.1');
-  assert.match(readme, /version-1.8.1-/);
-  assert.match(changelog, /^## \[1.8.1\]/m);
+  assert.equal(pkg.version, '1.8.2');
+  assert.match(readme, /version-1.8.2-/);
+  assert.match(changelog, /^## \[1.8.2\]/m);
   assert.match(release, /RumiStack v1\.8\.1/);
 });
 
@@ -35,7 +35,7 @@ test('Project Hub keeps common import simple and project actions health-aware', 
 });
 
 
-test('final documentation matches the v1.8.1 dashboard and has clean links', async () => {
+test('final documentation matches the v1.8.2 dashboard and has clean links', async () => {
   const [readme, index, quickstart, projectGuide, security] = await Promise.all([
     read('README.md'), read('docs/README.md'), read('docs/QUICKSTART.md'),
     read('docs/PROJECT-HUB.md'), read('docs/SECURITY.md')
@@ -50,14 +50,19 @@ test('final documentation matches the v1.8.1 dashboard and has clean links', asy
   assert.match(security, /dependency installation/i);
 });
 
-test('the single Windows launcher starts locally and never updates Git', async () => {
-  const [launcher, startScript] = await Promise.all([
-    read('Start-RumiStack.bat'), read('scripts/Start-Workspace.ps1')
+test('the single Windows launcher starts from the verified project root and never updates Git', async () => {
+  const [launcher, startScript, common] = await Promise.all([
+    read('Start-RumiStack.bat'), read('scripts/Start-Workspace.ps1'), read('scripts/lib/Common.ps1')
   ]);
   assert.match(launcher, /scripts\\Start-Workspace\.ps1/);
   assert.match(launcher, /does not update or pull from GitHub/i);
   assert.doesNotMatch(launcher, /git\s+(fetch|pull|merge)/i);
-  assert.match(startScript, /node server\/index\.js/);
+  assert.match(common, /function Get-RumiRoot[\s\S]*?while \(\$candidate\)/);
+  assert.match(common, /package\.json/);
+  assert.match(common, /server\\index\.js/);
+  assert.match(startScript, /Join-Path \$root 'server\\index\.js'/);
+  assert.match(startScript, /Test-Path -LiteralPath \$serverEntry/);
+  assert.match(startScript, /& node \$serverEntry/);
   assert.match(startScript, /Start-Process \$url/);
   assert.match(startScript, /alreadyListening/);
   assert.doesNotMatch(startScript, /git\s+(fetch|pull|merge)/i);
