@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.0] - 2026-11-18
+
+### 🏁 First stable release
+- Declared the core RumiStack experience stable: guided setup, local-first profiles, tool discovery, provider configuration, Project Hub and portable backups.
+- Kept the everyday workflow focused: one-click update-and-start, one primary coding assistant, then import or open a project.
+- Strengthened the one-click launcher: it now runs both workspace integrity checks and the automated test suite before starting the dashboard.
+- Preserved safe defaults: no Docker requirement, no automatic execution of imported repositories, no API-key values in portable profiles, and no destructive Git updates.
+- Confirmed the v0.17.0 baseline CI passed on Windows and Ubuntu with Node.js 20 and 22; v1.0.0 changes receive the same CI matrix.
+
+
 ## [0.17.0] - 2026-11-18
 
 ### ✨ Simpler Home experience
