@@ -57,7 +57,7 @@ test('the single Windows launcher starts from the verified project root and neve
   assert.match(launcher, /scripts\\Start-Workspace\.ps1/);
   assert.match(launcher, /does not update or pull from GitHub/i);
   assert.doesNotMatch(launcher, /git\s+(fetch|pull|merge)/i);
-  assert.match(common, /function Get-RumiRoot[\s\S]*?while \(\$candidate\)/);
+  assert.match(common, /function Get-RumiRoot[\s\S]*?while \(-not/);
   assert.match(common, /package\.json/);
   assert.match(common, /server\\index\.js/);
   assert.match(startScript, /Join-Path \$root 'server\\index\.js'/);
