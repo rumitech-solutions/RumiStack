@@ -48,10 +48,20 @@ export async function renderProjects(root, { navigate }) {
           await modal({ title: `Logs · ${p.name}`, wide: true, body: h('pre', { class: 'code', style: 'white-space:pre-wrap;max-height:60vh;overflow:auto' }, result.lines || 'No log output yet.'), actions: [{ label: 'Close', value: true, kind: 'primary' }] });
         }
         const actions = [];
-        if (p.hasPackageJson) actions.push(h('button', { class: 'btn small', type: 'button', onclick: async () => {
-          if (!(await confirmDialog({ title: 'Install dependencies?', message: 'This runs the project package manager and may execute dependency lifecycle scripts. Only continue if you trust this repository.', confirmLabel: 'Install' }))) return;
+        if (p.hasPackageJson && !p.dependenciesInstalled) actions.push(h('button', { class: 'btn small primary', type: 'button', disabled: !p.runtime?.managerAvailable, onclick: async () => {
+          if (!(await confirmDialog({ title: 'Set up this project?', message: `RumiStack will run ${p.manager} install in this folder. Package lifecycle scripts may execute. Continue only if you trust this repository.`, confirmLabel: 'Install & prepare' }))) return;
+          const installed = await attempt(() => api('POST', '/api/project-hub/install', { id: p.id }), 'Dependencies installed');
+          if (installed && p.preferredScript) {
+            if (await confirmDialog({ title: 'Start the project now?', message: `Dependencies are ready. Run the ${p.preferredScript} script?`, confirmLabel: 'Start project' })) {
+              await attempt(() => api('POST', '/api/project-hub/start', { id: p.id, script: p.preferredScript }), 'Project start requested');
+            }
+          }
+          refreshHub();
+        } }, icon('wand-sparkles', 13), 'Setup & start'));
+        else if (p.hasPackageJson) actions.push(h('button', { class: 'btn small', type: 'button', onclick: async () => {
+          if (!(await confirmDialog({ title: 'Reinstall dependencies?', message: 'This runs the project package manager and may execute dependency lifecycle scripts. Only continue if you trust this repository.', confirmLabel: 'Install' }))) return;
           if (await attempt(() => api('POST', '/api/project-hub/install', { id: p.id }), 'Dependencies installed')) refreshHub();
-        } }, icon('download', 13), 'Install dependencies'));
+        } }, icon('download', 13), 'Reinstall dependencies'));
         if (p.scripts?.length) actions.push(h('button', { class: 'btn small primary', type: 'button', disabled: p.running || p.missing, onclick: async () => {
           if (!(await confirmDialog({ title: `Run ${script.value}?`, message: 'This executes the selected script from package.json. Run code only from repositories you trust.', confirmLabel: 'Run project' }))) return;
           if (await attempt(() => api('POST', '/api/project-hub/start', { id: p.id, script: script.value }), 'Start requested. Check logs for the local URL.')) refreshHub();
@@ -71,7 +81,8 @@ export async function renderProjects(root, { navigate }) {
             p.missing ? badge('folder missing', 'warn') : p.running ? badge('running', 'ok') : p.isWeb ? badge('web project', 'info') : badge('imported', '')),
           h('p', { class: 'faint', style: 'font-size:12px;overflow-wrap:anywhere' }, p.path),
           p.source ? h('p', { class: 'faint', style: 'font-size:12px' }, p.source) : h('p', { class: 'faint', style: 'font-size:12px' }, 'Local folder · registered without moving'),
-          p.hasPackageJson ? h('div', { class: 'row', style: 'flex-wrap:wrap' }, badge(p.manager), badge(p.scripts?.length ? `${p.scripts.length} scripts` : 'no scripts')) : h('p', { class: 'faint' }, 'No Node.js package.json detected. Stored and organized; no automatic runner available.'),
+          p.hasPackageJson ? h('div', { class: 'row', style: 'flex-wrap:wrap' }, badge(p.manager), badge(p.scripts?.length ? `${p.scripts.length} scripts` : 'no scripts'), badge(`${p.dependencyCount} dependencies`), badge(p.dependenciesInstalled ? 'dependencies installed' : 'dependencies missing', p.dependenciesInstalled ? 'ok' : 'warn')) : h('p', { class: 'faint' }, 'No Node.js package.json detected. Stored and organized; no automatic runner available.'),
+          p.health ? h('div', { class: 'notice ${p.health.status === 'ready' ? 'success' : p.health.status === 'not-node' ? 'info' : 'warn'}', style: 'margin:10px 0' }, icon(p.health.status === 'ready' ? 'check-circle' : 'alert-circle', 15), h('span', {}, h('strong', {}, p.health.label), p.health.issues?.length ? h('span', { class: 'faint', style: 'display:block;margin-top:3px' }, p.health.issues.join(' ')) : h('span', { class: 'faint', style: 'display:block;margin-top:3px' }, `Node ${p.runtime?.node ?? '—'} · ${p.runtime?.requiredNode ? `requires ${p.runtime.requiredNode}` : 'no Node version constraint'} · ${p.lockfiles?.length ? p.lockfiles.join(', ') : 'no lockfile'}`))) : null,
           p.scripts?.length ? h('div', { class: 'row', style: 'margin:8px 0' }, h('label', { class: 'faint' }, 'Run script'), script) : null,
           h('div', { class: 'row', style: 'flex-wrap:wrap;margin-top:10px' }, actions));
       }));
