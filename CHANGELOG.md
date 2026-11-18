@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.16.1] - 2026-11-18
+
+### 🚀 One-click Windows launcher
+- Rebuilt `Update-and-Start.bat` as a smart updater that fetches the official `main` branch, refuses dirty or divergent checkouts, fast-forwards safely, runs workspace validation and starts the dashboard.
+- Detects an already-running RumiStack instance and opens it instead of attempting a duplicate server.
+- Removed the unnecessary `npm install` step; RumiStack uses Node.js built-ins for its own dashboard and server.
+- Added `scripts/Update-and-Start.ps1` for the update, safety and launch workflow.
+
+
 ## [0.16.0] - 2026-11-18
 
 ### 🧭 Guided setup experience
