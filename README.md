@@ -12,7 +12,7 @@ A local-first command center for AI coding assistants, model gateways, web proje
 
 <br>
 
-![Version](https://img.shields.io/badge/version-0.16.1-10b981?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-0.17.0-10b981?style=for-the-badge)
 ![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-64748b?style=for-the-badge)
 ![Runtime](https://img.shields.io/badge/Node.js-20%2B-16a34a?style=for-the-badge)
 ![Architecture](https://img.shields.io/badge/architecture-Local--first-d6b56d?style=for-the-badge)
@@ -130,6 +130,10 @@ npm test
 ```
 
 ### 3. Launch your workspace
+
+Double-click `Update-and-Start.bat` to safely update from GitHub, validate and start RumiStack. No `npm install` is needed for RumiStack itself.
+
+For a manual launch, use:
 
 ```powershell
 .\scripts\Start-Workspace.ps1
