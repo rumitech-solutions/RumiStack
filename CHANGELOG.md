@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.3.0] - 2026-11-18
+
+### 🧩 Multi-runtime project recognition
+- Project Hub now recognises Python, .NET, Go, Rust and Java projects from common manifest files.
+- Non-Node projects receive an explicit detected-runtime status and safe manual-setup guidance instead of a generic unknown-project label.
+- Automatic dependency installation and project launching remain limited to the supported Node.js workflow; no runtime commands are guessed or executed.
+- Added coverage for all five non-Node manifest families.
+
+
 ## [1.2.0] - 2026-11-18
 
 ### 🧭 Smarter first-run setup
