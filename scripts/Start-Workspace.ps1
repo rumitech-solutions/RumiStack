@@ -54,5 +54,8 @@ if (-not $NoBrowser) {
 Write-Host "RumiStack dashboard: $url  (Ctrl+C to stop)" -ForegroundColor Green
 $env:RUMISTACK_PORT = "$Port"
 Push-Location $root
-try { & node server/index.js }
+try {
+    & node server/index.js
+    if ($LASTEXITCODE -ne 0) { throw "RumiStack server exited with code $LASTEXITCODE." }
+}
 finally { Pop-Location }
