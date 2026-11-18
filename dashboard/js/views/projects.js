@@ -121,22 +121,25 @@ export async function renderProjects(root, { navigate }) {
   }
 
   root.append(
-    ...pageHeader('Projects', 'Import repositories to any drive, register existing folders without moving them, and manage web-app dependencies, runtime and logs.', {
+    ...pageHeader('Projects', 'Bring a project into one place. Import from GitHub or open a folder already on this laptop. RumiStack checks what each project needs before you run it.', {
       iconName: 'terminal',
       actions: [h('button', { class: 'btn primary', type: 'button', onclick: create }, icon('plus', 15), 'New project')]
     }),
-    h('h2', {}, icon('download', 16), 'Import from GitHub'),
+    h('h2', {}, icon('download', 16), 'Start with a GitHub repository'),
     h('div', { class: 'panel' },
-      field('GitHub repository URL', repoUrl, 'Public repositories and private repositories available to your Git sign-in. Import only clones files; it does not execute them.'),
-      field('Destination drive', driveSelect, 'Select a detected Windows drive, or type any absolute path in the destination field below.'),
-      field('Destination folder', destination, 'Choose any folder on the selected drive, for example D:\\RumiStack\\projects or E:\\WebProjects. The repository is placed in a new subfolder.'),
-      field('Folder name (optional)', folderName, 'Leave blank to use the repository name.'),
-      importBtn),
-    h('h2', {}, icon('folder', 16), 'Register an existing project'),
-    h('div', { class: 'panel' }, field('Full folder path', localPath, 'Registers the folder in place. RumiStack will not copy, move or modify its source files.'), registerBtn),
-    h('h2', {}, icon('layers', 16), 'Imported & managed projects'),
+      field('GitHub repository URL', repoUrl, 'Paste a repository link. Importing only downloads the files — it does not run the project.'),
+      importBtn,
+      h('details', { class: 'project-options' },
+        h('summary', {}, icon('sliders', 14), 'Advanced import options'),
+        field('Destination drive', driveSelect, 'Choose a detected drive, or enter any absolute folder path below.'),
+        field('Destination folder', destination, 'The repository is placed in a new subfolder here. Leave the default unless you need another drive or location.'),
+        field('Folder name (optional)', folderName, 'Leave blank to use the repository name.'))),
+    h('details', { class: 'project-options project-register' },
+      h('summary', {}, icon('folder-plus', 14), 'Already have a project on this laptop? Register its folder'),
+      h('div', { class: 'panel' }, h('p', { class: 'muted' }, 'This adds the folder to RumiStack without moving, copying or changing its files.'), field('Project folder path', localPath, 'Example: D:\\\\Projects\\\\my-app'), registerBtn)),
+    h('h2', {}, icon('layers', 16), 'Your projects'),
     hub,
-    h('h2', {}, icon('terminal', 16), 'Workspace projects'),
+    h('h2', {}, icon('terminal', 16), 'Projects created inside RumiStack'),
     windows ? null : h('div', { class: 'notice info', style: 'margin-bottom:14px' }, icon('info', 16), h('span', {}, 'Opening a project in VS Code or an assistant works on Windows. Creating and listing projects works everywhere.')),
     box,
     h('p', { class: 'faint', style: 'margin-top:16px' }, 'Project Hub metadata is stored locally in state/project-hub.json. Imported folders remain wherever you selected; unregistering never deletes them.')
